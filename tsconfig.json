@@ -1,0 +1,17 @@
+{
+  // https://www.typescriptlang.org/docs/handbook/compiler-options.html
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "NodeNext",
+    "allowJs": true,
+    "checkJs": true,
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "noImplicitOverride": true,
+    "declaration": true,
+    "outDir": "dist"
+  },
+  "include": [ "src" ],
+  "exclude": [ "**/*.test.ts" ]
+}
