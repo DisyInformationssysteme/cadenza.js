@@ -22,4 +22,6 @@ jobs:
     - run: npm ci
     - run: npm run build
     - run: npm test
-    - run: npm run deploy:docs -- --user "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+    - run: git config --global user.name "github-actions[bot]"
+    - run: git config --global user.email "github-actions[bot]@users.noreply.github.com"
+    - run: npm run deploy:docs
