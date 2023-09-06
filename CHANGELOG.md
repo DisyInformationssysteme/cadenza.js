@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-This is the initial release of Cadenza JS. It features:
-
 - `CadenzaClient#show`
 - `CadenzaClient#showMap`
 - `CadenzaClient#editGeometry`
