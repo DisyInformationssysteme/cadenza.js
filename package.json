@@ -1,6 +1,6 @@
 {
   "name": "@disy/cadenza.js",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "type": "module",
   "main": "./dist/cadenza.js",
   "types": "./src/cadenza.d.ts",
