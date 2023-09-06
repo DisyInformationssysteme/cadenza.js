@@ -8,23 +8,27 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout
       uses: actions/checkout@v3
+
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
         node-version-file: package.json
         cache: 'npm'
+
     - run: npm ci
-    - run: npm run build
     - run: npm test
-    - name: npm run deploy:docs
+    - run: npm run build
+
+    # Needed for the deploy step
+    - name: Configure Git
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}
-        npm run deploy:docs
+
+    - run: npm run deploy:docs

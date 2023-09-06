@@ -1,7 +1,13 @@
 {
-  "name": "cadenza-public-api",
-  "private": true,
+  "name": "@disy/cadenza.js",
+  "version": "0.0.1",
   "type": "module",
+  "main": "./dist/cadenza.js",
+  "types": "./src/cadenza.d.ts",
+  "files": [
+    "dist/**/*",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "build": "run-p build:*",
     "build:docs": "typedoc",
