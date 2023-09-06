@@ -35,11 +35,6 @@ jobs:
         echo "NEW_VERSION=$(npm --no-git-tag-version version ${{ github.event.inputs.release-type }})" >> $GITHUB_ENV
         echo "RELEASE_TAG=latest" >> $GITHUB_ENV
 
-    - name: Bump pre-release version
-      run: |
-        echo "NEW_VERSION=$(npm --no-git-tag-version --preid=dev version ${{ github.event.inputs.release-type }}
-        echo "RELEASE_TAG=dev" >> $GITHUB_ENV
-
     # Update changelog unreleased section with new version
     - name: Update changelog
       uses: superfaceai/release-changelog-action@v1
