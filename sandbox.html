@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Cadenza JS Development Sandbox</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
+      height: 100%;
+    }
+    body {
+      display: flex;
+      margin: 0;
+    }
+    aside, main {
+      padding: 16px;
+    }
+    aside {
+      background: #eee;
+      overflow: hidden auto;
+      width: 368px;
+    }
+    form, fieldset {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    main {
+      flex: 1;
+    }
+    iframe {
+      border: 4px solid #eee;
+      height: 100%;
+      width: 100%;
+    }
+    label {
+      font-weight: 600;
+    }
+    select, input:is(:not([type], [type=text])), textarea {
+      display: block;
+      width: 100%
+    }
+  </style>
+
+  <script type="module">
+    import { cadenza } from './src/cadenza.js';
+
+    const actionSelect = document.getElementById('action');
+    const settingsContainer = document.getElementById('settings');
+    actionSelect.onchange = () => {
+      settingsContainer.innerHTML = '';
+      const action = actionSelect.value;
+      const settingsTemplate = document.querySelector(`[data-action=${action}]`);
+      settingsContainer.append(settingsTemplate.content.cloneNode(true));
+    };
+    actionSelect.onchange();
+
+    const cadenzaClient = cadenza(location.origin + '/trunk', { iframe: 'iframe', debug: true });
+    const actionHandlers = {
+      show ({ embeddingTargetId, hideMainHeaderAndFooter, hideWorkbookToolBar }) {
+        cadenzaClient.show(embeddingTargetId, {
+          hideMainHeaderAndFooter: (hideMainHeaderAndFooter === 'on'),
+          hideWorkbookToolBar: (hideWorkbookToolBar === 'on')
+        });
+      },
+      showMap ({ embeddingTargetId, geometry, mapExtent, locationFinder }) {
+        cadenzaClient.showMap(embeddingTargetId, {
+          geometry: geometry && JSON.parse(geometry),
+          mapExtent: mapExtent && mapExtent.split(','),
+          locationFinder
+        });
+      },
+      createGeometry ({ embeddingTargetId, geometryType }) {
+        cadenzaClient.createGeometry(embeddingTargetId, geometryType);
+      },
+      editGeometry ({ embeddingTargetId, geometry }) {
+        cadenzaClient.editGeometry(embeddingTargetId, JSON.parse(geometry));
+      }
+    };
+
+    const form = document.getElementById('form');
+    form.onsubmit = (event) => {
+      event.preventDefault();
+      const { action, ...data } = Object.fromEntries(new FormData(form));
+      actionHandlers[action](data);
+    };
+  </script>
+</head>
+<body>
+
+<aside>
+  <form id="form">
+    <div>
+      <label for="action">Action</label>
+      <select name="action" id="action">
+        <option value="show">Show</option>
+        <option value="showMap">Show Map</option>
+        <option value="createGeometry">Create Geometry</option>
+        <option value="editGeometry">Edit Geometry</option>
+      </select>
+    </div>
+
+    <fieldset id="settings">
+    </fieldset>
+
+    <button>Go!</button>
+  </form>
+</aside>
+
+<main>
+  <iframe id="iframe"></iframe>
+</main>
+
+<template data-action="show">
+  <div>
+    <label for="embeddingTargetId">Embedding target ID *</label>
+    <input name="embeddingTargetId" id="embeddingTargetId" required>
+  </div>
+  <div>
+    <label>
+      <input type="checkbox" name="hideMainHeaderAndFooter">
+      Hide main header and footer
+    </label>
+  </div>
+  <div>
+    <label>
+      <input type="checkbox" name="hideWorkbookToolBar">
+      Hide workbook toolbar
+    </label>
+  </div>
+</template>
+
+<template data-action="showMap">
+  <div>
+    <label for="embeddingTargetId">Embedding target ID of the map view *</label>
+    <input name="embeddingTargetId" id="embeddingTargetId" required>
+  </div>
+  <div>
+    <label for="geometry">Geometry (GeoJSON)</label>
+    <textarea name="geometry" id="geometry" rows="5">
+{
+  "type": "Point",
+  "coordinates": [328627.563458, 5921296.662223]
+}
+</textarea>
+  </div>
+  <div>
+    <label for="mapExtent">Map extent coordinates</label>
+    <input name="mapExtent" id="mapExtent" placeholder="minx,miny,maxx,maxy" value="-572513.341856,5211017.966314,916327.095083,6636950.728974">
+  </div>
+  <div>
+    <label for="locationFinder">Location finder search query</label>
+    <input name="locationFinder" id="locationFinder">
+  </div>
+</template>
+
+<template data-action="createGeometry">
+  <div>
+    <label for="embeddingTargetId">Embedding target ID of the map view *</label>
+    <input name="embeddingTargetId" id="embeddingTargetId" required>
+  </div>
+  <div>
+    <label for="geometryType">Geometry type</label>
+    <select name="geometryType" id="geometryType">
+      <option>Point</option>
+      <option>MultiPoint</option>
+      <option>LineString</option>
+      <option>MultiLineString</option>
+      <option>Polygon</option>
+      <option>MultiPolygon</option>
+    </select>
+  </div>
+</template>
+
+<template data-action="editGeometry">
+  <div>
+    <label for="embeddingTargetId">Embedding target ID of the map view *</label>
+    <input name="embeddingTargetId" id="embeddingTargetId" required>
+  </div>
+  <div>
+    <label for="geometry">Geometry (GeoJSON) *</label>
+    <textarea name="geometry" id="geometry" rows="5" required>
+{
+  "type": "Point",
+  "coordinates": [328627.563458, 5921296.662223]
+}
+</textarea>
+  </div>
+</template>
+
+</body>
+</html>

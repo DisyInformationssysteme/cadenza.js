@@ -18,7 +18,8 @@
     "start:test": "npm test -- --watch",
     "start:reformat": "onchange \"src/**/*\" -- prettier {{changed}} --write",
     "test": "cross-env NODE_OPTIONS=--unhandled-rejections=warn jest",
-    "deploy:docs": "gh-pages --dist dist/apidoc"
+    "deploy:docs": "gh-pages --dist dist/apidoc",
+    "sandbox": "npx http-server -a localhost -c-1 -d false --proxy http://localhost:8000 -o /sandbox.html"
   },
   "devDependencies": {
     "@types/jest": "29.5.3",
