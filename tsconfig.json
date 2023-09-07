@@ -10,7 +10,7 @@
     "allowSyntheticDefaultImports": true,
     "noImplicitOverride": true,
     "declaration": true,
-    "outDir": "dist"
+    "outDir": "."
   },
   "include": [ "src" ],
   "exclude": [ "**/*.test.ts" ]

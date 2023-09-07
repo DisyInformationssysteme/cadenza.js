@@ -2,10 +2,12 @@
   "name": "@disy/cadenza.js",
   "version": "0.0.0",
   "type": "module",
-  "main": "./dist/cadenza.js",
-  "types": "./src/cadenza.d.ts",
+  "main": "./cadenza.js",
+  "types": "./cadenza.d.ts",
   "files": [
-    "dist/**/*",
+    "apidoc/**/*",
+    "cadenza.js",
+    "cadenza.d.ts",
     "CHANGELOG.md"
   ],
   "scripts": {
@@ -18,7 +20,7 @@
     "start:test": "npm test -- --watch",
     "start:reformat": "onchange \"src/**/*\" -- prettier {{changed}} --write",
     "test": "cross-env NODE_OPTIONS=--unhandled-rejections=warn jest",
-    "deploy:docs": "gh-pages --dist dist/apidoc",
+    "deploy:docs": "gh-pages --dist apidoc",
     "sandbox": "npx http-server -a localhost -c-1 -d false --proxy http://localhost:8000 -o /sandbox.html"
   },
   "devDependencies": {
