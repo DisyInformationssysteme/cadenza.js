@@ -78,7 +78,7 @@ const abortController = new AbortController();
 try {
   await cadenzaClient.show('{embeddingTargetId}', { signal: abortController.signal });
 catch (error) {
-  if (error.name ### 'AbortError') {
+  if (error.name === 'AbortError') {
     console.log('Iframe loading was aborted');
   }
 }
