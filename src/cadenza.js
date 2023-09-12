@@ -288,9 +288,9 @@ export class CadenzaClient {
   fetchData(source, { accept, signal } = {}) {
     this.#log('CadenzaClient#fetchData', accept);
     const params = new URLSearchParams({
-      ...(accept && {mediaType: accept})
-    })
-    return this.#fetch(resolvePath(source), { params, signal })
+      ...(accept && { mediaType: accept }),
+    });
+    return this.#fetch(resolvePath(source), { params, signal });
   }
 
   /**
@@ -305,7 +305,7 @@ export class CadenzaClient {
    */
   async downloadData(source, { accept, signal } = {}) {
     this.#log('CadenzaClient#downloadData', accept);
-    const res = await this.fetchData(source, { accept, signal })
+    const res = await this.fetchData(source, { accept, signal });
     const data = await res.arrayBuffer();
     return URL.createObjectURL(new Blob([data]));
   }
@@ -316,7 +316,7 @@ export class CadenzaClient {
    * @param {URLSearchParams} [options.params]
    * @param {AbortSignal} [options.signal]
    */
-  #fetch(path, {params, signal}) {
+  #fetch(path, { params, signal }) {
     const url = new URL(this.baseUrl + path);
     if (params) {
       for (const [param, value] of params) {
@@ -324,7 +324,7 @@ export class CadenzaClient {
       }
     }
     this.#log('Fetch data', url.toString());
-    return fetch(url)
+    return fetch(url);
   }
 
   /**
