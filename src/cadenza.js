@@ -276,6 +276,58 @@ export class CadenzaClient {
   }
 
   /**
+   * Fetch data from a view.
+   *
+   * @param {WorkbookViewSource} source - The workbook view to fetch data from
+   * @param {object} [options] - Options
+   * @param {string} [options.accept] - The media type to use for the data
+   * @param {AbortSignal} [options.signal] - A signal to abort the data fetching
+   * @return {Promise<Response>} A Promise for when the data has loaded
+   * @throws For an invalid workbook view source
+   */
+  fetchData(source, { accept, signal } = {}) {
+    this.#log('CadenzaClient#fetchData', accept);
+    const params = new URLSearchParams({
+      ...(accept && {mediaType: accept})
+    })
+    return this.#fetch(resolvePath(source), { params, signal })
+  }
+
+  /**
+   * Download data from a view.
+   *
+   * @param {WorkbookViewSource} source - The workbook view to download data from
+   * @param {object} [options] - Options
+   * @param {string} [options.accept] - The media type to use for the data
+   * @param {AbortSignal} [options.signal] - A signal to abort the download
+   * @return {Promise<string>} A Promise for when the data has loaded
+   * @throws For an invalid workbook view source
+   */
+  async downloadData(source, { accept, signal } = {}) {
+    this.#log('CadenzaClient#downloadData', accept);
+    const res = await this.fetchData(source, { accept, signal })
+    const data = await res.arrayBuffer();
+    return URL.createObjectURL(new Blob([data]));
+  }
+
+  /**
+   * @param {string} path
+   * @param {object} options
+   * @param {URLSearchParams} [options.params]
+   * @param {AbortSignal} [options.signal]
+   */
+  #fetch(path, {params, signal}) {
+    const url = new URL(this.baseUrl + path);
+    if (params) {
+      for (const [param, value] of params) {
+        url.searchParams.append(param, value);
+      }
+    }
+    this.#log('Fetch data', url.toString());
+    return fetch(url)
+  }
+
+  /**
    * @param {string} path
    * @param {object} options
    * @param {URLSearchParams} [options.params]
