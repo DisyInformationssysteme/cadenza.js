@@ -68,15 +68,21 @@
           hideWorkbookToolBar: (hideWorkbookToolBar === 'on')
         });
       },
-      showMap ({ embeddingTargetId, geometry, mapExtent, locationFinder }) {
+      showMap ({ embeddingTargetId, geometry, mapExtent, locationFinder, useMapSrs }) {
         cadenzaClient.showMap(embeddingTargetId, {
           geometry: geometry && JSON.parse(geometry),
           mapExtent: mapExtent && mapExtent.split(','),
-          locationFinder
+          locationFinder,
+          useMapSrs: useMapSrs === 'on'
         });
       },
       createGeometry ({ embeddingTargetId, geometryType }) {
         cadenzaClient.createGeometry(embeddingTargetId, geometryType);
+      createGeometry ({ embeddingTargetId, geometryType, useMapSrs }) {
+        cadenzaClient.createGeometry(embeddingTargetId, geometryType, { useMapSrs: useMapSrs === 'on' });
+      },
+      editGeometry ({ embeddingTargetId, geometry, useMapSrs }) {
+        cadenzaClient.editGeometry(embeddingTargetId, JSON.parse(geometry), { useMapSrs: useMapSrs === 'on' });
       },
       editGeometry ({ embeddingTargetId, geometry }) {
         cadenzaClient.editGeometry(embeddingTargetId, JSON.parse(geometry));
@@ -157,6 +163,10 @@
     <label for="locationFinder">Location finder search query</label>
     <input name="locationFinder" id="locationFinder">
   </div>
+  <div>
+    <label for="useMapSrs">Use map SRS-Code</label>
+    <input type="checkbox" name="useMapSrs" id="useMapSrs">
+  </div>
 </template>
 
 <template data-action="createGeometry">
@@ -175,6 +185,10 @@
       <option>MultiPolygon</option>
     </select>
   </div>
+  <div>
+    <label for="useMapSrs">Use map SRS-Code</label>
+    <input type="checkbox" name="useMapSrs" id="useMapSrs">
+  </div>
 </template>
 
 <template data-action="editGeometry">
@@ -190,6 +204,12 @@
   "coordinates": [328627.563458, 5921296.662223]
 }
 </textarea>
+  </div>
+  <div>
+    <label for="useMapSrs">Use map SRS-Code</label>
+    <input type="checkbox" name="useMapSrs" id="useMapSrs">
+  </div>
+</template>
   </div>
 </template>
 
