@@ -24,12 +24,13 @@
     "start:reformat": "onchange \"src/**/*\" -- prettier {{changed}} --write",
     "test": "cross-env NODE_OPTIONS=--unhandled-rejections=warn jest",
     "deploy:docs": "gh-pages --dist apidoc",
-    "sandbox": "npx http-server -a localhost -c-1 -d false --proxy http://localhost:8000 -o /sandbox.html"
+    "sandbox": "http-server -a localhost -c-1 -d false --proxy http://localhost:8000 --proxy-options.headers.Origin http://localhost:8000 -o /sandbox.html"
   },
   "devDependencies": {
     "@types/jest": "29.5.3",
     "cross-env": "7.0.3",
     "gh-pages": "6.0.0",
+    "http-server": "14.1.1",
     "jest": "29.6.1",
     "jest-environment-jsdom": "29.6.1",
     "keep-a-changelog": "2.3.0",
