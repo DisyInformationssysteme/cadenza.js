@@ -68,25 +68,18 @@
           hideWorkbookToolBar: (hideWorkbookToolBar === 'on')
         });
       },
-      showMap ({ embeddingTargetId, geometry, mapExtent, locationFinder, useMapSrs }) {
+      showMap ({ embeddingTargetId, geometry, mapExtent, locationFinder }) {
         cadenzaClient.showMap(embeddingTargetId, {
           geometry: geometry && JSON.parse(geometry),
           mapExtent: mapExtent && mapExtent.split(','),
-          locationFinder,
-          useMapSrs: useMapSrs === 'on'
+          locationFinder
         });
       },
-      createGeometry ({ embeddingTargetId, geometryType, useMapSrs }) {
-        cadenzaClient.createGeometry(embeddingTargetId, geometryType, { useMapSrs: useMapSrs === 'on' });
+      createGeometry ({ embeddingTargetId, geometryType }) {
+        cadenzaClient.createGeometry(embeddingTargetId, geometryType);
       },
-      editGeometry ({ embeddingTargetId, geometry, useMapSrs }) {
-        cadenzaClient.editGeometry(embeddingTargetId, JSON.parse(geometry), { useMapSrs: useMapSrs === 'on' });
-      },
-      fetchData ({ embeddingTargetId, mediaType }) {
-        cadenzaClient.fetchData(embeddingTargetId, { accept: mediaType });
-      },
-      downloadData ({ embeddingTargetId, mediaType }) {
-        cadenzaClient.downloadData(embeddingTargetId, { accept: mediaType });
+      editGeometry ({ embeddingTargetId, geometry }) {
+        cadenzaClient.editGeometry(embeddingTargetId, JSON.parse(geometry));
       }
     };
 
@@ -109,8 +102,6 @@
         <option value="showMap">Show Map</option>
         <option value="createGeometry">Create Geometry</option>
         <option value="editGeometry">Edit Geometry</option>
-        <option value="fetchData">Fetch data</option>
-        <option value="downloadData">Download data</option>
       </select>
     </div>
 
@@ -154,21 +145,17 @@
     <textarea name="geometry" id="geometry" rows="5">
 {
   "type": "Point",
-  "coordinates": [2.9521117, 46.8725555]
+  "coordinates": [328627.563458, 5921296.662223]
 }
 </textarea>
   </div>
   <div>
     <label for="mapExtent">Map extent coordinates</label>
-    <input name="mapExtent" id="mapExtent" placeholder="minx,miny,maxx,maxy" value="-5.1429749,42.3331692,8.2315063,51.088429">
+    <input name="mapExtent" id="mapExtent" placeholder="minx,miny,maxx,maxy" value="-572513.341856,5211017.966314,916327.095083,6636950.728974">
   </div>
   <div>
     <label for="locationFinder">Location finder search query</label>
     <input name="locationFinder" id="locationFinder">
-  </div>
-  <div>
-    <label for="useMapSrs">Use map SRS-Code</label>
-    <input type="checkbox" name="useMapSrs" id="useMapSrs">
   </div>
 </template>
 
@@ -188,10 +175,6 @@
       <option>MultiPolygon</option>
     </select>
   </div>
-  <div>
-    <label for="useMapSrs">Use map SRS-Code</label>
-    <input type="checkbox" name="useMapSrs" id="useMapSrs">
-  </div>
 </template>
 
 <template data-action="editGeometry">
@@ -207,32 +190,6 @@
   "coordinates": [328627.563458, 5921296.662223]
 }
 </textarea>
-  </div>
-  <div>
-    <label for="useMapSrs">Use map SRS-Code</label>
-    <input type="checkbox" name="useMapSrs" id="useMapSrs">
-  </div>
-</template>
-
-<template data-action="fetchData">
-  <div>
-    <label for="embeddingTargetId">Embedding target ID *</label>
-    <input name="embeddingTargetId" id="embeddingTargetId" required>
-  </div>
-  <div>
-    <label for="mediaType">MediaType</label>
-    <input name="mediaType" id="mediaType" placeholder="text/csv" value="text/csv" >
-  </div>
-</template>
-
-<template data-action="downloadData">
-  <div>
-    <label for="embeddingTargetId">Embedding target ID *</label>
-    <input name="embeddingTargetId" id="embeddingTargetId" required>
-  </div>
-  <div>
-    <label for="mediaType">MediaType</label>
-    <input name="mediaType" id="mediaType" placeholder="text/csv" value="text/csv" >
   </div>
 </template>
 
