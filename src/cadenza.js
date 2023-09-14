@@ -59,6 +59,10 @@ globalThis.cadenza = Object.assign(
  */
 /** @typedef {[number,number,number,number]} Extent - An array of numbers representing an extent: [minx, miny, maxx, maxy] */
 
+const CSV = 'text/csv';
+const MS_EXCEL_2007 =
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+
 /**
  * _Notes:_
  * * Most public methods can be aborted using an [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal).
@@ -300,14 +304,13 @@ export class CadenzaClient {
    * @param {object} [options] - Options
    * @param {string} [options.accept] - The media type to use for the data
    * @param {AbortSignal} [options.signal] - A signal to abort the download
-   * @return {Promise<string>} A Promise for when the data has loaded
    * @throws For an invalid workbook view source
    */
-  async downloadData(source, { accept, signal } = {}) {
+  downloadData(source, { accept, signal } = {}) {
     this.#log('CadenzaClient#downloadData', accept);
-    const res = await this.fetchData(source, { accept, signal });
-    const data = await res.arrayBuffer();
-    return URL.createObjectURL(new Blob([data]));
+    assert(validMediaType(accept), 'invalid media type');
+    const fileFormat = accept === CSV ? '.csv' : 'xlsx';
+    download(this.fetchData(source, { accept, signal }), fileFormat);
   }
 
   /**
@@ -324,7 +327,7 @@ export class CadenzaClient {
       }
     }
     this.#log('Fetch data', url.toString());
-    return fetch(url);
+    return fetch(url, { signal });
   }
 
   /**
@@ -552,6 +555,41 @@ function validGeometryType(value) {
     'Polygon',
     'MultiPolygon',
   ].includes(value);
+}
+
+/** @param {string} [value] */
+function validMediaType(value) {
+  return value === CSV || value === MS_EXCEL_2007;
+}
+
+/** @param {Promise<Response>} responsePromise
+ * @param {string} fileFormat - The file format
+ * */
+async function download(responsePromise, fileFormat) {
+  const res = await responsePromise;
+
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([await res.arrayBuffer()]));
+  a.hidden = true;
+  a.download = getFilename(res) + formatDate() + fileFormat;
+
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+/** @param {Response} res */
+function getFilename(res) {
+  return res.headers
+    .get('Content-Disposition')
+    ?.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)?.[1]
+    ?.replace(/['"]/g, '');
+}
+
+function formatDate() {
+  const offset = new Date().getTimezoneOffset();
+  const timestamp = new Date(Date.now() - offset * 60 * 1000);
+  return ' ' + timestamp.toISOString().split('T').at(0);
 }
 
 /**
