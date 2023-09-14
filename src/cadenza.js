@@ -283,13 +283,13 @@ export class CadenzaClient {
    * Fetch data from a view.
    *
    * @param {WorkbookViewSource} source - The workbook view to fetch data from
-   * @param {object} [options] - Options
-   * @param {string} [options.accept] - The media type to use for the data
+   * @param {object} options - Options
+   * @param {string} options.accept - The media type to use for the data
    * @param {AbortSignal} [options.signal] - A signal to abort the data fetching
    * @return {Promise<Response>} A Promise for when the data has loaded
    * @throws For an invalid workbook view source
    */
-  fetchData(source, { accept, signal } = {}) {
+  fetchData(source, { accept, signal }) {
     this.#log('CadenzaClient#fetchData', accept);
     const params = new URLSearchParams({
       ...(accept && { mediaType: accept }),
@@ -301,13 +301,13 @@ export class CadenzaClient {
    * Download data from a view.
    *
    * @param {WorkbookViewSource} source - The workbook view to download data from
-   * @param {object} [options] - Options
-   * @param {string} [options.accept] - The media type to use for the data
-   * @param {string} [options.filename] - The media type to use for the data
+   * @param {object} options - Options
+   * @param {string} options.accept - The media type to use for the data
+   * @param {string} [options.filename] - An optional filename
    * @param {AbortSignal} [options.signal] - A signal to abort the download
    * @throws For an invalid workbook view source
    */
-  downloadData(source, { accept, filename, signal } = {}) {
+  downloadData(source, { accept, filename, signal }) {
     this.#log('CadenzaClient#downloadData', accept);
     assert(validMediaType(accept), 'invalid media type');
     const fileFormat = accept === CSV ? '.csv' : 'xlsx';
