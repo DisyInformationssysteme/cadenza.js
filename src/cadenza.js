@@ -303,14 +303,17 @@ export class CadenzaClient {
    * @param {WorkbookViewSource} source - The workbook view to download data from
    * @param {object} [options] - Options
    * @param {string} [options.accept] - The media type to use for the data
+   * @param {string} [options.filename] - The media type to use for the data
    * @param {AbortSignal} [options.signal] - A signal to abort the download
    * @throws For an invalid workbook view source
    */
-  downloadData(source, { accept, signal } = {}) {
+  downloadData(source, { accept, filename, signal } = {}) {
     this.#log('CadenzaClient#downloadData', accept);
     assert(validMediaType(accept), 'invalid media type');
     const fileFormat = accept === CSV ? '.csv' : 'xlsx';
-    download(this.fetchData(source, { accept, signal }), fileFormat);
+    download(this.fetchData(source, { accept, signal }), fileFormat, {
+      filename,
+    });
   }
 
   /**
@@ -318,8 +321,9 @@ export class CadenzaClient {
    * @param {object} options
    * @param {URLSearchParams} [options.params]
    * @param {AbortSignal} [options.signal]
+   * @throws For an invalid http status
    */
-  #fetch(path, { params, signal }) {
+  async #fetch(path, { params, signal }) {
     const url = new URL(this.baseUrl + path);
     if (params) {
       for (const [param, value] of params) {
@@ -327,7 +331,19 @@ export class CadenzaClient {
       }
     }
     this.#log('Fetch data', url.toString());
-    return fetch(url, { signal });
+    const res = await fetch(url, { signal });
+    if (!res.ok) {
+      const message = 'failed to fetch';
+      switch (res.status) {
+        case 400:
+          throw new CadenzaError('bad-request', message);
+        case 401:
+          throw new CadenzaError('unauthorized', message);
+        case 404:
+          throw new CadenzaError('not-found', message);
+      }
+    }
+    return res;
   }
 
   /**
@@ -564,14 +580,18 @@ function validMediaType(value) {
 
 /** @param {Promise<Response>} responsePromise
  * @param {string} fileFormat - The file format
+ * @param {object} [options] - Options
+ * @param {string} [options.filename] - The media type to use for the data
  * */
-async function download(responsePromise, fileFormat) {
+async function download(responsePromise, fileFormat, { filename } = {}) {
   const res = await responsePromise;
+  assert(res.ok, 'download failed');
+  filename = filename ?? getFilename(res);
 
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([await res.arrayBuffer()]));
   a.hidden = true;
-  a.download = getFilename(res) + formatDate() + fileFormat;
+  a.download = filename + formatDate() + fileFormat;
 
   document.body.appendChild(a);
   a.click();
