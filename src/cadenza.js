@@ -4,6 +4,7 @@
  * @param {string} baseUrl - The base URL of the Cadenza server
  * @param {object} [options] - Options
  * @param {HTMLIFrameElement | string} [options.iframe] - An iframe for embedding Cadenza or the iframe's ID
+ * @param {ExternalLinkKey} [options.targetOrigin] - A external link id from which origin should be resolved when cadenza posts event
  * @param {boolean} [options.debug] - Whether to enable debug logging
  * @throws For invalid base URL
  */
@@ -26,6 +27,11 @@ globalThis.cadenza = Object.assign(
 
 /** @typedef {string} EmbeddingTargetId - The ID of an embedding target */
 
+/**
+ * @typedef ExternalLinkKey - A tuple qualifying a cadenza external link
+ * @property {string} repositoryName - The name of the link's repository
+ * @property {string} externalLinkId - The ID of the external link
+ */
 /**
  * @typedef WorkbookKey - A tuple qualifying a workbook
  * @property {string} repositoryName - The name of the workbook's repository
@@ -78,6 +84,10 @@ export class CadenzaClient {
   /** @readonly */
   #iframe;
 
+  /** @readonly */
+  /** @type {ExternalLinkKey | undefined} */
+  #targetOrigin;
+
   /** @type {HTMLIFrameElement | undefined} */
   #iframeElement;
 
@@ -92,9 +102,10 @@ export class CadenzaClient {
    * @param {string} baseUrl
    * @param {object} [options]
    * @param {HTMLIFrameElement | string} [options.iframe]
+   * @param {ExternalLinkKey} [options.targetOrigin]
    * @param {boolean} [options.debug]
    */
-  constructor(baseUrl, { debug = false, iframe } = {}) {
+  constructor(baseUrl, { debug = false, iframe, targetOrigin } = {}) {
     assert(validUrl(baseUrl), `Invalid baseUrl: ${baseUrl}`);
 
     // Remove trailing /
@@ -108,6 +119,7 @@ export class CadenzaClient {
     this.#origin = new URL(baseUrl).origin;
     this.#iframe = iframe;
     this.#debug = debug;
+    this.#targetOrigin = targetOrigin;
   }
 
   /** The base URL of the Cadenza server this client is requesting */
@@ -154,6 +166,7 @@ export class CadenzaClient {
     const params = new URLSearchParams({
       ...(hideMainHeaderAndFooter && { hideMainHeaderAndFooter: 'true' }),
       ...(hideWorkbookToolBar && { hideWorkbookToolBar: 'true' }),
+      ...(this.#targetOrigin && { webApplication: this.#createWebApplicationParameter() })
     });
     return this.#show(resolvePath(source), { params, signal });
   }
@@ -195,6 +208,7 @@ export class CadenzaClient {
       ...(locationFinder && { locationFinder }),
       ...(mapExtent && { mapExtent: mapExtent.join() }),
       ...(useMapSrs && { useMapSrs: 'true' }),
+      ...(this.#targetOrigin && { webApplication: this.#createWebApplicationParameter() })
     });
     return this.#show(resolvePath(mapView), { params, signal }).then(() =>
       this.#postEvent('setGeometry', { geometry }),
@@ -235,6 +249,7 @@ export class CadenzaClient {
       ...(locationFinder && { locationFinder }),
       ...(mapExtent && { mapExtent: mapExtent.join() }),
       ...(minScale && { minScale: String(minScale) }),
+      ...(this.#targetOrigin && { webApplication: this.#createWebApplicationParameter() })
     });
     return this.#show(resolvePath(backgroundMapView), { params, signal });
   }
@@ -269,6 +284,7 @@ export class CadenzaClient {
       ...(mapExtent && { mapExtent: mapExtent.join() }),
       ...(useMapSrs && { useMapSrs: 'true' }),
       ...(minScale && { minScale: String(minScale) }),
+      ...(this.#targetOrigin && { webApplication: this.#createWebApplicationParameter() }),
     });
     return this.#show(resolvePath(backgroundMapView), { params, signal }).then(
       () => this.#postEvent('setGeometry', { geometry }),
@@ -491,6 +507,12 @@ export class CadenzaClient {
     if (this.#debug) {
       console.log(...args);
     }
+  }
+
+  #createWebApplicationParameter () {
+    return this.#targetOrigin 
+      ? `${this.#targetOrigin.repositoryName},${this.#targetOrigin.externalLinkId}` 
+      : undefined
   }
 }
 
