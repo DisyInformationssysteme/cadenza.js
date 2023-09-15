@@ -310,8 +310,7 @@ export class CadenzaClient {
   downloadData(source, { accept, filename, signal }) {
     this.#log('CadenzaClient#downloadData', accept);
     assert(validMediaType(accept), 'invalid media type');
-    const fileFormat = accept === CSV ? '.csv' : 'xlsx';
-    download(this.fetchData(source, { accept, signal }), fileFormat, {
+    download(this.fetchData(source, { accept, signal }), {
       filename,
     });
   }
@@ -579,37 +578,34 @@ function validMediaType(value) {
 }
 
 /** @param {Promise<Response>} responsePromise
- * @param {string} fileFormat - The file format
  * @param {object} [options] - Options
  * @param {string} [options.filename] - The media type to use for the data
  * */
-async function download(responsePromise, fileFormat, { filename } = {}) {
+async function download(responsePromise, { filename } = {}) {
   const res = await responsePromise;
   assert(res.ok, 'download failed');
-  filename = filename ?? getFilename(res);
+  filename = getFilename(res, filename);
 
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([await res.arrayBuffer()]));
   a.hidden = true;
-  a.download = filename + formatDate() + fileFormat;
+  a.download = filename ?? '';
 
   document.body.appendChild(a);
   a.click();
   a.remove();
 }
 
-/** @param {Response} res */
-function getFilename(res) {
-  return res.headers
+/** @param {Response} res
+ * @param {string} [filename]
+ * */
+function getFilename(res, filename) {
+  const nameFromHeader = res.headers
     .get('Content-Disposition')
     ?.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)?.[1]
     ?.replace(/['"]/g, '');
-}
-
-function formatDate() {
-  const offset = new Date().getTimezoneOffset();
-  const timestamp = new Date(Date.now() - offset * 60 * 1000);
-  return ' ' + timestamp.toISOString().split('T').at(0);
+  const format = '.' + nameFromHeader?.split('.').at(-1);
+  return filename ? filename + format : nameFromHeader;
 }
 
 /**
