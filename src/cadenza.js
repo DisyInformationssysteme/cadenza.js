@@ -166,7 +166,9 @@ export class CadenzaClient {
     const params = new URLSearchParams({
       ...(hideMainHeaderAndFooter && { hideMainHeaderAndFooter: 'true' }),
       ...(hideWorkbookToolBar && { hideWorkbookToolBar: 'true' }),
-      ...(this.#targetOrigin && { webApplication: this.#createWebApplicationParameter() })
+      ...(this.#targetOrigin && {
+        webApplication: this.#createWebApplicationParameter(),
+      }),
     });
     return this.#show(resolvePath(source), { params, signal });
   }
@@ -208,7 +210,9 @@ export class CadenzaClient {
       ...(locationFinder && { locationFinder }),
       ...(mapExtent && { mapExtent: mapExtent.join() }),
       ...(useMapSrs && { useMapSrs: 'true' }),
-      ...(this.#targetOrigin && { webApplication: this.#createWebApplicationParameter() })
+      ...(this.#targetOrigin && {
+        webApplication: this.#createWebApplicationParameter(),
+      }),
     });
     return this.#show(resolvePath(mapView), { params, signal }).then(() =>
       this.#postEvent('setGeometry', { geometry }),
@@ -249,7 +253,9 @@ export class CadenzaClient {
       ...(locationFinder && { locationFinder }),
       ...(mapExtent && { mapExtent: mapExtent.join() }),
       ...(minScale && { minScale: String(minScale) }),
-      ...(this.#targetOrigin && { webApplication: this.#createWebApplicationParameter() })
+      ...(this.#targetOrigin && {
+        webApplication: this.#createWebApplicationParameter(),
+      }),
     });
     return this.#show(resolvePath(backgroundMapView), { params, signal });
   }
@@ -284,7 +290,9 @@ export class CadenzaClient {
       ...(mapExtent && { mapExtent: mapExtent.join() }),
       ...(useMapSrs && { useMapSrs: 'true' }),
       ...(minScale && { minScale: String(minScale) }),
-      ...(this.#targetOrigin && { webApplication: this.#createWebApplicationParameter() }),
+      ...(this.#targetOrigin && {
+        webApplication: this.#createWebApplicationParameter(),
+      }),
     });
     return this.#show(resolvePath(backgroundMapView), { params, signal }).then(
       () => this.#postEvent('setGeometry', { geometry }),
@@ -425,10 +433,12 @@ export class CadenzaClient {
     }
   }
 
-  #createWebApplicationParameter () {
-    return this.#targetOrigin 
-      ? `${this.#targetOrigin.repositoryName},${this.#targetOrigin.externalLinkId}` 
-      : undefined
+  #createWebApplicationParameter() {
+    return this.#targetOrigin
+      ? `${this.#targetOrigin.repositoryName},${
+          this.#targetOrigin.externalLinkId
+        }`
+      : undefined;
   }
 }
 
