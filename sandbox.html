@@ -95,12 +95,6 @@
           useMapSrs: useMapSrs === 'on',
           minScale
         });
-      },
-      fetchData ({ embeddingTargetId, mediaType }) {
-        cadenzaClient.fetchData(embeddingTargetId, { accept: mediaType });
-      },
-      downloadData ({ embeddingTargetId, mediaType }) {
-        cadenzaClient.downloadData(embeddingTargetId, { accept: mediaType });
       }
     };
 
@@ -217,10 +211,6 @@
     </select>
   </div>
   <div>
-    <label for="useMapSrs">Use map SRS-Code</label>
-    <input type="checkbox" name="useMapSrs" id="useMapSrs">
-  </div>
-  <div>
     <label for="minScale">Minimum Scale</label>
     <input type="number" name="minScale" id="minScale">
   </div>
@@ -242,28 +232,6 @@
   <div>
     <label for="minScale">Minimum Scale</label>
     <input type="number" name="minScale" id="minScale">
-  </div>
-</template>
-
-<template data-action="fetchData">
-  <div>
-    <label for="embeddingTargetId">Embedding target ID *</label>
-    <input name="embeddingTargetId" id="embeddingTargetId" required>
-  </div>
-  <div>
-    <label for="mediaType">MediaType</label>
-    <input name="mediaType" id="mediaType" placeholder="text/csv" value="text/csv" >
-  </div>
-</template>
-
-<template data-action="downloadData">
-  <div>
-    <label for="embeddingTargetId">Embedding target ID *</label>
-    <input name="embeddingTargetId" id="embeddingTargetId" required>
-  </div>
-  <div>
-    <label for="mediaType">MediaType</label>
-    <input name="mediaType" id="mediaType" placeholder="text/csv" value="text/csv" >
   </div>
 </template>
 
