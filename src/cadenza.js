@@ -454,6 +454,7 @@ export class CadenzaClient {
     assertSupportedMediaType(mediaType, [
       MediaType.CSV,
       MediaType.EXCEL,
+      MediaType.JSON,
       MediaType.PDF,
     ]);
     const params = createParams({ mediaType });
@@ -501,6 +502,7 @@ export class CadenzaClient {
     assertSupportedMediaType(mediaType, [
       MediaType.CSV,
       MediaType.EXCEL,
+      MediaType.JSON,
       MediaType.PDF,
     ]);
     const params = createParams({ fileName, mediaType });
@@ -655,6 +657,7 @@ function validGeometryType(value) {
 const MediaType = /** @type {Record<string, MediaType>} */ {
   CSV: 'text/csv',
   EXCEL: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  JSON: 'application/json',
   PDF: 'application/pdf',
 };
 
