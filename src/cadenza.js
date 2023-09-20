@@ -27,6 +27,8 @@ globalThis.cadenza = Object.assign(
 
 /** @typedef {string} EmbeddingTargetId - The ID of an embedding target */
 
+/** @typedef {string} GlobalId - The ID of a navigator tree item */
+
 /**
  * @typedef ExternalLinkKey - A tuple qualifying a Cadenza external link
  * @property {string} repositoryName - The name of the link's repository
@@ -164,13 +166,20 @@ export class CadenzaClient {
    * @param {boolean} [options.hideWorkbookToolBar] - Whether to hide the workbook toolbar.
    * @param {string} [options.mediaType] - Set to "application/pdf" for Jasper Report views
    *     to show the PDF directly, without any Cadenza headers or footers.
+   * @param {GlobalId} [options.highlightGlobalId] - The id of the item to highlight and expand in the navigator tree.
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A Promise for when the iframe is loaded
    * @throws For an invalid source
    */
   show(
     source,
-    { hideMainHeaderAndFooter, hideWorkbookToolBar, signal, mediaType } = {},
+    {
+      hideMainHeaderAndFooter,
+      hideWorkbookToolBar,
+      signal,
+      mediaType,
+      highlightGlobalId,
+    } = {},
   ) {
     this.#log('CadenzaClient#show', source);
     if (mediaType) {
@@ -179,6 +188,7 @@ export class CadenzaClient {
     const params = createParams({
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
+      highlightGlobalId,
       webApplication: this.#webApplication,
       mediaType,
     });
@@ -196,6 +206,7 @@ export class CadenzaClient {
    * @param {string} [options.locationFinder] - A search query for the location finder
    * @param {Extent} [options.mapExtent] - A map extent to set
    * @param {boolean} [options.useMapSrs] -  Whether the geometry and the extent are in the map's SRS (otherwise EPSG:4326 is assumed)
+   * @param {GlobalId} [options.highlightGlobalId] - The id of the item to highlight and expand in the navigator tree.
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A Promise for when the iframe is loaded
    * @throws For an invalid workbook view source or geometry type
@@ -209,6 +220,7 @@ export class CadenzaClient {
       locationFinder,
       mapExtent,
       useMapSrs,
+      highlightGlobalId,
       signal,
     } = {},
   ) {
@@ -222,6 +234,7 @@ export class CadenzaClient {
       locationFinder,
       mapExtent,
       useMapSrs,
+      highlightGlobalId,
       webApplication: this.#webApplication,
     });
     return this.#show(resolvePath(mapView), { params, signal }).then(() =>
@@ -665,6 +678,7 @@ function assertSupportedMediaType(type, supportedTypes) {
  * @param {string} [params.mediaType]
  * @param {number} [params.minScale]
  * @param {boolean} [params.useMapSrs]
+ * @param {GlobalId} [params.highlightGlobalId]
  * @param {ExternalLinkKey} [params.webApplication]
  * @return {URLSearchParams}
  */
@@ -679,6 +693,7 @@ function createParams({
   mediaType,
   minScale,
   useMapSrs,
+  highlightGlobalId,
   webApplication,
 }) {
   if (geometryType) {
@@ -695,6 +710,7 @@ function createParams({
     ...(mediaType && { mediaType }),
     ...(minScale && { minScale: String(minScale) }),
     ...(useMapSrs && { useMapSrs: 'true' }),
+    ...(highlightGlobalId && { highlightGlobalId }),
     ...(webApplication && {
       webApplicationLink: webApplication.externalLinkId,
       webApplicationLinkRepository: webApplication.repositoryName,

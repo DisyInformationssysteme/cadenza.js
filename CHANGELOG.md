@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `mediaType` option for `CadenzaClient#show`
 - `CadenzaClient#fetchData`
 - `CadenzaClient#downloadData`
+- `highlightGlobalId` option for `CadenzaClient#show` and `CadenzaClient#showMap` 
 
 ## 1.0.0 - 2023-09-07
 

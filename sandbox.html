@@ -70,19 +70,21 @@
 
     const cadenzaClient = cadenza(location.origin + '/trunk', { iframe: 'iframe', debug: true });
     const actionHandlers = {
-      show ({ embeddingTargetId, hideMainHeaderAndFooter, hideWorkbookToolBar, jasperReportAsPdf }) {
+      show ({ embeddingTargetId, hideMainHeaderAndFooter, hideWorkbookToolBar, jasperReportAsPdf, highlightGlobalId }) {
         cadenzaClient.show(embeddingTargetId, {
           hideMainHeaderAndFooter: (hideMainHeaderAndFooter === 'on'),
           hideWorkbookToolBar: (hideWorkbookToolBar === 'on'),
-          ...(jasperReportAsPdf === 'on' && { mediaType: 'application/pdf' })
+          highlightGlobalId,
+          ...(jasperReportAsPdf === 'on' && { mediaType: 'application/pdf' }),
         });
       },
-      showMap ({ embeddingTargetId, useMapSrs, geometry, mapExtent, locationFinder }) {
+      showMap ({ embeddingTargetId, useMapSrs, geometry, mapExtent, locationFinder, highlightGlobalId }) {
         cadenzaClient.showMap(embeddingTargetId, {
           useMapSrs: useMapSrs === 'on',
           geometry: geometry && JSON.parse(geometry),
           mapExtent: mapExtent && mapExtent.split(','),
-          locationFinder
+          locationFinder,
+          highlightGlobalId
         });
       },
       createGeometry ({ embeddingTargetId, geometryType, useMapSrs, minScale, mapExtent, locationFinder }) {
@@ -182,6 +184,10 @@
       Hide workbook toolbar
     </label>
   </div>
+  <div>
+    <label for="highlightGlobalId">Highlighted Global ID</label>
+    <input name="highlightGlobalId" id="highlightGlobalId">
+  </div>
 </template>
 
 <template data-action="showMap">
@@ -210,6 +216,10 @@
   <div>
     <label for="locationFinder">Location finder search query</label>
     <input name="locationFinder" id="locationFinder">
+  </div>
+  <div>
+    <label for="highlightGlobalId">Highlighted Global ID</label>
+    <input name="highlightGlobalId" id="highlightGlobalId">
   </div>
 </template>
 

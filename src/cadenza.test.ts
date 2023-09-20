@@ -106,9 +106,10 @@ describe('Given a Cadenza JS client instance', () => {
       cadenza(BASE_URL, { iframe }).show(EMBEDDING_TARGET_ID, {
         hideMainHeaderAndFooter: true,
         hideWorkbookToolBar: true,
+        highlightGlobalId: 'ROOT.MyFolder',
       });
       expect(cad.iframe!.src).toBe(
-        `${BASE_URL}/w/${EMBEDDING_TARGET_ID}?hideMainHeaderAndFooter=true&hideWorkbookToolBar=true`,
+        `${BASE_URL}/w/${EMBEDDING_TARGET_ID}?hideMainHeaderAndFooter=true&hideWorkbookToolBar=true&highlightGlobalId=ROOT.MyFolder`,
       );
     });
 
