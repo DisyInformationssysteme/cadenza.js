@@ -103,6 +103,12 @@
           locationFinder
         });
       },
+      fetchData ({ embeddingTargetId, mediaType }) {
+        cadenzaClient.fetchData(embeddingTargetId, mediaType)
+          .then(response => response.text())
+          .then(text => alert(text))
+          .catch(exception => alert(exception));
+      },
       downloadData ({ embeddingTargetId, mediaType, fileName }) {
         cadenzaClient.downloadData(embeddingTargetId, mediaType, {
           fileName
@@ -147,6 +153,7 @@
         <option value="createGeometry">Create Geometry</option>
         <option value="editGeometry">Edit Geometry</option>
         <option value="downloadData">Download data</option>
+        <option value="fetchData">Fetch data</option>
       </select>
     </div>
 
@@ -291,11 +298,32 @@
   </div>
   <div>
     <label for="mediaType">Media type *</label>
-    <input name="mediaType" id="mediaType" value="text/csv" required>
+    <select name="mediaType" id="mediaType" required>
+      <option>text/csv</option>
+      <option>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</option>
+      <option>application/json</option>
+      <option>application/pdf</option>
+    </select>
   </div>
   <div>
     <label for="fileName">Filename</label>
     <input name="fileName" id="fileName">
+  </div>
+</template>
+
+<template data-action="fetchData">
+  <div>
+    <label for="embeddingTargetId">Embedding target ID *</label>
+    <input name="embeddingTargetId" id="embeddingTargetId" required>
+  </div>
+  <div>
+    <label for="mediaType">Media type *</label>
+    <select name="mediaType" id="mediaType" required>
+      <option>text/csv</option>
+      <option>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</option>
+      <option>application/json</option>
+      <option>application/pdf</option>
+    </select>
   </div>
 </template>
 
