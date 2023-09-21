@@ -169,11 +169,14 @@ describe('Given a Cadenza JS client instance', () => {
 
     it('Includes given origin param', () => {
       cad.show(EMBEDDING_TARGET_ID);
-      const expectedExternalKey = `${EXTERNAL_LINK_KEY.repositoryName},${EXTERNAL_LINK_KEY.externalLinkId}`;
+      const expectedKey = `webApplicationLink=${encodeURIComponent(
+        EXTERNAL_LINK_KEY.externalLinkId,
+      )}`;
+      const expectedKeyRepository = `webApplicationLinkRepository=${encodeURIComponent(
+        EXTERNAL_LINK_KEY.repositoryName,
+      )}`;
       expect(cad.iframe!.src).toBe(
-        `${BASE_URL}/w/${EMBEDDING_TARGET_ID}?webApplication=${encodeURIComponent(
-          expectedExternalKey,
-        )}`,
+        `${BASE_URL}/w/${EMBEDDING_TARGET_ID}?${expectedKey}&${expectedKeyRepository}`,
       );
     });
   });
