@@ -167,7 +167,8 @@ export class CadenzaClient {
       ...(hideMainHeaderAndFooter && { hideMainHeaderAndFooter: 'true' }),
       ...(hideWorkbookToolBar && { hideWorkbookToolBar: 'true' }),
       ...(this.#targetOrigin && {
-        webApplication: this.#createWebApplicationParameter(),
+        webApplicationLink: this.#targetOrigin.externalLinkId,
+        webApplicationLinkRepository: this.#targetOrigin.repositoryName,
       }),
     });
     return this.#show(resolvePath(source), { params, signal });
@@ -211,7 +212,8 @@ export class CadenzaClient {
       ...(mapExtent && { mapExtent: mapExtent.join() }),
       ...(useMapSrs && { useMapSrs: 'true' }),
       ...(this.#targetOrigin && {
-        webApplication: this.#createWebApplicationParameter(),
+        webApplicationLink: this.#targetOrigin.externalLinkId,
+        webApplicationLinkRepository: this.#targetOrigin.repositoryName,
       }),
     });
     return this.#show(resolvePath(mapView), { params, signal }).then(() =>
@@ -254,7 +256,8 @@ export class CadenzaClient {
       ...(mapExtent && { mapExtent: mapExtent.join() }),
       ...(minScale && { minScale: String(minScale) }),
       ...(this.#targetOrigin && {
-        webApplication: this.#createWebApplicationParameter(),
+        webApplicationLink: this.#targetOrigin.externalLinkId,
+        webApplicationLinkRepository: this.#targetOrigin.repositoryName,
       }),
     });
     return this.#show(resolvePath(backgroundMapView), { params, signal });
@@ -291,7 +294,8 @@ export class CadenzaClient {
       ...(useMapSrs && { useMapSrs: 'true' }),
       ...(minScale && { minScale: String(minScale) }),
       ...(this.#targetOrigin && {
-        webApplication: this.#createWebApplicationParameter(),
+        webApplicationLink: this.#targetOrigin.externalLinkId,
+        webApplicationLinkRepository: this.#targetOrigin.repositoryName,
       }),
     });
     return this.#show(resolvePath(backgroundMapView), { params, signal }).then(
@@ -431,14 +435,6 @@ export class CadenzaClient {
     if (this.#debug) {
       console.log(...args);
     }
-  }
-
-  #createWebApplicationParameter() {
-    return this.#targetOrigin
-      ? `${this.#targetOrigin.repositoryName},${
-          this.#targetOrigin.externalLinkId
-        }`
-      : undefined;
   }
 }
 
