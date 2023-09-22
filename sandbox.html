@@ -68,8 +68,9 @@
           hideWorkbookToolBar: (hideWorkbookToolBar === 'on')
         });
       },
-      showMap ({ embeddingTargetId, geometry, mapExtent, locationFinder }) {
+      showMap ({ embeddingTargetId, useMapSrs, geometry, mapExtent, locationFinder }) {
         cadenzaClient.showMap(embeddingTargetId, {
+          useMapSrs: useMapSrs === 'on',
           geometry: geometry && JSON.parse(geometry),
           mapExtent: mapExtent && mapExtent.split(','),
           locationFinder
@@ -139,6 +140,12 @@
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
+  </div>
+  <div>
+    <label>
+      <input type="checkbox" name="useMapSrs">
+      Use map SRS
+    </label>
   </div>
   <div>
     <label for="geometry">Geometry (GeoJSON)</label>
