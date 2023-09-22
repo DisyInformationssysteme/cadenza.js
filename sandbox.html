@@ -107,7 +107,11 @@
       for (const [ name, value ] of Object.entries(data)) {
         const control = form.elements[name];
         if (control) {
-          control.value = value;
+          if (control.type === 'checkbox') {
+            control.checked = (value === 'on');
+          } else {
+            control.value = value;
+          }
         }
       }
     }
