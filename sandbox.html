@@ -57,8 +57,16 @@
       const action = actionSelect.value;
       const settingsTemplate = document.querySelector(`[data-action=${action}]`);
       settingsContainer.append(settingsTemplate.content.cloneNode(true));
+
+      const data = localStorage.getItem(`cadenzajs-sandbox-${action}`);
+      if (data) {
+        applyData(JSON.parse(data));
+      }
+
+      const url = new URL(location.href);
+      url.searchParams.set('action', action);
+      history.replaceState(null, '', url);
     };
-    actionSelect.onchange();
 
     const cadenzaClient = cadenza(location.origin + '/trunk', { iframe: 'iframe', debug: true });
     const actionHandlers = {
@@ -89,7 +97,20 @@
       event.preventDefault();
       const { action, ...data } = Object.fromEntries(new FormData(form));
       actionHandlers[action](data);
+      localStorage.setItem(`cadenzajs-sandbox-${action}`, JSON.stringify(data));
     };
+
+    actionSelect.value = new URLSearchParams(location.search).get('action') || 'show';
+    actionSelect.onchange();
+
+    function applyData (data) {
+      for (const [ name, value ] of Object.entries(data)) {
+        const control = form.elements[name];
+        if (control) {
+          control.value = value;
+        }
+      }
+    }
   </script>
 </head>
 <body>
@@ -149,16 +170,11 @@
   </div>
   <div>
     <label for="geometry">Geometry (GeoJSON)</label>
-    <textarea name="geometry" id="geometry" rows="5">
-{
-  "type": "Point",
-  "coordinates": [328627.563458, 5921296.662223]
-}
-</textarea>
+    <textarea name="geometry" id="geometry" rows="5"></textarea>
   </div>
   <div>
     <label for="mapExtent">Map extent coordinates</label>
-    <input name="mapExtent" id="mapExtent" placeholder="minx,miny,maxx,maxy" value="-572513.341856,5211017.966314,916327.095083,6636950.728974">
+    <input name="mapExtent" id="mapExtent" placeholder="minX,minY,maxX,maxY">
   </div>
   <div>
     <label for="locationFinder">Location finder search query</label>
@@ -191,12 +207,7 @@
   </div>
   <div>
     <label for="geometry">Geometry (GeoJSON) *</label>
-    <textarea name="geometry" id="geometry" rows="5" required>
-{
-  "type": "Point",
-  "coordinates": [328627.563458, 5921296.662223]
-}
-</textarea>
+    <textarea name="geometry" id="geometry" rows="5" required></textarea>
   </div>
 </template>
 
