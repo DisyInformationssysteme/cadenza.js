@@ -68,12 +68,12 @@
           hideWorkbookToolBar: (hideWorkbookToolBar === 'on')
         });
       },
-      showMap ({ embeddingTargetId, geometry, mapExtent, locationFinder, useMapSrs }) {
+      showMap ({ embeddingTargetId, useMapSrs, geometry, mapExtent, locationFinder }) {
         cadenzaClient.showMap(embeddingTargetId, {
+          useMapSrs: useMapSrs === 'on',
           geometry: geometry && JSON.parse(geometry),
           mapExtent: mapExtent && mapExtent.split(','),
-          locationFinder,
-          useMapSrs: useMapSrs === 'on'
+          locationFinder
         });
       },
       createGeometry ({ embeddingTargetId, geometryType, useMapSrs }) {
@@ -150,6 +150,12 @@
     <input name="embeddingTargetId" id="embeddingTargetId" required>
   </div>
   <div>
+    <label>
+      <input type="checkbox" name="useMapSrs">
+      Use map SRS
+    </label>
+  </div>
+  <div>
     <label for="geometry">Geometry (GeoJSON)</label>
     <textarea name="geometry" id="geometry" rows="5">
 {
@@ -165,10 +171,6 @@
   <div>
     <label for="locationFinder">Location finder search query</label>
     <input name="locationFinder" id="locationFinder">
-  </div>
-  <div>
-    <label for="useMapSrs">Use map SRS-Code</label>
-    <input type="checkbox" name="useMapSrs" id="useMapSrs">
   </div>
 </template>
 
@@ -188,10 +190,6 @@
       <option>MultiPolygon</option>
     </select>
   </div>
-  <div>
-    <label for="useMapSrs">Use map SRS-Code</label>
-    <input type="checkbox" name="useMapSrs" id="useMapSrs">
-  </div>
 </template>
 
 <template data-action="editGeometry">
@@ -207,32 +205,6 @@
   "coordinates": [328627.563458, 5921296.662223]
 }
 </textarea>
-  </div>
-  <div>
-    <label for="useMapSrs">Use map SRS-Code</label>
-    <input type="checkbox" name="useMapSrs" id="useMapSrs">
-  </div>
-</template>
-
-<template data-action="fetchData">
-  <div>
-    <label for="embeddingTargetId">Embedding target ID *</label>
-    <input name="embeddingTargetId" id="embeddingTargetId" required>
-  </div>
-  <div>
-    <label for="mediaType">MediaType</label>
-    <input name="mediaType" id="mediaType" placeholder="text/csv" value="text/csv" >
-  </div>
-</template>
-
-<template data-action="downloadData">
-  <div>
-    <label for="embeddingTargetId">Embedding target ID *</label>
-    <input name="embeddingTargetId" id="embeddingTargetId" required>
-  </div>
-  <div>
-    <label for="mediaType">MediaType</label>
-    <input name="mediaType" id="mediaType" placeholder="text/csv" value="text/csv" >
   </div>
 </template>
 
