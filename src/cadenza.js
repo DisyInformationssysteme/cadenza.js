@@ -59,10 +59,6 @@ globalThis.cadenza = Object.assign(
  */
 /** @typedef {[number,number,number,number]} Extent - An array of numbers representing an extent: [minx, miny, maxx, maxy] */
 
-const CSV = 'text/csv';
-const MS_EXCEL_2007 =
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-
 /**
  * _Notes:_
  * * Most public methods can be aborted using an [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal).
@@ -280,39 +276,43 @@ export class CadenzaClient {
   }
 
   /**
-   * Fetch data from a view.
+   * Fetch data from a workbook view.
    *
    * @param {WorkbookViewSource} source - The workbook view to fetch data from
    * @param {object} options - Options
    * @param {string} options.accept - The media type to use for the data
    * @param {AbortSignal} [options.signal] - A signal to abort the data fetching
-   * @return {Promise<Response>} A Promise for when the data has loaded
-   * @throws For an invalid workbook view source
+   * @return {Promise<Response>} A Promise for the fetch response
+   * @throws For an invalid workbook view source or media type
    */
   fetchData(source, { accept, signal }) {
     this.#log('CadenzaClient#fetchData', accept);
+    assert(validMediaType(accept), 'invalid media type');
     const params = new URLSearchParams({
-      ...(accept && { mediaType: accept }),
+      ...{ mediaType: accept },
     });
     return this.#fetch(resolvePath(source), { params, signal });
   }
 
   /**
-   * Download data from a view.
+   * Download data from a workbook view.
+   *
+   * _Note:_ The filename, if not provided, is generated from the name of the workbook view and the current date
    *
    * @param {WorkbookViewSource} source - The workbook view to download data from
    * @param {object} options - Options
    * @param {string} options.accept - The media type to use for the data
-   * @param {string} [options.filename] - An optional filename
-   * @param {AbortSignal} [options.signal] - A signal to abort the download
-   * @throws For an invalid workbook view source
+   * @param {string} [options.fileName] - An optional filename
+   * @throws For an invalid workbook view source or media type
    */
-  downloadData(source, { accept, filename, signal }) {
+  downloadData(source, { accept, fileName }) {
     this.#log('CadenzaClient#downloadData', accept);
     assert(validMediaType(accept), 'invalid media type');
-    download(this.fetchData(source, { accept, signal }), {
-      filename,
+    const params = new URLSearchParams({
+      ...{ mediaType: accept },
+      ...(fileName && { fileName }),
     });
+    download(this.#createUrl(resolvePath(source), params));
   }
 
   /**
@@ -323,16 +323,11 @@ export class CadenzaClient {
    * @throws For an invalid http status
    */
   async #fetch(path, { params, signal }) {
-    const url = new URL(this.baseUrl + path);
-    if (params) {
-      for (const [param, value] of params) {
-        url.searchParams.append(param, value);
-      }
-    }
+    const url = this.#createUrl(path, params);
     this.#log('Fetch data', url.toString());
     const res = await fetch(url, { signal });
     if (!res.ok) {
-      const message = 'failed to fetch';
+      const message = 'Failed to fetch data';
       switch (res.status) {
         case 400:
           throw new CadenzaError('bad-request', message);
@@ -340,6 +335,8 @@ export class CadenzaClient {
           throw new CadenzaError('unauthorized', message);
         case 404:
           throw new CadenzaError('not-found', message);
+        default:
+          throw new CadenzaError('internal-error', message);
       }
     }
     return res;
@@ -352,15 +349,24 @@ export class CadenzaClient {
    * @param {AbortSignal} [options.signal]
    */
   #show(path, { params, signal }) {
+    const url = this.#createUrl(path, params);
+    this.#log('Load iframe', url.toString());
+    this.#requiredIframe.src = url.toString();
+    return this.#getIframePromise(signal);
+  }
+
+  /**
+   * @param {string} path
+   * @param {URLSearchParams} [params]
+   */
+  #createUrl(path, params) {
     const url = new URL(this.baseUrl + path);
     if (params) {
       for (const [param, value] of params) {
         url.searchParams.append(param, value);
       }
     }
-    this.#log('Load iframe', url.toString());
-    this.#requiredIframe.src = url.toString();
-    return this.#getIframePromise(signal);
+    return url;
   }
 
   /**
@@ -574,38 +580,21 @@ function validGeometryType(value) {
 
 /** @param {string} [value] */
 function validMediaType(value) {
+  const CSV = 'text/csv';
+  const MS_EXCEL_2007 =
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
   return value === CSV || value === MS_EXCEL_2007;
 }
 
-/** @param {Promise<Response>} responsePromise
- * @param {object} [options] - Options
- * @param {string} [options.filename] - The media type to use for the data
- * */
-async function download(responsePromise, { filename } = {}) {
-  const res = await responsePromise;
-  assert(res.ok, 'download failed');
-  filename = getFilename(res, filename);
-
+/** @param {URL} url */
+function download(url) {
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([await res.arrayBuffer()]));
+  a.href = url.toString();
   a.hidden = true;
-  a.download = filename ?? '';
 
-  document.body.appendChild(a);
+  document.body.append(a);
   a.click();
   a.remove();
-}
-
-/** @param {Response} res
- * @param {string} [filename]
- * */
-function getFilename(res, filename) {
-  const nameFromHeader = res.headers
-    .get('Content-Disposition')
-    ?.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)?.[1]
-    ?.replace(/['"]/g, '');
-  const format = '.' + nameFromHeader?.split('.').at(-1);
-  return filename ? filename + format : nameFromHeader;
 }
 
 /**
