@@ -81,19 +81,23 @@
           useMapSrs: useMapSrs === 'on',
           geometry: geometry && JSON.parse(geometry),
           mapExtent: mapExtent && mapExtent.split(','),
+          locationFinder,
+        });
+      },
+      createGeometry ({ embeddingTargetId, geometryType, useMapSrs, minScale, mapExtent, locationFinder }) {
+        cadenzaClient.createGeometry(embeddingTargetId, geometryType, {
+          useMapSrs: useMapSrs === 'on',
+          minScale,
+          mapExtent: mapExtent && mapExtent.split(','),
           locationFinder
         });
       },
-      createGeometry ({ embeddingTargetId, geometryType, useMapSrs, minScale }) {
-        cadenzaClient.createGeometry(embeddingTargetId, geometryType, {
+      editGeometry ({ embeddingTargetId, geometry, useMapSrs, minScale, mapExtent, locationFinder }) {
+        cadenzaClient.editGeometry(embeddingTargetId, JSON.parse(geometry), {
           useMapSrs: useMapSrs === 'on',
-          minScale
-        });
-      },
-      editGeometry ({ embeddingTargetId, geometry, useMapSrs, minScale }) {
-        cadenzaClient.editGeometry(embeddingTargetId, JSON.parse(geometry), { 
-          useMapSrs: useMapSrs === 'on',
-          minScale
+          minScale,
+          mapExtent: mapExtent && mapExtent.split(','),
+          locationFinder
         });
       }
     };
@@ -180,11 +184,20 @@
   </div>
   <div>
     <label for="geometry">Geometry (GeoJSON)</label>
-    <textarea name="geometry" id="geometry" rows="5"></textarea>
+    <textarea name="geometry" id="geometry" rows="5">
+{
+  "type": "Point",
+  "coordinates": [8.682127, 50.1109238]
+}
+</textarea>
+  </div>
+  <div>
+    <label for="useMapSrs">Use map SRS</label>
+    <input type="checkbox" name="useMapSrs" id="useMapSrs" />
   </div>
   <div>
     <label for="mapExtent">Map extent coordinates</label>
-    <input name="mapExtent" id="mapExtent" placeholder="minX,minY,maxX,maxY">
+    <input name="mapExtent" id="mapExtent" placeholder="minx,miny,maxx,maxy" value="5.533762,47.304145,16.168528,54.190365">
   </div>
   <div>
     <label for="locationFinder">Location finder search query</label>
@@ -212,6 +225,18 @@
     <label for="minScale">Minimum Scale</label>
     <input type="number" name="minScale" id="minScale">
   </div>
+  <div>
+    <label for="useMapSrs">Use map SRS</label>
+    <input type="checkbox" name="useMapSrs" id="useMapSrs" />
+  </div>
+  <div>
+    <label for="mapExtent">Map extent coordinates</label>
+    <input name="mapExtent" id="mapExtent" placeholder="minx,miny,maxx,maxy" value="5.533762,47.304145,16.168528,54.190365">
+  </div>
+  <div>
+    <label for="locationFinder">Location finder search query</label>
+    <input name="locationFinder" id="locationFinder">
+  </div>
 </template>
 
 <template data-action="editGeometry">
@@ -221,11 +246,28 @@
   </div>
   <div>
     <label for="geometry">Geometry (GeoJSON) *</label>
-    <textarea name="geometry" id="geometry" rows="5" required></textarea>
+    <textarea name="geometry" id="geometry" rows="5" required>
+{
+  "type": "Point",
+  "coordinates": [8.682127, 50.1109238]
+}
+</textarea>
   </div>
   <div>
     <label for="minScale">Minimum Scale</label>
     <input type="number" name="minScale" id="minScale">
+  </div>
+  <div>
+    <label for="useMapSrs">Use map SRS</label>
+    <input type="checkbox" name="useMapSrs" id="useMapSrs" />
+  </div>
+  <div>
+    <label for="mapExtent">Map extent coordinates</label>
+    <input name="mapExtent" id="mapExtent" placeholder="minx,miny,maxx,maxy" value="5.533762,47.304145,16.168528,54.190365">
+  </div>
+  <div>
+    <label for="locationFinder">Location finder search query</label>
+    <input name="locationFinder" id="locationFinder">
   </div>
 </template>
 
