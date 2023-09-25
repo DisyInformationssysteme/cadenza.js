@@ -2,7 +2,7 @@ import { cadenza, CadenzaClient, CadenzaError } from './cadenza.js';
 
 const BASE_URL = 'http://example.com';
 const EMBEDDING_TARGET_ID = 'embedding-target';
-const EXTERNAL_LINK_ID = 'external-link';
+const EXTERNAL_LINK_ID = 'qwertzuioplkjhgfdsay';
 const REPOSITORY_NAME = 'repository';
 const WORKBOOK_ID = 'abcdefghijklmnopqrst'; // length=20, Base64
 const WORKSHEET_ID = WORKBOOK_ID;
@@ -164,19 +164,13 @@ describe('Given a Cadenza JS client instance', () => {
 
     beforeEach(() => {
       iframe = document.createElement('iframe');
-      cad = cadenza(BASE_URL, { iframe, targetOrigin: EXTERNAL_LINK_KEY });
+      cad = cadenza(BASE_URL, { iframe, webApplication: EXTERNAL_LINK_KEY });
     });
 
     it('Includes given origin param', () => {
       cad.show(EMBEDDING_TARGET_ID);
-      const expectedKey = `webApplicationLink=${encodeURIComponent(
-        EXTERNAL_LINK_KEY.externalLinkId,
-      )}`;
-      const expectedKeyRepository = `webApplicationLinkRepository=${encodeURIComponent(
-        EXTERNAL_LINK_KEY.repositoryName,
-      )}`;
       expect(cad.iframe!.src).toBe(
-        `${BASE_URL}/w/${EMBEDDING_TARGET_ID}?${expectedKey}&${expectedKeyRepository}`,
+        `${BASE_URL}/w/${EMBEDDING_TARGET_ID}?webApplicationLink=${EXTERNAL_LINK_KEY.externalLinkId}&webApplicationLinkRepository=${EXTERNAL_LINK_KEY.repositoryName}`,
       );
     });
   });
