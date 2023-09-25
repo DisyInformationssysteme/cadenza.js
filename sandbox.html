@@ -91,9 +91,15 @@
         });
       },
       editGeometry ({ embeddingTargetId, geometry, useMapSrs, minScale }) {
-        cadenzaClient.editGeometry(embeddingTargetId, JSON.parse(geometry), { 
+        cadenzaClient.editGeometry(embeddingTargetId, JSON.parse(geometry), {
           useMapSrs: useMapSrs === 'on',
           minScale
+        });
+      },
+      downloadData ({ embeddingTargetId, mediaType, fileName }) {
+        cadenzaClient.downloadData(embeddingTargetId, {
+          accept: mediaType,
+          fileName
         });
       }
     };
@@ -134,6 +140,7 @@
         <option value="showMap">Show Map</option>
         <option value="createGeometry">Create Geometry</option>
         <option value="editGeometry">Edit Geometry</option>
+        <option value="downloadData">Download data</option>
       </select>
     </div>
 
@@ -226,6 +233,21 @@
   <div>
     <label for="minScale">Minimum Scale</label>
     <input type="number" name="minScale" id="minScale">
+  </div>
+</template>
+
+<template data-action="downloadData">
+  <div>
+    <label for="embeddingTargetId">Embedding target ID *</label>
+    <input name="embeddingTargetId" id="embeddingTargetId" required>
+  </div>
+  <div>
+    <label for="mediaType">Media type *</label>
+    <input name="mediaType" id="mediaType" value="text/csv" required>
+  </div>
+  <div>
+    <label for="fileName">Filename</label>
+    <input name="fileName" id="fileName">
   </div>
 </template>
 
