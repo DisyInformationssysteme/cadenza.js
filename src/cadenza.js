@@ -444,7 +444,7 @@ export class CadenzaClient {
    * @param {WorkbookViewSource} source - The workbook view to download data from
    * @param {string} mediaType - The media type to use for the data
    * @param {object} options - Options
-   * @param {string} [options.fileName] - The file name to use
+   * @param {string} [options.fileName] - The file name to use; The file extension is appended by Cadenza.
    * @throws For an invalid workbook view source or media type
    */
   downloadData(source, mediaType, { fileName }) {
