@@ -97,8 +97,7 @@
         });
       },
       downloadData ({ embeddingTargetId, mediaType, fileName }) {
-        cadenzaClient.downloadData(embeddingTargetId, {
-          accept: mediaType,
+        cadenzaClient.downloadData(embeddingTargetId, mediaType, {
           fileName
         });
       }

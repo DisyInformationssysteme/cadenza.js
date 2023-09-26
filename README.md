@@ -195,11 +195,10 @@ That's why the events use the `editGeometry` prefix.
 Fetch data from a workbook view in CSV format.
 
 ```javascript
-const response = await cadenzaClient.fetchData('{embeddingTargetId}', { 
-  accept: 'text/csv'
-});
+const response = await cadenzaClient.fetchData('{embeddingTargetId}', 'text/csv');
 
 const text = await response.text();
+...
 ```
 
 ### Download Data From a Workbook View
@@ -213,8 +212,7 @@ const button = document.createElement('button');
 button.textContent = 'Download Excel';
 
 button.onclick = (event) => {
-  cadenzaClient.downloadData('{embeddingTargetId}', {
-    accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-  });
+  cadenzaClient.downloadData('{embeddingTargetId}',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 };
 ```
