@@ -162,16 +162,22 @@ export class CadenzaClient {
    * @param {object} [options]
    * @param {boolean} [options.hideMainHeaderAndFooter] - Whether to hide the main Cadenza header and footer.
    * @param {boolean} [options.hideWorkbookToolBar] - Whether to hide the workbook toolbar.
+   * @param {string} [options.accept] - Media type; set to "application/pdf" for Jasper Report views
+   *     to show the PDF directly, without any Cadenza chrome around it.
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A Promise for when the iframe is loaded
    * @throws For an invalid source
    */
-  show(source, { hideMainHeaderAndFooter, hideWorkbookToolBar, signal } = {}) {
+  show(
+    source,
+    { hideMainHeaderAndFooter, hideWorkbookToolBar, signal, accept } = {},
+  ) {
     this.#log('CadenzaClient#show', source);
     const params = createParams({
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
       webApplication: this.#webApplication,
+      mediaType: accept
     });
     return this.#show(resolvePath(source), { params, signal });
   }
@@ -462,7 +468,10 @@ export class CadenzaClient {
    * _Note:_ The file name, if not provided, is generated from the name of the workbook view and the current date.
    *
    * @param {WorkbookViewSource} source - The workbook view to download data from
-   * @param {string} mediaType - The media type to use for the data
+   * @param {string} mediaType - The media type to use for the data. Allowed are
+   * * 'text/csv'
+   * * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+   * * 'application/pdf' (for Jasper Report views)
    * @param {object} options - Options
    * @param {string} [options.fileName] - The file name to use; The file extension is appended by Cadenza.
    * @throws For an invalid workbook view source or media type
@@ -483,6 +492,8 @@ export class CadenzaClient {
     const url = this.#createUrl(path, params);
     const a = document.createElement('a');
     a.href = url.toString();
+    // causes the file to be downloaded even if the server sends a "Content-disposition: inline" header
+    a.download = '';
     a.hidden = true;
     document.body.append(a);
     a.click();
@@ -616,7 +627,8 @@ function validMediaType(value) {
   const CSV = 'text/csv';
   const MS_EXCEL_2007 =
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-  return value === CSV || value === MS_EXCEL_2007;
+  const PDF = 'application/pdf';
+  return !!value && [CSV, MS_EXCEL_2007, PDF].includes(value);
 }
 
 /**

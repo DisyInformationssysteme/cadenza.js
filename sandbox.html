@@ -70,10 +70,11 @@
 
     const cadenzaClient = cadenza(location.origin + '/trunk', { iframe: 'iframe', debug: true });
     const actionHandlers = {
-      show ({ embeddingTargetId, hideMainHeaderAndFooter, hideWorkbookToolBar }) {
+      show ({ embeddingTargetId, hideMainHeaderAndFooter, hideWorkbookToolBar, mediaType }) {
         cadenzaClient.show(embeddingTargetId, {
           hideMainHeaderAndFooter: (hideMainHeaderAndFooter === 'on'),
-          hideWorkbookToolBar: (hideWorkbookToolBar === 'on')
+          hideWorkbookToolBar: (hideWorkbookToolBar === 'on'),
+          accept: mediaType
         });
       },
       showMap ({ embeddingTargetId, useMapSrs, geometry, mapExtent, locationFinder }) {
@@ -162,6 +163,10 @@
   <div>
     <label for="embeddingTargetId">Embedding target ID *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
+  </div>
+  <div>
+    <label for="mediaType">MediaType (optional, for Jasper Reports)</label>
+    <input name="mediaType" id="mediaType" placeholder="application/pdf">
   </div>
   <div>
     <label>
