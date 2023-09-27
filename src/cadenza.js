@@ -162,22 +162,25 @@ export class CadenzaClient {
    * @param {object} [options]
    * @param {boolean} [options.hideMainHeaderAndFooter] - Whether to hide the main Cadenza header and footer.
    * @param {boolean} [options.hideWorkbookToolBar] - Whether to hide the workbook toolbar.
-   * @param {string} [options.accept] - Media type; set to "application/pdf" for Jasper Report views
-   *     to show the PDF directly, without any Cadenza chrome around it.
+   * @param {string} [options.mediaType] - Set to "application/pdf" for Jasper Report views
+   *     to show the PDF directly, without any Cadenza headers or footers.
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A Promise for when the iframe is loaded
    * @throws For an invalid source
    */
   show(
     source,
-    { hideMainHeaderAndFooter, hideWorkbookToolBar, signal, accept } = {},
+    { hideMainHeaderAndFooter, hideWorkbookToolBar, signal, mediaType } = {},
   ) {
     this.#log('CadenzaClient#show', source);
+    if (mediaType) {
+      assertSupportedMediaType(mediaType, [MediaType.PDF]);
+    }
     const params = createParams({
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
       webApplication: this.#webApplication,
-      mediaType: accept
+      mediaType
     });
     return this.#show(resolvePath(source), { params, signal });
   }
@@ -427,7 +430,7 @@ export class CadenzaClient {
    * Fetch data from a workbook view.
    *
    * @param {WorkbookViewSource} source - The workbook view to fetch data from
-   * @param {string} mediaType - The media type to use for the data
+   * @param {MediaType} mediaType - The media type to use for the data
    * @param {object} options - Options
    * @param {AbortSignal} [options.signal] - A signal to abort the data fetching
    * @return {Promise<Response>} A Promise for the fetch response
@@ -435,7 +438,11 @@ export class CadenzaClient {
    */
   fetchData(source, mediaType, { signal } = {}) {
     this.#log('CadenzaClient#fetchData', source, mediaType);
-    assert(validMediaType(mediaType), `Invalid media type: ${mediaType}`);
+    assertSupportedMediaType(mediaType, [
+      MediaType.CSV,
+      MediaType.EXCEL,
+      MediaType.PDF,
+    ]);
     const params = createParams({ mediaType });
     return this.#fetch(resolvePath(source), { params, signal });
   }
@@ -468,9 +475,9 @@ export class CadenzaClient {
    * _Note:_ The file name, if not provided, is generated from the name of the workbook view and the current date.
    *
    * @param {WorkbookViewSource} source - The workbook view to download data from
-   * @param {string} mediaType - The media type to use for the data. Allowed are
+   * @param {MediaType} mediaType - The media type to use for the data. Allowed are:
    * * 'text/csv'
-   * * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+   * * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' (Excel)
    * * 'application/pdf' (for Jasper Report views)
    * @param {object} options - Options
    * @param {string} [options.fileName] - The file name to use; The file extension is appended by Cadenza.
@@ -478,7 +485,11 @@ export class CadenzaClient {
    */
   downloadData(source, mediaType, { fileName }) {
     this.#log('CadenzaClient#downloadData', source, mediaType);
-    assert(validMediaType(mediaType), `Invalid media type: ${mediaType}`);
+    assertSupportedMediaType(mediaType, [
+      MediaType.CSV,
+      MediaType.EXCEL,
+      MediaType.PDF,
+    ]);
     const params = createParams({ fileName, mediaType });
     this.#download(resolvePath(source), { params });
   }
@@ -622,13 +633,24 @@ function validGeometryType(value) {
   ].includes(value);
 }
 
-/** @param {string} [value] */
-function validMediaType(value) {
-  const CSV = 'text/csv';
-  const MS_EXCEL_2007 =
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-  const PDF = 'application/pdf';
-  return !!value && [CSV, MS_EXCEL_2007, PDF].includes(value);
+/**
+ * @typedef {string} MediaType - A media type
+ *
+ * See {@link https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types}
+ */
+
+const MediaType = /** @type {Record<string, MediaType>} */ {
+  CSV: 'text/csv',
+  EXCEL: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  PDF: 'application/pdf',
+};
+
+/**
+ * @param {MediaType} type
+ * @param {MediaType[]} supportedTypes
+ */
+function assertSupportedMediaType(type, supportedTypes) {
+  return assert(supportedTypes.includes(type), `Invalid media type: ${type}`);
 }
 
 /**

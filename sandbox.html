@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -70,11 +70,11 @@
 
     const cadenzaClient = cadenza(location.origin + '/trunk', { iframe: 'iframe', debug: true });
     const actionHandlers = {
-      show ({ embeddingTargetId, hideMainHeaderAndFooter, hideWorkbookToolBar, mediaType }) {
+      show ({ embeddingTargetId, hideMainHeaderAndFooter, hideWorkbookToolBar, jasperReportAsPdf }) {
         cadenzaClient.show(embeddingTargetId, {
           hideMainHeaderAndFooter: (hideMainHeaderAndFooter === 'on'),
           hideWorkbookToolBar: (hideWorkbookToolBar === 'on'),
-          accept: mediaType
+          ...(jasperReportAsPdf && { mediaType: 'application/pdf' })
         });
       },
       showMap ({ embeddingTargetId, useMapSrs, geometry, mapExtent, locationFinder }) {
@@ -165,8 +165,10 @@
     <input name="embeddingTargetId" id="embeddingTargetId" required>
   </div>
   <div>
-    <label for="mediaType">MediaType (optional, for Jasper Reports)</label>
-    <input name="mediaType" id="mediaType" placeholder="application/pdf">
+    <label>
+      <input type="checkbox" name="jasperReportAsPdf" id="jasperReportAsPdf"/>
+      Show Jasper Report as PDF
+    </label>
   </div>
   <div>
     <label>

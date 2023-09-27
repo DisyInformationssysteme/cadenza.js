@@ -72,11 +72,11 @@ cadenzaClient.show('{embeddingTargetId}', {
 #### Show the Generated PDF of a Jasper Report View Directly
 Views of type "JasperReports report" can be shown in an iFrame like any other view.
 But there is an additional option to show only the generated PDF without any Cadenza footers or headers.
-This is done with by setting the "accept" option to "application/pdf".
+This is done by setting the "mediaType" option to "application/pdf".
 
 ```javascript
 cadenzaClient.show('{embeddingTargetId}', {
-   accept: 'application/pdf'
+  mediaType: 'application/pdf'
 });
 ```
 
@@ -87,8 +87,8 @@ Cadenza JS uses the [AbortController Web API](https://developer.mozilla.org/en-U
 ```javascript
 const abortController = new AbortController();
 try {
-  await cadenzaClient.show('{embeddingTargetId}', { signal: abortController.signal });
-catch (error) {
+    await cadenzaClient.show('{embeddingTargetId}', { signal: abortController.signal });
+} catch (error) {
   if (error.name === 'AbortError') {
     console.log('Iframe loading was aborted');
   }
