@@ -81,7 +81,7 @@
           useMapSrs: useMapSrs === 'on',
           geometry: geometry && JSON.parse(geometry),
           mapExtent: mapExtent && mapExtent.split(','),
-          locationFinder,
+          locationFinder
         });
       },
       createGeometry ({ embeddingTargetId, geometryType, useMapSrs, minScale, mapExtent, locationFinder }) {
@@ -184,12 +184,7 @@
   </div>
   <div>
     <label for="geometry">Geometry (GeoJSON)</label>
-    <textarea name="geometry" id="geometry" rows="5">
-{
-  "type": "Point",
-  "coordinates": [8.682127, 50.1109238]
-}
-</textarea>
+    <textarea name="geometry" id="geometry" rows="5"></textarea>
   </div>
   <div>
     <label for="useMapSrs">Use map SRS</label>
@@ -197,7 +192,7 @@
   </div>
   <div>
     <label for="mapExtent">Map extent coordinates</label>
-    <input name="mapExtent" id="mapExtent" placeholder="minx,miny,maxx,maxy" value="5.533762,47.304145,16.168528,54.190365">
+    <input name="mapExtent" id="mapExtent" placeholder="minX,minY,maxX,maxY">
   </div>
   <div>
     <label for="locationFinder">Location finder search query</label>
@@ -231,7 +226,7 @@
   </div>
   <div>
     <label for="mapExtent">Map extent coordinates</label>
-    <input name="mapExtent" id="mapExtent" placeholder="minx,miny,maxx,maxy" value="5.533762,47.304145,16.168528,54.190365">
+    <input name="mapExtent" id="mapExtent" placeholder="minX,minY,maxX,maxY">
   </div>
   <div>
     <label for="locationFinder">Location finder search query</label>
@@ -246,12 +241,7 @@
   </div>
   <div>
     <label for="geometry">Geometry (GeoJSON) *</label>
-    <textarea name="geometry" id="geometry" rows="5" required>
-{
-  "type": "Point",
-  "coordinates": [8.682127, 50.1109238]
-}
-</textarea>
+    <textarea name="geometry" id="geometry" rows="5" required></textarea>
   </div>
   <div>
     <label for="minScale">Minimum Scale</label>
@@ -263,7 +253,7 @@
   </div>
   <div>
     <label for="mapExtent">Map extent coordinates</label>
-    <input name="mapExtent" id="mapExtent" placeholder="minx,miny,maxx,maxy" value="5.533762,47.304145,16.168528,54.190365">
+    <input name="mapExtent" id="mapExtent" placeholder="minX,minY,maxX,maxY">
   </div>
   <div>
     <label for="locationFinder">Location finder search query</label>
