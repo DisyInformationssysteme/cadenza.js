@@ -84,16 +84,20 @@
           locationFinder
         });
       },
-      createGeometry ({ embeddingTargetId, geometryType, useMapSrs, minScale }) {
+      createGeometry ({ embeddingTargetId, geometryType, useMapSrs, minScale, mapExtent, locationFinder }) {
         cadenzaClient.createGeometry(embeddingTargetId, geometryType, {
           useMapSrs: useMapSrs === 'on',
-          minScale
+          minScale,
+          mapExtent: mapExtent && mapExtent.split(','),
+          locationFinder
         });
       },
-      editGeometry ({ embeddingTargetId, geometry, useMapSrs, minScale }) {
+      editGeometry ({ embeddingTargetId, geometry, useMapSrs, minScale, mapExtent, locationFinder }) {
         cadenzaClient.editGeometry(embeddingTargetId, JSON.parse(geometry), {
           useMapSrs: useMapSrs === 'on',
-          minScale
+          minScale,
+          mapExtent: mapExtent && mapExtent.split(','),
+          locationFinder
         });
       },
       downloadData ({ embeddingTargetId, mediaType, fileName }) {
@@ -189,6 +193,10 @@
     <textarea name="geometry" id="geometry" rows="5"></textarea>
   </div>
   <div>
+    <label for="useMapSrs">Use map SRS</label>
+    <input type="checkbox" name="useMapSrs" id="useMapSrs" />
+  </div>
+  <div>
     <label for="mapExtent">Map extent coordinates</label>
     <input name="mapExtent" id="mapExtent" placeholder="minX,minY,maxX,maxY">
   </div>
@@ -218,6 +226,18 @@
     <label for="minScale">Minimum Scale</label>
     <input type="number" name="minScale" id="minScale">
   </div>
+  <div>
+    <label for="useMapSrs">Use map SRS</label>
+    <input type="checkbox" name="useMapSrs" id="useMapSrs" />
+  </div>
+  <div>
+    <label for="mapExtent">Map extent coordinates</label>
+    <input name="mapExtent" id="mapExtent" placeholder="minX,minY,maxX,maxY">
+  </div>
+  <div>
+    <label for="locationFinder">Location finder search query</label>
+    <input name="locationFinder" id="locationFinder">
+  </div>
 </template>
 
 <template data-action="editGeometry">
@@ -232,6 +252,18 @@
   <div>
     <label for="minScale">Minimum Scale</label>
     <input type="number" name="minScale" id="minScale">
+  </div>
+  <div>
+    <label for="useMapSrs">Use map SRS</label>
+    <input type="checkbox" name="useMapSrs" id="useMapSrs" />
+  </div>
+  <div>
+    <label for="mapExtent">Map extent coordinates</label>
+    <input name="mapExtent" id="mapExtent" placeholder="minX,minY,maxX,maxY">
+  </div>
+  <div>
+    <label for="locationFinder">Location finder search query</label>
+    <input name="locationFinder" id="locationFinder">
   </div>
 </template>
 
