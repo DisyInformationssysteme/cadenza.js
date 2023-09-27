@@ -187,3 +187,32 @@ cadenzaClient.on('editGeometry:ok', (event) => {
 
 _Note:_ Under the hood, creating a geometry is similar to editing a geometry.
 That's why the events use the `editGeometry` prefix.
+
+### Fetch Data From a Workbook View
+
+<small>API: [CadenzaClient#fetchData](./classes/CadenzaClient.html#fetchData)</small>
+
+Fetch data from a workbook view in CSV format.
+
+```javascript
+const response = await cadenzaClient.fetchData('{embeddingTargetId}', 'text/csv');
+
+const text = await response.text();
+...
+```
+
+### Download Data From a Workbook View
+
+<small>API: [CadenzaClient#downloadData](./classes/CadenzaClient.html#downloadData)</small>
+
+Download data from a workbook view in Excel format. This triggers the browser's download dialog.
+
+```javascript
+const button = document.createElement('button');
+button.textContent = 'Download Excel';
+
+button.onclick = (event) => {
+  cadenzaClient.downloadData('{embeddingTargetId}',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+};
+```

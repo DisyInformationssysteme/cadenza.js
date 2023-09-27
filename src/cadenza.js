@@ -282,12 +282,7 @@ export class CadenzaClient {
    * @param {AbortSignal} [options.signal]
    */
   #show(path, { params, signal }) {
-    const url = new URL(this.baseUrl + path);
-    if (params) {
-      for (const [param, value] of params) {
-        url.searchParams.append(param, value);
-      }
-    }
+    const url = this.#createUrl(path, params);
     this.#log('Load iframe', url.toString());
     this.#requiredIframe.src = url.toString();
     return this.#getIframePromise(signal);
@@ -402,6 +397,95 @@ export class CadenzaClient {
     contentWindow.postMessage(event, { targetOrigin: this.#origin });
   }
 
+  /**
+   * Fetch data from a workbook view.
+   *
+   * @param {WorkbookViewSource} source - The workbook view to fetch data from
+   * @param {string} mediaType - The media type to use for the data
+   * @param {object} options - Options
+   * @param {AbortSignal} [options.signal] - A signal to abort the data fetching
+   * @return {Promise<Response>} A Promise for the fetch response
+   * @throws For an invalid workbook view source or media type
+   */
+  fetchData(source, mediaType, { signal } = {}) {
+    this.#log('CadenzaClient#fetchData', source, mediaType);
+    assert(validMediaType(mediaType), `Invalid media type: ${mediaType}`);
+    const params = new URLSearchParams({ mediaType });
+    return this.#fetch(resolvePath(source), { params, signal });
+  }
+
+  /**
+   * @param {string} path
+   * @param {object} options
+   * @param {URLSearchParams} [options.params]
+   * @param {AbortSignal} [options.signal]
+   */
+  async #fetch(path, { params, signal }) {
+    const url = this.#createUrl(path, params);
+    this.#log('Fetch', url.toString());
+    const res = await fetch(url, { signal });
+    if (!res.ok) {
+      const errorType =
+        {
+          400: 'bad-request',
+          401: 'unauthorized',
+          404: 'not-found',
+        }[res.status] ?? 'internal-error';
+      throw new CadenzaError(errorType, 'Failed to fetch data');
+    }
+    return res;
+  }
+
+  /**
+   * Download data from a workbook view.
+   *
+   * _Note:_ The file name, if not provided, is generated from the name of the workbook view and the current date.
+   *
+   * @param {WorkbookViewSource} source - The workbook view to download data from
+   * @param {string} mediaType - The media type to use for the data
+   * @param {object} options - Options
+   * @param {string} [options.fileName] - The file name to use; The file extension is appended by Cadenza.
+   * @throws For an invalid workbook view source or media type
+   */
+  downloadData(source, mediaType, { fileName }) {
+    this.#log('CadenzaClient#downloadData', source, mediaType);
+    assert(validMediaType(mediaType), `Invalid media type: ${mediaType}`);
+    const params = new URLSearchParams({
+      mediaType,
+      ...(fileName && { fileName }),
+    });
+    this.#download(resolvePath(source), { params });
+  }
+
+  /**
+   * @param {string} path
+   * @param {object} options - Options
+   * @param {URLSearchParams} [options.params]
+   */
+  #download(path, { params }) {
+    const url = this.#createUrl(path, params);
+    const a = document.createElement('a');
+    a.href = url.toString();
+    a.hidden = true;
+    document.body.append(a);
+    a.click();
+    a.remove();
+  }
+
+  /**
+   * @param {string} path
+   * @param {URLSearchParams} [params]
+   */
+  #createUrl(path, params) {
+    const url = new URL(this.baseUrl + path);
+    if (params) {
+      for (const [param, value] of params) {
+        url.searchParams.append(param, value);
+      }
+    }
+    return url;
+  }
+
   /** @param {unknown[]} args */
   #log(...args) {
     if (this.#debug) {
@@ -500,6 +584,14 @@ function validGeometryType(value) {
     'Polygon',
     'MultiPolygon',
   ].includes(value);
+}
+
+/** @param {string} [value] */
+function validMediaType(value) {
+  const CSV = 'text/csv';
+  const MS_EXCEL_2007 =
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+  return value === CSV || value === MS_EXCEL_2007;
 }
 
 /**
