@@ -168,13 +168,10 @@ export class CadenzaClient {
    */
   show(source, { hideMainHeaderAndFooter, hideWorkbookToolBar, signal } = {}) {
     this.#log('CadenzaClient#show', source);
-    const params = new URLSearchParams({
-      ...(hideMainHeaderAndFooter && { hideMainHeaderAndFooter: 'true' }),
-      ...(hideWorkbookToolBar && { hideWorkbookToolBar: 'true' }),
-      ...(this.#webApplication && {
-        webApplicationLink: this.#webApplication.externalLinkId,
-        webApplicationLinkRepository: this.#webApplication.repositoryName,
-      }),
+    const params = createParams({
+      hideMainHeaderAndFooter,
+      hideWorkbookToolBar,
+      webApplication: this.#webApplication,
     });
     return this.#show(resolvePath(source), { params, signal });
   }
@@ -210,16 +207,13 @@ export class CadenzaClient {
     if (geometry) {
       assertValidGeometryType(geometry.type);
     }
-    const params = new URLSearchParams({
-      ...(hideMainHeaderAndFooter && { hideMainHeaderAndFooter: 'true' }),
-      ...(hideWorkbookToolBar && { hideWorkbookToolBar: 'true' }),
-      ...(locationFinder && { locationFinder }),
-      ...(mapExtent && { mapExtent: mapExtent.join() }),
-      ...(useMapSrs && { useMapSrs: 'true' }),
-      ...(this.#webApplication && {
-        webApplicationLink: this.#webApplication.externalLinkId,
-        webApplicationLinkRepository: this.#webApplication.repositoryName,
-      }),
+    const params = createParams({
+      hideMainHeaderAndFooter,
+      hideWorkbookToolBar,
+      locationFinder,
+      mapExtent,
+      useMapSrs,
+      webApplication: this.#webApplication,
     });
     return this.#show(resolvePath(mapView), { params, signal }).then(() =>
       this.#postEvent('setGeometry', { geometry }),
@@ -235,10 +229,10 @@ export class CadenzaClient {
    * @param {WorkbookViewSource} backgroundMapView - The workbook map view in the background
    * @param {GeometryType} geometryType - The geometry type
    * @param {object} [options] - Options
-   * @param {Extent} [options.mapExtent] - A map extent to set
    * @param {string} [options.locationFinder] - A search query for the location finder
-   * @param {boolean} [options.useMapSrs] - Whether the created geometry should use the map's SRS (otherwise EPSG:4326 will be used)
+   * @param {Extent} [options.mapExtent] - A map extent to set
    * @param {number} [options.minScale] - The minimum scale where the user should work on. A warning is shown when the map is zoomed out above the threshold.
+   * @param {boolean} [options.useMapSrs] - Whether the created geometry should use the map's SRS (otherwise EPSG:4326 will be used)
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A Promise for when the iframe is loaded
    * @throws For an invalid workbook view source or geometry type
@@ -249,21 +243,17 @@ export class CadenzaClient {
   createGeometry(
     backgroundMapView,
     geometryType,
-    { mapExtent, locationFinder, useMapSrs, minScale, signal } = {},
+    { locationFinder, mapExtent, minScale, useMapSrs, signal } = {},
   ) {
     this.#log('CadenzaClient#createGeometry', backgroundMapView, geometryType);
-    assertValidGeometryType(geometryType);
-    const params = new URLSearchParams({
+    const params = createParams({
       action: 'editGeometry',
       geometryType,
-      ...(useMapSrs && { useMapSrs: 'true' }),
-      ...(locationFinder && { locationFinder }),
-      ...(mapExtent && { mapExtent: mapExtent.join() }),
-      ...(minScale && { minScale: String(minScale) }),
-      ...(this.#webApplication && {
-        webApplicationLink: this.#webApplication.externalLinkId,
-        webApplicationLinkRepository: this.#webApplication.repositoryName,
-      }),
+      useMapSrs,
+      locationFinder,
+      mapExtent,
+      minScale,
+      webApplication: this.#webApplication,
     });
     return this.#show(resolvePath(backgroundMapView), { params, signal });
   }
@@ -276,8 +266,8 @@ export class CadenzaClient {
    * @param {object} [options] - Options
    * @param {string} [options.locationFinder] - A search query for the location finder
    * @param {Extent} [options.mapExtent] - A map extent to set
-   * @param {boolean} [options.useMapSrs] - Whether the geometry is in the map's SRS (otherwise EPSG:4326 is assumed)
    * @param {number} [options.minScale] - The minimum scale where the user should work on. A warning is shown when the map is zoomed out above the threshold.
+   * @param {boolean} [options.useMapSrs] - Whether the geometry is in the map's SRS (otherwise EPSG:4326 is assumed)
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A Promise for when the iframe is loaded
    * @throws For an invalid workbook view source
@@ -288,20 +278,17 @@ export class CadenzaClient {
   editGeometry(
     backgroundMapView,
     geometry,
-    { mapExtent, locationFinder, useMapSrs, minScale, signal } = {},
+    { locationFinder, mapExtent, minScale, useMapSrs, signal } = {},
   ) {
     this.#log('CadenzaClient#editGeometry', backgroundMapView, geometry);
     assertValidGeometryType(geometry.type);
-    const params = new URLSearchParams({
+    const params = createParams({
       action: 'editGeometry',
-      ...(locationFinder && { locationFinder }),
-      ...(mapExtent && { mapExtent: mapExtent.join() }),
-      ...(useMapSrs && { useMapSrs: 'true' }),
-      ...(minScale && { minScale: String(minScale) }),
-      ...(this.#webApplication && {
-        webApplicationLink: this.#webApplication.externalLinkId,
-        webApplicationLinkRepository: this.#webApplication.repositoryName,
-      }),
+      locationFinder,
+      mapExtent,
+      minScale,
+      useMapSrs,
+      webApplication: this.#webApplication,
     });
     return this.#show(resolvePath(backgroundMapView), { params, signal }).then(
       () => this.#postEvent('setGeometry', { geometry }),
@@ -443,7 +430,7 @@ export class CadenzaClient {
   fetchData(source, mediaType, { signal } = {}) {
     this.#log('CadenzaClient#fetchData', source, mediaType);
     assert(validMediaType(mediaType), `Invalid media type: ${mediaType}`);
-    const params = new URLSearchParams({ mediaType });
+    const params = createParams({ mediaType });
     return this.#fetch(resolvePath(source), { params, signal });
   }
 
@@ -483,10 +470,7 @@ export class CadenzaClient {
   downloadData(source, mediaType, { fileName }) {
     this.#log('CadenzaClient#downloadData', source, mediaType);
     assert(validMediaType(mediaType), `Invalid media type: ${mediaType}`);
-    const params = new URLSearchParams({
-      mediaType,
-      ...(fileName && { fileName }),
-    });
+    const params = createParams({ fileName, mediaType });
     this.#download(resolvePath(source), { params });
   }
 
@@ -633,6 +617,55 @@ function validMediaType(value) {
   const MS_EXCEL_2007 =
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
   return value === CSV || value === MS_EXCEL_2007;
+}
+
+/**
+ * @param {object} params - Options
+ * @param {string} [params.action]
+ * @param {string} [params.fileName]
+ * @param {GeometryType} [params.geometryType]
+ * @param {boolean} [params.hideMainHeaderAndFooter]
+ * @param {boolean} [params.hideWorkbookToolBar]
+ * @param {string} [params.locationFinder]
+ * @param {Extent} [params.mapExtent]
+ * @param {string} [params.mediaType]
+ * @param {number} [params.minScale]
+ * @param {boolean} [params.useMapSrs]
+ * @param {ExternalLinkKey} [params.webApplication]
+ * @return {URLSearchParams}
+ */
+function createParams({
+  action,
+  fileName,
+  geometryType,
+  hideMainHeaderAndFooter,
+  hideWorkbookToolBar,
+  locationFinder,
+  mapExtent,
+  mediaType,
+  minScale,
+  useMapSrs,
+  webApplication,
+}) {
+  if (geometryType) {
+    assertValidGeometryType(geometryType);
+  }
+  return new URLSearchParams({
+    ...(action && { action }),
+    ...(fileName && { fileName }),
+    ...(geometryType && { geometryType }),
+    ...(hideMainHeaderAndFooter && { hideMainHeaderAndFooter: 'true' }),
+    ...(hideWorkbookToolBar && { hideWorkbookToolBar: 'true' }),
+    ...(locationFinder && { locationFinder }),
+    ...(mapExtent && { mapExtent: mapExtent.join() }),
+    ...(mediaType && { mediaType }),
+    ...(minScale && { minScale: String(minScale) }),
+    ...(useMapSrs && { useMapSrs: 'true' }),
+    ...(webApplication && {
+      webApplicationLink: webApplication.externalLinkId,
+      webApplicationLinkRepository: webApplication.repositoryName,
+    }),
+  });
 }
 
 /**
