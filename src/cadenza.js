@@ -180,7 +180,7 @@ export class CadenzaClient {
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
       webApplication: this.#webApplication,
-      mediaType
+      mediaType,
     });
     return this.#show(resolvePath(source), { params, signal });
   }
