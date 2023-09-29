@@ -70,10 +70,11 @@
 
     const cadenzaClient = cadenza(location.origin + '/trunk', { iframe: 'iframe', debug: true });
     const actionHandlers = {
-      show ({ embeddingTargetId, hideMainHeaderAndFooter, hideWorkbookToolBar }) {
+      show ({ embeddingTargetId, hideMainHeaderAndFooter, hideWorkbookToolBar, jasperReportAsPdf }) {
         cadenzaClient.show(embeddingTargetId, {
           hideMainHeaderAndFooter: (hideMainHeaderAndFooter === 'on'),
-          hideWorkbookToolBar: (hideWorkbookToolBar === 'on')
+          hideWorkbookToolBar: (hideWorkbookToolBar === 'on'),
+          ...(jasperReportAsPdf === 'on' && { mediaType: 'application/pdf' })
         });
       },
       showMap ({ embeddingTargetId, useMapSrs, geometry, mapExtent, locationFinder }) {
@@ -162,6 +163,12 @@
   <div>
     <label for="embeddingTargetId">Embedding target ID *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
+  </div>
+  <div>
+    <label>
+      <input type="checkbox" name="jasperReportAsPdf" id="jasperReportAsPdf"/>
+      Show Jasper Report as PDF
+    </label>
   </div>
   <div>
     <label>
