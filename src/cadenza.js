@@ -26,7 +26,6 @@ globalThis.cadenza = Object.assign(
 );
 
 /** @typedef {string} EmbeddingTargetId - The ID of an embedding target */
-
 /** @typedef {string} GlobalId - The ID of a navigator tree item */
 
 /**
@@ -162,11 +161,11 @@ export class CadenzaClient {
    *
    * @param {WorkbookSource | WorksheetSource | WorkbookViewSource} source - The source to show
    * @param {object} [options]
-   * @param {boolean} [options.hideMainHeaderAndFooter] - Whether to hide the main Cadenza header and footer.
-   * @param {boolean} [options.hideWorkbookToolBar] - Whether to hide the workbook toolbar.
+   * @param {boolean} [options.hideMainHeaderAndFooter] - Whether to hide the main Cadenza header and footer
+   * @param {boolean} [options.hideWorkbookToolBar] - Whether to hide the workbook toolbar
+   * @param {GlobalId} [options.highlightGlobalId] - The ID of an item to highlight / expand in the navigator
    * @param {string} [options.mediaType] - Set to "application/pdf" for Jasper Report views
    *     to show the PDF directly, without any Cadenza headers or footers.
-   * @param {GlobalId} [options.highlightGlobalId] - The id of the item to highlight and expand in the navigator tree.
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A Promise for when the iframe is loaded
    * @throws For an invalid source
@@ -176,9 +175,9 @@ export class CadenzaClient {
     {
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
-      signal,
-      mediaType,
       highlightGlobalId,
+      mediaType,
+      signal,
     } = {},
   ) {
     this.#log('CadenzaClient#show', source);
@@ -189,8 +188,8 @@ export class CadenzaClient {
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
       highlightGlobalId,
-      webApplication: this.#webApplication,
       mediaType,
+      webApplication: this.#webApplication,
     });
     return this.#show(resolvePath(source), { params, signal });
   }
@@ -201,12 +200,12 @@ export class CadenzaClient {
    * @param {WorkbookViewSource} mapView - The workbook map view to show
    * @param {object} [options] - Options
    * @param {Geometry} [options.geometry] - A geometry to show on the map
-   * @param {boolean} [options.hideMainHeaderAndFooter] - Whether to hide the main Cadenza header and footer.
-   * @param {boolean} [options.hideWorkbookToolBar] - Whether to hide the workbook toolbar.
+   * @param {boolean} [options.hideMainHeaderAndFooter] - Whether to hide the main Cadenza header and footer
+   * @param {boolean} [options.hideWorkbookToolBar] - Whether to hide the workbook toolbar
+   * @param {GlobalId} [options.highlightGlobalId] - The ID of an item to highlight / expand in the navigator
    * @param {string} [options.locationFinder] - A search query for the location finder
    * @param {Extent} [options.mapExtent] - A map extent to set
    * @param {boolean} [options.useMapSrs] -  Whether the geometry and the extent are in the map's SRS (otherwise EPSG:4326 is assumed)
-   * @param {GlobalId} [options.highlightGlobalId] - The id of the item to highlight and expand in the navigator tree.
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A Promise for when the iframe is loaded
    * @throws For an invalid workbook view source or geometry type
@@ -217,10 +216,10 @@ export class CadenzaClient {
       geometry,
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
+      highlightGlobalId,
       locationFinder,
       mapExtent,
       useMapSrs,
-      highlightGlobalId,
       signal,
     } = {},
   ) {
@@ -231,10 +230,10 @@ export class CadenzaClient {
     const params = createParams({
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
+      highlightGlobalId,
       locationFinder,
       mapExtent,
       useMapSrs,
-      highlightGlobalId,
       webApplication: this.#webApplication,
     });
     return this.#show(resolvePath(mapView), { params, signal }).then(() =>
@@ -271,10 +270,10 @@ export class CadenzaClient {
     const params = createParams({
       action: 'editGeometry',
       geometryType,
-      useMapSrs,
       locationFinder,
       mapExtent,
       minScale,
+      useMapSrs,
       webApplication: this.#webApplication,
     });
     return this.#show(resolvePath(backgroundMapView), { params, signal });
@@ -676,12 +675,12 @@ function assertSupportedMediaType(type, supportedTypes) {
  * @param {GeometryType} [params.geometryType]
  * @param {boolean} [params.hideMainHeaderAndFooter]
  * @param {boolean} [params.hideWorkbookToolBar]
+ * @param {GlobalId} [params.highlightGlobalId]
  * @param {string} [params.locationFinder]
  * @param {Extent} [params.mapExtent]
  * @param {string} [params.mediaType]
  * @param {number} [params.minScale]
  * @param {boolean} [params.useMapSrs]
- * @param {GlobalId} [params.highlightGlobalId]
  * @param {ExternalLinkKey} [params.webApplication]
  * @return {URLSearchParams}
  */
@@ -691,12 +690,12 @@ function createParams({
   geometryType,
   hideMainHeaderAndFooter,
   hideWorkbookToolBar,
+  highlightGlobalId,
   locationFinder,
   mapExtent,
   mediaType,
   minScale,
   useMapSrs,
-  highlightGlobalId,
   webApplication,
 }) {
   if (geometryType) {
@@ -708,12 +707,12 @@ function createParams({
     ...(geometryType && { geometryType }),
     ...(hideMainHeaderAndFooter && { hideMainHeaderAndFooter: 'true' }),
     ...(hideWorkbookToolBar && { hideWorkbookToolBar: 'true' }),
+    ...(highlightGlobalId && { highlightGlobalId }),
     ...(locationFinder && { locationFinder }),
     ...(mapExtent && { mapExtent: mapExtent.join() }),
     ...(mediaType && { mediaType }),
     ...(minScale && { minScale: String(minScale) }),
     ...(useMapSrs && { useMapSrs: 'true' }),
-    ...(highlightGlobalId && { highlightGlobalId }),
     ...(webApplication && {
       webApplicationLink: webApplication.externalLinkId,
       webApplicationLinkRepository: webApplication.repositoryName,
