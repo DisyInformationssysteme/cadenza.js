@@ -164,8 +164,8 @@ export class CadenzaClient {
    * @param {boolean} [options.hideMainHeaderAndFooter] - Whether to hide the main Cadenza header and footer
    * @param {boolean} [options.hideWorkbookToolBar] - Whether to hide the workbook toolbar
    * @param {GlobalId} [options.highlightGlobalId] - The ID of an item to highlight / expand in the navigator
-   * @param {string} [options.mediaType] - Set to "application/pdf" for Jasper Report views
-   *     to show the PDF directly, without any Cadenza headers or footers.
+   * @param {string} [options.mediaType] - Set to 'application/pdf' for views of type "JasperReports report"
+   *     to show the report PDF directly, without any Cadenza headers or footers.
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A Promise for when the iframe is loaded
    * @throws For an invalid source
@@ -442,7 +442,11 @@ export class CadenzaClient {
    * Fetch data from a workbook view.
    *
    * @param {WorkbookViewSource} source - The workbook view to fetch data from
-   * @param {MediaType} mediaType - The media type to use for the data
+   * @param {MediaType} mediaType - The media type to use for the data. Allowed are:
+   * * 'application/json'
+   * * 'application/pdf' (for Jasper Report views)
+   * * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' (Excel)
+   * * 'text/csv'
    * @param {object} options - Options
    * @param {AbortSignal} [options.signal] - A signal to abort the data fetching
    * @return {Promise<Response>} A Promise for the fetch response
@@ -450,12 +454,7 @@ export class CadenzaClient {
    */
   fetchData(source, mediaType, { signal } = {}) {
     this.#log('CadenzaClient#fetchData', source, mediaType);
-    assertSupportedMediaType(mediaType, [
-      MediaType.CSV,
-      MediaType.EXCEL,
-      MediaType.JSON,
-      MediaType.PDF,
-    ]);
+    assertSupportedMediaType(mediaType);
     const params = createParams({ mediaType });
     return this.#fetch(resolvePath(source), { params, signal });
   }
@@ -489,21 +488,17 @@ export class CadenzaClient {
    *
    * @param {WorkbookViewSource} source - The workbook view to download data from
    * @param {MediaType} mediaType - The media type to use for the data. Allowed are:
-   * * 'text/csv'
-   * * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' (Excel)
+   * * 'application/json'
    * * 'application/pdf' (for Jasper Report views)
+   * * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' (Excel)
+   * * 'text/csv'
    * @param {object} options - Options
    * @param {string} [options.fileName] - The file name to use; The file extension is appended by Cadenza.
    * @throws For an invalid workbook view source or media type
    */
   downloadData(source, mediaType, { fileName }) {
     this.#log('CadenzaClient#downloadData', source, mediaType);
-    assertSupportedMediaType(mediaType, [
-      MediaType.CSV,
-      MediaType.EXCEL,
-      MediaType.JSON,
-      MediaType.PDF,
-    ]);
+    assertSupportedMediaType(mediaType);
     const params = createParams({ fileName, mediaType });
     this.#download(resolvePath(source), { params });
   }
@@ -664,7 +659,10 @@ const MediaType = /** @type {Record<string, MediaType>} */ {
  * @param {MediaType} type
  * @param {MediaType[]} supportedTypes
  */
-function assertSupportedMediaType(type, supportedTypes) {
+function assertSupportedMediaType(
+  type,
+  supportedTypes = Object.values(MediaType),
+) {
   return assert(supportedTypes.includes(type), `Invalid media type: ${type}`);
 }
 

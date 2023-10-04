@@ -69,7 +69,7 @@ cadenzaClient.show('{embeddingTargetId}', {
 - If the embedding target cannot be resolved, a 404 page is shown to the user.
 - Cadenza JS does not handle user authentication: If the user is not already logged in, the normal authentication flow of Cadenza will run. By default, the login page would be shown to the user.
 
-#### Show the Generated PDF of a Jasper Report View Directly
+#### Show the Generated PDF of a "JasperReports report" View Directly
 
 Views of type "JasperReports report" can be shown in an iframe like any other view. Additionally, there is an option to show only the generated PDF without any Cadenza footers or headers. This is done by setting the "mediaType" option to "application/pdf".
 
