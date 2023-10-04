@@ -209,7 +209,7 @@ export class CadenzaClient {
    * @return {Promise<void>} A Promise for when the iframe is loaded
    * @throws For an invalid workbook view source or geometry type
    */
-  showMap(
+  async showMap(
     mapView,
     {
       geometry,
@@ -235,9 +235,8 @@ export class CadenzaClient {
       useMapSrs,
       webApplication: this.#webApplication,
     });
-    return this.#show(resolvePath(mapView), params, signal).then(() =>
-      this.#postEvent('setGeometry', { geometry }),
-    );
+    await this.#show(resolvePath(mapView), params, signal);
+    this.#postEvent('setGeometry', { geometry });
   }
 
   /**
@@ -295,7 +294,7 @@ export class CadenzaClient {
    * @fires `editGeometry:ok` - When the user completed the geometry editing. The event includes the edited geometry.
    * @fires `editGeometry:cancel` - When the user cancelled the geometry editing in Cadenza.
    */
-  editGeometry(
+  async editGeometry(
     backgroundMapView,
     geometry,
     { locationFinder, mapExtent, minScale, useMapSrs, signal } = {},
@@ -310,9 +309,8 @@ export class CadenzaClient {
       useMapSrs,
       webApplication: this.#webApplication,
     });
-    return this.#show(resolvePath(backgroundMapView), params, signal).then(() =>
-      this.#postEvent('setGeometry', { geometry }),
-    );
+    await this.#show(resolvePath(backgroundMapView), params, signal);
+    this.#postEvent('setGeometry', { geometry });
   }
 
   #show(
@@ -357,16 +355,17 @@ export class CadenzaClient {
       ];
     });
 
-    promise.then(
-      () => this.#log('Iframe loaded'),
-      (error) => this.#log('Iframe loading failed', error),
-    );
+    promise
+      .then(
+        () => this.#log('Iframe loaded'),
+        (error) => this.#log('Iframe loading failed', error),
+      )
+      .finally(() => {
+        iframe.removeEventListener('error', onerror);
+        signal?.removeEventListener('abort', onabort);
+        unsubscribes.forEach((unsubscribe) => unsubscribe());
+      });
 
-    promise.finally(() => {
-      iframe.removeEventListener('error', onerror);
-      signal?.removeEventListener('abort', onabort);
-      unsubscribes.forEach((unsubscribe) => unsubscribe());
-    });
     return promise;
   }
 

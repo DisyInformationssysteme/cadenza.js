@@ -104,10 +104,8 @@
         });
       },
       fetchData ({ embeddingTargetId, mediaType }) {
-        cadenzaClient.fetchData(embeddingTargetId, mediaType)
-          .then(response => response.text())
-          .then(text => alert(text))
-          .catch(exception => alert(exception));
+        console.log('Inspect the fetchData() request in the devtools.');
+        cadenzaClient.fetchData(embeddingTargetId, mediaType);
       },
       downloadData ({ embeddingTargetId, mediaType, fileName }) {
         cadenzaClient.downloadData(embeddingTargetId, mediaType, {
