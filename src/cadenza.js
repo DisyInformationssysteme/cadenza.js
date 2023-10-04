@@ -15,8 +15,7 @@ export function cadenza(baseUrl, options) {
 /* @ts-ignore */
 const previousGlobalCadenza = globalThis.cadenza;
 globalThis.cadenza = Object.assign(
-  /** @param {Parameters<cadenza>} args */
-  (...args) => cadenza(...args),
+  (/** @type Parameters<cadenza> */ ...args) => cadenza(...args),
   {
     noConflict() {
       globalThis.cadenza = previousGlobalCadenza;
@@ -26,7 +25,7 @@ globalThis.cadenza = Object.assign(
 );
 
 /** @typedef {string} EmbeddingTargetId - The ID of an embedding target */
-/** @typedef {string} GlobalId - The ID of a navigator tree item */
+/** @typedef {string} GlobalId - The ID of a navigator item */
 
 /**
  * @typedef ExternalLinkKey - A tuple qualifying a Cadenza external link
@@ -191,7 +190,7 @@ export class CadenzaClient {
       mediaType,
       webApplication: this.#webApplication,
     });
-    return this.#show(resolvePath(source), { params, signal });
+    return this.#show(resolvePath(source), params, signal);
   }
 
   /**
@@ -236,7 +235,7 @@ export class CadenzaClient {
       useMapSrs,
       webApplication: this.#webApplication,
     });
-    return this.#show(resolvePath(mapView), { params, signal }).then(() =>
+    return this.#show(resolvePath(mapView), params, signal).then(() =>
       this.#postEvent('setGeometry', { geometry }),
     );
   }
@@ -276,7 +275,7 @@ export class CadenzaClient {
       useMapSrs,
       webApplication: this.#webApplication,
     });
-    return this.#show(resolvePath(backgroundMapView), { params, signal });
+    return this.#show(resolvePath(backgroundMapView), params, signal);
   }
 
   /**
@@ -311,28 +310,23 @@ export class CadenzaClient {
       useMapSrs,
       webApplication: this.#webApplication,
     });
-    return this.#show(resolvePath(backgroundMapView), { params, signal }).then(
-      () => this.#postEvent('setGeometry', { geometry }),
+    return this.#show(resolvePath(backgroundMapView), params, signal).then(() =>
+      this.#postEvent('setGeometry', { geometry }),
     );
   }
 
-  /**
-   * @param {string} path
-   * @param {object} options
-   * @param {URLSearchParams} [options.params]
-   * @param {AbortSignal} [options.signal]
-   */
-  #show(path, { params, signal }) {
+  #show(
+    /** @type string */ path,
+    /** @type URLSearchParams */ params,
+    /** @type AbortSignal | undefined */ signal,
+  ) {
     const url = this.#createUrl(path, params);
     this.#log('Load iframe', url.toString());
     this.#requiredIframe.src = url.toString();
     return this.#getIframePromise(signal);
   }
 
-  /**
-   * @param {AbortSignal} [signal]
-   */
-  #getIframePromise(signal) {
+  #getIframePromise(/** @type AbortSignal | undefined */ signal) {
     const iframe = this.#requiredIframe;
     /** @type {() => void} */
     let onerror;
@@ -406,9 +400,8 @@ export class CadenzaClient {
     };
   }
 
-  /** @param {MessageEvent<CadenzaEvent<never>>} event */
   // Use arrow function so that it's bound to this.
-  #onMessage = (event) => {
+  #onMessage = (/** @type MessageEvent<CadenzaEvent<never>> */ event) => {
     this.#log('Received message', event);
     if (
       event.origin !== this.#origin ||
@@ -425,11 +418,7 @@ export class CadenzaClient {
     });
   };
 
-  /**
-   * @param {string} type
-   * @param {unknown} detail
-   */
-  #postEvent(type, detail) {
+  #postEvent(/** @type string */ type, /** @type unknown */ detail) {
     const event = { type, detail };
     this.#log('postMessage', event);
     const contentWindow = /** @type {WindowProxy} */ (
@@ -456,16 +445,14 @@ export class CadenzaClient {
     this.#log('CadenzaClient#fetchData', source, mediaType);
     assertSupportedMediaType(mediaType);
     const params = createParams({ mediaType });
-    return this.#fetch(resolvePath(source), { params, signal });
+    return this.#fetch(resolvePath(source), params, signal);
   }
 
-  /**
-   * @param {string} path
-   * @param {object} options
-   * @param {URLSearchParams} [options.params]
-   * @param {AbortSignal} [options.signal]
-   */
-  async #fetch(path, { params, signal }) {
+  async #fetch(
+    /** @type string */ path,
+    /** @type URLSearchParams */ params,
+    /** @type AbortSignal | undefined */ signal,
+  ) {
     const url = this.#createUrl(path, params);
     this.#log('Fetch', url.toString());
     const res = await fetch(url, { signal });
@@ -500,15 +487,10 @@ export class CadenzaClient {
     this.#log('CadenzaClient#downloadData', source, mediaType);
     assertSupportedMediaType(mediaType);
     const params = createParams({ fileName, mediaType });
-    this.#download(resolvePath(source), { params });
+    this.#download(resolvePath(source), params);
   }
 
-  /**
-   * @param {string} path
-   * @param {object} options - Options
-   * @param {URLSearchParams} [options.params]
-   */
-  #download(path, { params }) {
+  #download(/** @type string */ path, /** @type URLSearchParams */ params) {
     const url = this.#createUrl(path, params);
     const a = document.createElement('a');
     a.href = url.toString();
@@ -520,11 +502,7 @@ export class CadenzaClient {
     a.remove();
   }
 
-  /**
-   * @param {string} path
-   * @param {URLSearchParams} [params]
-   */
-  #createUrl(path, params) {
+  #createUrl(/** @type string */ path, /** @type URLSearchParams */ params) {
     const url = new URL(this.baseUrl + path);
     if (params) {
       for (const [param, value] of params) {
@@ -534,16 +512,16 @@ export class CadenzaClient {
     return url;
   }
 
-  /** @param {unknown[]} args */
-  #log(...args) {
+  #log(/** @type unknown[] */ ...args) {
     if (this.#debug) {
       console.log(...args);
     }
   }
 }
 
-/** @param {WorkbookSource | WorksheetSource | WorkbookViewSource} source */
-function resolvePath(source) {
+function resolvePath(
+  /** @type WorkbookSource | WorksheetSource | WorkbookViewSource */ source,
+) {
   if (typeof source === 'string') {
     assert(
       validEmbeddingTargetId(source),
@@ -575,18 +553,13 @@ function resolvePath(source) {
   }
 }
 
-/**
- * @param {boolean} assertion
- * @param {string} message
- */
-function assert(assertion, message) {
+function assert(/** @type boolean */ assertion, /** @type string */ message) {
   if (!assertion) {
     throw new Error(message);
   }
 }
 
-/** @param {string} value */
-function validUrl(value) {
+function validUrl(/** @type string */ value) {
   try {
     new URL(value);
     return true;
@@ -595,18 +568,15 @@ function validUrl(value) {
   }
 }
 
-/** @param {string} value */
-function validEmbeddingTargetId(value) {
+function validEmbeddingTargetId(/** @type string */ value) {
   return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value);
 }
 
-/** @param {string} value */
-function validRepositoryName(value) {
+function validRepositoryName(/** @type string */ value) {
   return /^[\w -]{1,255}$/.test(value);
 }
 
-/** @param {string} value */
-function validWorkbookId(value) {
+function validWorkbookId(/** @type string */ value) {
   try {
     // Workbook IDs are url-safe base64 strings.
     // https://stackoverflow.com/a/44528376
@@ -617,21 +587,18 @@ function validWorkbookId(value) {
   }
 }
 
-/** @param {ExternalLinkKey} linkKey */
-function validExternalLinkKey(linkKey) {
+function validExternalLinkKey(/** @type ExternalLinkKey */ linkKey) {
   return (
     validRepositoryName(linkKey.repositoryName) &&
     validWorkbookId(linkKey.externalLinkId)
   );
 }
 
-/** @param {string} value */
-function assertValidGeometryType(value) {
+function assertValidGeometryType(/** @type string */ value) {
   assert(validGeometryType(value), 'Invalid geometry type');
 }
 
-/** @param {string} value */
-function validGeometryType(value) {
+function validGeometryType(/** @type string */ value) {
   return [
     'Point',
     'MultiPoint',
@@ -655,13 +622,9 @@ const MediaType = /** @type {Record<string, MediaType>} */ {
   PDF: 'application/pdf',
 };
 
-/**
- * @param {MediaType} type
- * @param {MediaType[]} supportedTypes
- */
 function assertSupportedMediaType(
-  type,
-  supportedTypes = Object.values(MediaType),
+  /** @type MediaType */ type,
+  /** @type MediaType[] */ supportedTypes = Object.values(MediaType),
 ) {
   return assert(supportedTypes.includes(type), `Invalid media type: ${type}`);
 }
