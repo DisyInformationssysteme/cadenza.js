@@ -202,7 +202,7 @@ That's why the events use the `editGeometry` prefix.
 
 <small>API: [CadenzaClient#fetchData](./classes/CadenzaClient.html#fetchData)</small>
 
-Fetch data from a workbook view in CSV or JSON format.
+Fetch data from a workbook view in CSV format.
 
 ```javascript
 const response = await cadenzaClient.fetchData('{embeddingTargetId}', 'text/csv');
@@ -215,7 +215,7 @@ const text = await response.text();
 
 <small>API: [CadenzaClient#downloadData](./classes/CadenzaClient.html#downloadData)</small>
 
-Download data from a workbook view in Excel, CSV, JSON or PDF format. This triggers the browser's download dialog.
+Download data from a workbook view in Excel format. This triggers the browser's download dialog.
 
 ```javascript
 const button = document.createElement('button');
