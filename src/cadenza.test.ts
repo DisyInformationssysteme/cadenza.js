@@ -1,4 +1,4 @@
-import { cadenza, CadenzaClient, CadenzaError } from './cadenza.js';
+import { cadenza, CadenzaClient, CadenzaError, PageSource } from './cadenza.js';
 
 const BASE_URL = 'http://example.com';
 const EMBEDDING_TARGET_ID = 'embedding-target';
@@ -20,6 +20,10 @@ const EXTERNAL_LINK_KEY = {
 const WORKSHEET_KEY = {
   ...WORKBOOK_KEY,
   worksheetId: WORKSHEET_ID,
+};
+
+const WELCOME_PAGE: PageSource = {
+  page: 'welcome',
 };
 
 describe('cadenza()', () => {
@@ -104,12 +108,13 @@ describe('Given a Cadenza JS client instance', () => {
 
     it('Includes optional params', () => {
       cadenza(BASE_URL, { iframe }).show(EMBEDDING_TARGET_ID, {
+        expandNavigator: true,
         hideMainHeaderAndFooter: true,
         hideWorkbookToolBar: true,
         highlightGlobalId: 'ROOT.MyFolder',
       });
       expect(cad.iframe!.src).toBe(
-        `${BASE_URL}/w/${EMBEDDING_TARGET_ID}?hideMainHeaderAndFooter=true&hideWorkbookToolBar=true&highlightGlobalId=ROOT.MyFolder`,
+        `${BASE_URL}/w/${EMBEDDING_TARGET_ID}?expandNavigator=true&hideMainHeaderAndFooter=true&hideWorkbookToolBar=true&highlightGlobalId=ROOT.MyFolder`,
       );
     });
 
@@ -184,6 +189,17 @@ describe('Given a Cadenza JS client instance', () => {
     it("Sets the iframe's src accordingly", () => {
       const { repositoryName, workbookId } = WORKBOOK_KEY;
       const expectedSrc = `${BASE_URL}/public/repositories/${repositoryName}/workbooks/${workbookId}`;
+      expect(cad.iframe!.src).toBe(expectedSrc);
+    });
+  });
+
+  describe('When showing the welcome page', () => {
+    beforeEach(() => {
+      cad.show(WELCOME_PAGE);
+    });
+
+    it("Sets the iframe's src accordingly", () => {
+      const expectedSrc = `${BASE_URL}/public/pages/welcome`;
       expect(cad.iframe!.src).toBe(expectedSrc);
     });
   });

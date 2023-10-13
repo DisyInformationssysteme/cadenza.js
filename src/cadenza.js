@@ -64,6 +64,13 @@ globalThis.cadenza = Object.assign(
  * */
 
 /**
+ * @typedef PageSource - A well-known Cadenza page
+ * @property {PageType} page - The name of the page
+ *
+ * @typedef {'welcome'} PageType - A Cadenza well-known page name
+ */
+
+/**
  * @typedef Geometry - A [GeoJSON](https://geojson.org/) geometry object
  * @property {GeometryType} type - The type of the geometry
  */
@@ -165,11 +172,12 @@ export class CadenzaClient {
   }
 
   /**
-   * Show a workbook, worksheet or workbook view in an iframe.
+   * Show a page, workbook, worksheet or workbook view in an iframe.
    *
-   * @param {WorkbookSource | WorksheetSource | WorkbookViewSource} source - The source to show
+   * @param {PageSource | WorkbookSource | WorksheetSource | WorkbookViewSource} source - The source to show
    * @param {object} [options]
    * @param {UiFeature[]} [options.disabledUiFeatures] - Cadenza UI features to disable
+   * @param {boolean} [options.expandNavigator] - Indicates if the navigator should be expanded.
    * @param {boolean} [options.hideMainHeaderAndFooter] - Whether to hide the main Cadenza header and footer
    * @param {boolean} [options.hideWorkbookToolBar] - Whether to hide the workbook toolbar
    * @param {GlobalId} [options.highlightGlobalId] - The ID of an item to highlight / expand in the navigator
@@ -184,6 +192,7 @@ export class CadenzaClient {
     source,
     {
       disabledUiFeatures,
+      expandNavigator,
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
       highlightGlobalId,
@@ -198,6 +207,7 @@ export class CadenzaClient {
     }
     const params = createParams({
       disabledUiFeatures,
+      expandNavigator,
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
       highlightGlobalId,
@@ -214,6 +224,7 @@ export class CadenzaClient {
    * @param {WorkbookViewSource} mapView - The workbook map view to show
    * @param {object} [options] - Options
    * @param {UiFeature[]} [options.disabledUiFeatures] - Cadenza UI features to disable
+   * @param {boolean} [options.expandNavigator] - Indicates if the navigator should be expanded.
    * @param {Geometry} [options.geometry] - A geometry to show on the map
    * @param {boolean} [options.hideMainHeaderAndFooter] - Whether to hide the main Cadenza header and footer
    * @param {boolean} [options.hideWorkbookToolBar] - Whether to hide the workbook toolbar
@@ -230,6 +241,7 @@ export class CadenzaClient {
     mapView,
     {
       disabledUiFeatures,
+      expandNavigator,
       geometry,
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
@@ -247,6 +259,7 @@ export class CadenzaClient {
     }
     const params = createParams({
       disabledUiFeatures,
+      expandNavigator,
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
       highlightGlobalId,
@@ -258,6 +271,16 @@ export class CadenzaClient {
     });
     await this.#show(resolvePath(mapView), params, signal);
     this.#postEvent('setGeometry', { geometry });
+  }
+
+  /**
+   * Expand/collapse the navigator tree.
+   *
+   * @param {boolean} expandNavigator - The expansion state of the navigator.
+   */
+  expandNavigator(expandNavigator) {
+    this.#log('CadenzaClient#expandNavigator', expandNavigator);
+    this.#postEvent('expandNavigator', { expandNavigator: !!expandNavigator });
   }
 
   /**
@@ -540,7 +563,7 @@ export class CadenzaClient {
 }
 
 function resolvePath(
-  /** @type WorkbookSource | WorksheetSource | WorkbookViewSource */ source,
+  /** @type PageSource | WorkbookSource | WorksheetSource | WorkbookViewSource */ source,
 ) {
   if (typeof source === 'string') {
     assert(
@@ -548,6 +571,10 @@ function resolvePath(
       `Invalid embedding target ID: ${source}`,
     );
     return `/w/${source}`;
+  } else if ('page' in source) {
+    const page = source.page;
+    assert(validPageName(page), `Invalid page name: ${page}`);
+    return `/public/pages/${page}`;
   } else {
     const { repositoryName, workbookId } = source;
     assert(
@@ -586,6 +613,10 @@ function validUrl(/** @type string */ value) {
   } catch {
     return false;
   }
+}
+
+function validPageName(/** @type string */ value) {
+  return ['welcome'].includes(value);
 }
 
 function validEmbeddingTargetId(/** @type string */ value) {
@@ -661,6 +692,7 @@ function assertSupportedMediaType(
  * @param {object} params - Options
  * @param {string} [params.action]
  * @param {UiFeature[]} [params.disabledUiFeatures]
+ * @param {boolean} [params.expandNavigator]
  * @param {string} [params.fileName]
  * @param {GeometryType} [params.geometryType]
  * @param {boolean} [params.hideMainHeaderAndFooter]
@@ -677,6 +709,7 @@ function assertSupportedMediaType(
  */
 function createParams({
   action,
+  expandNavigator,
   fileName,
   geometryType,
   hideMainHeaderAndFooter,
@@ -710,6 +743,7 @@ function createParams({
     ...(disabledUiFeatures && {
       disabledUiFeatures: disabledUiFeatures.join(),
     }),
+    ...(expandNavigator && { expandNavigator: 'true' }),
     ...(fileName && { fileName }),
     ...(geometryType && { geometryType }),
     ...(hideMainHeaderAndFooter && { hideMainHeaderAndFooter: 'true' }),

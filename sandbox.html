@@ -71,8 +71,9 @@
     const contextPath = new URLSearchParams(location.search).get('contextPath') ?? '';
     const cadenzaClient = cadenza(location.origin + contextPath, { iframe: 'iframe', debug: true });
     const actionHandlers = {
-      show ({ embeddingTargetId, hideMainHeaderAndFooter, hideWorkbookToolBar, jasperReportAsPdf, highlightGlobalId, operationMode, disabledUiFeatures }) {
+      show ({ embeddingTargetId, expandNavigator, hideMainHeaderAndFooter, hideWorkbookToolBar, jasperReportAsPdf, highlightGlobalId, operationMode, disabledUiFeatures }) {
         cadenzaClient.show(embeddingTargetId, {
+          expandNavigator: (expandNavigator === 'on'),
           hideMainHeaderAndFooter: (hideMainHeaderAndFooter === 'on'),
           hideWorkbookToolBar: (hideWorkbookToolBar === 'on'),
           highlightGlobalId,
@@ -80,6 +81,15 @@
           ...(operationMode === 'on' && { operationMode: 'normal' }),
           disabledUiFeatures: disabledUiFeatures && disabledUiFeatures.split(',')
         });
+      },
+      showPage ({ page, expandNavigator, highlightGlobalId }) {
+        cadenzaClient.show({ page: page }, {
+          expandNavigator: (expandNavigator === 'on'),
+          highlightGlobalId
+        });
+      },
+      expandNavigator ({ expandNavigator }) {
+        cadenzaClient.expandNavigator(expandNavigator === 'on');
       },
       showMap ({ embeddingTargetId, useMapSrs, geometry, mapExtent, locationFinder, highlightGlobalId }) {
         cadenzaClient.showMap(embeddingTargetId, {
@@ -150,6 +160,8 @@
       <label for="action">Action</label>
       <select name="action" id="action">
         <option value="show">Show</option>
+        <option value="showPage">Show Page</option>
+        <option value="expandNavigator">Expand Navigator</option>
         <option value="showMap">Show Map</option>
         <option value="createGeometry">Create Geometry</option>
         <option value="editGeometry">Edit Geometry</option>
@@ -182,6 +194,12 @@
   </div>
   <div>
     <label>
+      <input type="checkbox" name="expandNavigator">
+      Expand navigator tree
+    </label>
+  </div>
+  <div>
+    <label>
       <input type="checkbox" name="hideMainHeaderAndFooter">
       Hide main header and footer
     </label>
@@ -205,6 +223,35 @@
   <div>
     <label for="disabledUiFeatures">Disabled UI features</label>
     <input name="disabledUiFeatures" id="disabledUiFeatures" placeholder="feature1,feature2...">
+  </div>
+</template>
+
+<template data-action="showPage">
+  <div>
+    <label for="page">Page *</label>
+    <select name="page" id="page" required>
+      <option>welcome</option>
+      <option>an-invalid-page-name</option>
+    </select>
+  </div>
+  <div>
+    <label>
+      <input type="checkbox" name="expandNavigator">
+      Expand navigator tree
+    </label>
+  </div>
+  <div>
+    <label for="highlightGlobalId">Highlighted Global ID</label>
+    <input name="highlightGlobalId" id="highlightGlobalId">
+  </div>
+</template>
+
+<template data-action="expandNavigator">
+  <div>
+    <label>
+      <input type="checkbox" name="expandNavigator">
+      Expand navigator tree
+    </label>
   </div>
 </template>
 
