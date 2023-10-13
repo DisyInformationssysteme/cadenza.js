@@ -208,6 +208,40 @@ cadenzaClient.on('editGeometry:ok', (event) => {
 _Note:_ Under the hood, creating a geometry is similar to editing a geometry.
 That's why the events use the `editGeometry` prefix.
 
+### Highlight an Item in the Navigator
+
+<small>API: [CadenzaClient#show](./classes/CadenzaClient.html#show)</small>
+
+Show an embedding target in an iframe and highlight an item in the navigator. Additionally, expand the navigator tree.
+
+```javascript
+cadenzaClient.show({embeddingTargetId}, {expandNavigator: true, highlightGlobalId: 'ROOT.MyFolder'});
+```
+
+#### Highlight an Item in the Navigator on the Welcome Page
+
+<small>API: [CadenzaClient#show](./classes/CadenzaClient.html#show)</small>
+
+Show Cadenza's welcome page in an iframe and highlight an item in the navigator.
+
+```javascript
+cadenzaClient.show({page: 'welcome'}, {highlightGlobalId: 'ROOT.MyFolder'});
+```
+
+### Expand/collapse the navigator tree
+
+<small>API: [CadenzaClient#expandNavigator](./classes/CadenzaClient.html#expandNavigator)</small>
+
+Expand the navigator tree.
+
+```javascript
+const button = document.createElement('button');
+button.textContent = 'Expand Navigator';
+button.onclick = (event) => {
+  cadenzaClient.expandNavigator(true);
+};
+```
+
 ### Fetch Data From a Workbook View
 
 <small>API: [CadenzaClient#fetchData](./classes/CadenzaClient.html#fetchData)</small>
