@@ -457,14 +457,16 @@ export class CadenzaClient {
    * * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' (Excel)
    * * 'text/csv'
    * @param {object} options - Options
+   * @param {TablePart[]} [options.parts] - An optional array of table parts to export. If not specified, all parts are exported.
    * @param {AbortSignal} [options.signal] - A signal to abort the data fetching
    * @return {Promise<Response>} A Promise for the fetch response
    * @throws For invalid arguments
    */
-  fetchData(source, mediaType, { signal } = {}) {
+  fetchData(source, mediaType, { parts, signal } = {}) {
     this.#log('CadenzaClient#fetchData', source, mediaType);
     assertSupportedMediaType(mediaType);
-    const params = createParams({ mediaType });
+    assertValidTableParts(parts);
+    const params = createParams({ mediaType, parts });
     return this.#fetch(resolvePath(source), params, signal);
   }
 
@@ -501,12 +503,14 @@ export class CadenzaClient {
    * * 'text/csv'
    * @param {object} options - Options
    * @param {string} [options.fileName] - The file name to use; The file extension is appended by Cadenza.
+   * @param {TablePart[]} [options.parts] - An optional array of table parts to export. If not specified, all parts are exported.
    * @throws For invalid arguments
    */
-  downloadData(source, mediaType, { fileName }) {
+  downloadData(source, mediaType, { fileName, parts }) {
     this.#log('CadenzaClient#downloadData', source, mediaType);
     assertSupportedMediaType(mediaType);
-    const params = createParams({ fileName, mediaType });
+    assertValidTableParts(parts);
+    const params = createParams({ fileName, mediaType, parts });
     this.#download(resolvePath(source), params);
   }
 
@@ -629,6 +633,23 @@ function validGeometryType(/** @type string */ value) {
   ].includes(value);
 }
 
+/** @typedef {'columns' | 'values' | 'totals'} TablePart - A part of a table to export. */
+
+function validTablePart(/** @type TablePart */ value) {
+  return ['columns', 'values', 'totals'].includes(value);
+}
+
+function assertValidTablePart(/** @type TablePart */ value) {
+  assert(validTablePart(value));
+}
+
+function assertValidTableParts(/** @type TablePart[] | undefined */ parts) {
+  if (parts) {
+    assert(Array.isArray(parts), `'parts' argument must be an array`);
+    parts.forEach(assertValidTablePart);
+  }
+}
+
 function validOperationMode(/** @type string */ value) {
   return ['normal', 'simplified'].includes(value);
 }
@@ -671,6 +692,7 @@ function assertSupportedMediaType(
  * @param {string} [params.mediaType]
  * @param {number} [params.minScale]
  * @param {OperationMode} [params.operationMode]
+ * @param {TablePart[]} [params.parts]
  * @param {boolean} [params.useMapSrs]
  * @param {ExternalLinkKey} [params.webApplication]
  * @return {URLSearchParams}
@@ -686,6 +708,7 @@ function createParams({
   mapExtent,
   mediaType,
   minScale,
+  parts,
   useMapSrs,
   webApplication,
   operationMode,
@@ -720,6 +743,7 @@ function createParams({
     ...(mediaType && { mediaType }),
     ...(minScale && { minScale: String(minScale) }),
     ...(operationMode && { operationMode }),
+    ...(parts && { parts: parts.join() }),
     ...(useMapSrs && { useMapSrs: 'true' }),
     ...(webApplication && {
       webApplicationLink: webApplication.externalLinkId,

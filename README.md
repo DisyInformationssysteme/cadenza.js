@@ -221,6 +221,18 @@ const text = await response.text();
 ...
 ```
 
+#### Control the contents of the fetched table data
+
+Fetch data from a workbook view in JSON format and include only the data values and the aggregations (totals) and exclude
+the column names.
+
+```javascript
+const response = await cadenzaClient.fetchData('{embeddingTargetId}', 'application/json', { parts: ['values', 'totals'] });
+
+const tableData = await response.json();
+...
+```
+
 ### Download Data From a Workbook View
 
 <small>API: [CadenzaClient#downloadData](./classes/CadenzaClient.html#downloadData)</small>
