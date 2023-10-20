@@ -106,13 +106,16 @@
           locationFinder
         });
       },
-      fetchData ({ embeddingTargetId, mediaType }) {
+      fetchData ({ embeddingTargetId, mediaType, parts }) {
         console.log('Inspect the fetchData() request in the devtools.');
-        cadenzaClient.fetchData(embeddingTargetId, mediaType);
+        cadenzaClient.fetchData(embeddingTargetId, mediaType, {
+          parts: parts && parts.split(',')
+        });
       },
-      downloadData ({ embeddingTargetId, mediaType, fileName }) {
+      downloadData ({ embeddingTargetId, mediaType, fileName, parts }) {
         cadenzaClient.downloadData(embeddingTargetId, mediaType, {
-          fileName
+          fileName,
+          parts: parts && parts.split(',')
         });
       }
     };
@@ -308,6 +311,10 @@
     <input name="embeddingTargetId" id="embeddingTargetId" required>
   </div>
   <div>
+    <label for="parts">Parts</label>
+    <input name="parts" id="parts" placeholder="columns,values,totals">
+  </div>
+  <div>
     <label for="mediaType">Media type *</label>
     <select name="mediaType" id="mediaType" required>
       <option>text/csv</option>
@@ -326,6 +333,10 @@
   <div>
     <label for="embeddingTargetId">Embedding target ID *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
+  </div>
+  <div>
+    <label for="parts">Parts</label>
+    <input name="parts" id="parts" placeholder="columns,values,totals">
   </div>
   <div>
     <label for="mediaType">Media type *</label>
