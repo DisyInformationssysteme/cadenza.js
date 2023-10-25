@@ -10,7 +10,8 @@
     "apidoc/**/*",
     "cadenza.js",
     "cadenza.d.ts",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "sandbox.html"
   ],
   "scripts": {
     "build": "run-p validate:* build:*",
@@ -21,6 +22,7 @@
     "start": "run-p start:*",
     "start:docs": "npm run build:docs -- --watch",
     "start:test": "npm test -- --watch",
+    "start:ts": "npm run build:ts -- --watch",
     "start:reformat": "onchange \"src/**/*\" -- prettier {{changed}} --write",
     "test": "cross-env NODE_OPTIONS=--unhandled-rejections=warn jest",
     "deploy:docs": "gh-pages --dist apidoc",
