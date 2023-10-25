@@ -1,5 +1,13 @@
 Cadenza JS is a JavaScript library to use the [disy Cadenza](https://www.disy.net/en/products/disy-cadenza/) APIs conveniently without having to deal with technical details like parameter encoding or the `postMessage()` Web API.
 
+## Installation
+
+Install using npm:
+
+```bash
+npm install @disy/cadenza.js
+```
+
 ## Usage Examples
 
 This section features usage examples for Cadenza JS. For detailed usage information, see the "API:" links.
@@ -19,7 +27,7 @@ Create an instance of the Cadenza client by calling `cadenza()` with the base UR
 ```
 
 ```javascript
-import { cadenza } from './cadenza.js';
+import { cadenza } from '@disy/cadenza.js';
 
 const cadenzaClient = cadenza('{baseUrl}', {
   iframe: 'cadenza-iframe',
@@ -31,7 +39,7 @@ _Tip:_ If you develop your application in TypeScript - Cadenza JS is typed using
 #### Globally
 
 ```html
-<script type="module" src="cadenza.js">
+<script type="module" src="./cadenza.js">
 ```
 
 ```javascript
