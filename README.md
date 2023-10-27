@@ -87,6 +87,26 @@ cadenzaClient.show('{embeddingTargetId}', {
 });
 ```
 
+#### Show an Embedding Target in Simplified Operation Mode
+
+Workbook embedding targets can be shown with simplified operation mode enabled by setting the "operationMode" option to "simplified".
+
+```javascript
+cadenzaClient.show('{embeddingTargetId}', {
+  operationMode: 'simplified'
+});
+```
+
+#### Show an Embedding Target with Disabled Features
+
+Embedding targets can be shown with certain UI features disabled. To disable the designer, add "workbook-design" to the "disabledUiFeatures" option. To disable editing of workbook layout and design, add "workbook-view-management".
+
+```javascript
+cadenzaClient.show('{embeddingTargetId}', {
+  disabledUiFeatures: ['workbook-design', 'workbook-view-management']
+});
+```
+
 ### Abort (Iframe) Loading
 
 Cadenza JS uses the [AbortController Web API](https://developer.mozilla.org/en-US/docs/Web/API/AbortController) for aborting requests. This is supported by most of the public methods.

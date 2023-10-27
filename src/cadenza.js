@@ -64,6 +64,13 @@ globalThis.cadenza = Object.assign(
  * _Note:_ The GeoJSON geometry type "GeometryCollection" is currently not supported.
  */
 /** @typedef {[number,number,number,number]} Extent - An array of numbers representing an extent: [minx, miny, maxx, maxy] */
+/**
+ * @typedef {[string]} DisabledUiFeatures - An array of strings representing Cadenza UI features to disable
+ *
+ * _Note:_ Supported features are:
+ * * 'workbook-design' - Disable the designer
+ * * 'workbook-view-management' - Disable workbook layout/design editing
+ * */
 
 /**
  * _Notes:_
@@ -165,6 +172,8 @@ export class CadenzaClient {
    * @param {GlobalId} [options.highlightGlobalId] - The ID of an item to highlight / expand in the navigator
    * @param {string} [options.mediaType] - Set to 'application/pdf' for views of type "JasperReports report"
    *     to show the report PDF directly, without any Cadenza headers or footers.
+   * @param {string} [options.operationMode] - Whether to enable simplified operation mode
+   * @param {DisabledUiFeatures} [options.disabledUiFeatures] - Cadenza UI features to disable
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A Promise for when the iframe is loaded
    * @throws For an invalid source
@@ -176,6 +185,8 @@ export class CadenzaClient {
       hideWorkbookToolBar,
       highlightGlobalId,
       mediaType,
+      operationMode,
+      disabledUiFeatures,
       signal,
     } = {},
   ) {
@@ -183,10 +194,15 @@ export class CadenzaClient {
     if (mediaType) {
       assertSupportedMediaType(mediaType, [MediaType.PDF]);
     }
+    if (disabledUiFeatures) {
+      assertValidUiFeatures(disabledUiFeatures);
+    }
     const params = createParams({
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
       highlightGlobalId,
+      operationMode,
+      disabledUiFeatures,
       mediaType,
       webApplication: this.#webApplication,
     });
@@ -608,6 +624,16 @@ function validGeometryType(/** @type string */ value) {
   ].includes(value);
 }
 
+function assertValidUiFeatures(/** @type DisabledUiFeatures */ features) {
+  features.forEach((feature) =>
+    assert(validUiFeatures(feature), 'Invalid UI feature'),
+  );
+}
+
+function validUiFeatures(/** @type string */ value) {
+  return ['workbook-design', 'workbook-view-management'].includes(value);
+}
+
 /**
  * @typedef {string} MediaType - A media type
  *
@@ -641,6 +667,8 @@ function assertSupportedMediaType(
  * @param {string} [params.mediaType]
  * @param {number} [params.minScale]
  * @param {boolean} [params.useMapSrs]
+ * @param {string} [params.operationMode]
+ * @param {DisabledUiFeatures} [params.disabledUiFeatures]
  * @param {ExternalLinkKey} [params.webApplication]
  * @return {URLSearchParams}
  */
@@ -657,6 +685,8 @@ function createParams({
   minScale,
   useMapSrs,
   webApplication,
+  operationMode,
+  disabledUiFeatures,
 }) {
   if (geometryType) {
     assertValidGeometryType(geometryType);
@@ -676,6 +706,10 @@ function createParams({
     ...(webApplication && {
       webApplicationLink: webApplication.externalLinkId,
       webApplicationLinkRepository: webApplication.repositoryName,
+    }),
+    ...(operationMode && { operationMode }),
+    ...(disabledUiFeatures && {
+      disabledUiFeatures: disabledUiFeatures.join(),
     }),
   });
 }

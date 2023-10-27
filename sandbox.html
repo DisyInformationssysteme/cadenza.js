@@ -70,12 +70,14 @@
 
     const cadenzaClient = cadenza(location.origin + '/trunk', { iframe: 'iframe', debug: true });
     const actionHandlers = {
-      show ({ embeddingTargetId, hideMainHeaderAndFooter, hideWorkbookToolBar, jasperReportAsPdf, highlightGlobalId }) {
+      show ({ embeddingTargetId, hideMainHeaderAndFooter, hideWorkbookToolBar, jasperReportAsPdf, highlightGlobalId, operationMode, disabledUiFeatures }) {
         cadenzaClient.show(embeddingTargetId, {
           hideMainHeaderAndFooter: (hideMainHeaderAndFooter === 'on'),
           hideWorkbookToolBar: (hideWorkbookToolBar === 'on'),
           highlightGlobalId,
           ...(jasperReportAsPdf === 'on' && { mediaType: 'application/pdf' }),
+          operationMode: operationMode === 'on' ? 'simplified' : 'normal',
+          disabledUiFeatures: disabledUiFeatures && disabledUiFeatures.split(',')
         });
       },
       showMap ({ embeddingTargetId, useMapSrs, geometry, mapExtent, locationFinder, highlightGlobalId }) {
@@ -190,8 +192,18 @@
     </label>
   </div>
   <div>
+    <label>
+      <input type="checkbox" name="operationMode">
+      Enable simplified operation mode
+    </label>
+  </div>
+  <div>
     <label for="highlightGlobalId">Highlighted Global ID</label>
     <input name="highlightGlobalId" id="highlightGlobalId">
+  </div>
+  <div>
+    <label for="disabledUiFeatures">Disabled UI features</label>
+    <input name="disabledUiFeatures" id="disabledUiFeatures", placeholder="feature1, feature2, feature3...">
   </div>
 </template>
 
