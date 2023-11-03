@@ -173,7 +173,7 @@ export class CadenzaClient {
    * @param {boolean} [options.hideMainHeaderAndFooter] - Whether to hide the main Cadenza header and footer
    * @param {boolean} [options.hideWorkbookToolBar] - Whether to hide the workbook toolbar
    * @param {GlobalId} [options.highlightGlobalId] - The ID of an item to highlight / expand in the navigator
-   * @param {string} [options.mediaType] - Set to 'application/pdf' for views of type "JasperReports report"
+   * @param {MediaType} [options.mediaType] - Set to 'application/pdf' for views of type "JasperReports report"
    *     to show the report PDF directly, without any Cadenza headers or footers.
    * @param {OperationMode} [options.operationMode] - The mode in which a workbook should be operated
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
@@ -675,7 +675,7 @@ function assertSupportedMediaType(
   /** @type MediaType */ type,
   /** @type MediaType[] */ supportedTypes = Object.values(MediaType),
 ) {
-  return assert(supportedTypes.includes(type), `Invalid media type: ${type}`);
+  assert(supportedTypes.includes(type), `Invalid media type: ${type}`);
 }
 
 /**
@@ -689,7 +689,7 @@ function assertSupportedMediaType(
  * @param {GlobalId} [params.highlightGlobalId]
  * @param {string} [params.locationFinder]
  * @param {Extent} [params.mapExtent]
- * @param {string} [params.mediaType]
+ * @param {MediaType} [params.mediaType]
  * @param {number} [params.minScale]
  * @param {OperationMode} [params.operationMode]
  * @param {TablePart[]} [params.parts]
