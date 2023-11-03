@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `operationMode` option for `CadenzaClient#show`
+- `disabledUiFeatures` option for `CadenzaClient#show`
 - `webApplication` constructor option
 - `mediaType` option for `CadenzaClient#show`
 - `CadenzaClient#fetchData`
