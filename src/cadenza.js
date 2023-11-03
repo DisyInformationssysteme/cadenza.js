@@ -64,8 +64,9 @@ globalThis.cadenza = Object.assign(
  * _Note:_ The GeoJSON geometry type "GeometryCollection" is currently not supported.
  */
 /** @typedef {[number,number,number,number]} Extent - An array of numbers representing an extent: [minx, miny, maxx, maxy] */
+/** @typedef {'normal'|'simplified'} OperationMode - The mode in which a workbook should be operated */
 /**
- * @typedef {[string]} DisabledUiFeatures - An array of strings representing Cadenza UI features to disable
+ * @typedef {'workbook-design'|'workbook-view-management'} UiFeature - The name of a Cadenza UI feature
  *
  * _Note:_ Supported features are:
  * * 'workbook-design' - Disable the designer
@@ -172,8 +173,8 @@ export class CadenzaClient {
    * @param {GlobalId} [options.highlightGlobalId] - The ID of an item to highlight / expand in the navigator
    * @param {string} [options.mediaType] - Set to 'application/pdf' for views of type "JasperReports report"
    *     to show the report PDF directly, without any Cadenza headers or footers.
-   * @param {string} [options.operationMode] - Whether to enable simplified operation mode
-   * @param {DisabledUiFeatures} [options.disabledUiFeatures] - Cadenza UI features to disable
+   * @param {OperationMode} [options.operationMode] - The mode in which a workbook should be operated
+   * @param {UiFeature[]} [options.disabledUiFeatures] - Cadenza UI features to disable
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A Promise for when the iframe is loaded
    * @throws For an invalid source
@@ -624,7 +625,7 @@ function validGeometryType(/** @type string */ value) {
   ].includes(value);
 }
 
-function assertValidUiFeatures(/** @type DisabledUiFeatures */ features) {
+function assertValidUiFeatures(/** @type UiFeature[] */ features) {
   features.forEach((feature) =>
     assert(validUiFeatures(feature), 'Invalid UI feature'),
   );
@@ -667,8 +668,8 @@ function assertSupportedMediaType(
  * @param {string} [params.mediaType]
  * @param {number} [params.minScale]
  * @param {boolean} [params.useMapSrs]
- * @param {string} [params.operationMode]
- * @param {DisabledUiFeatures} [params.disabledUiFeatures]
+ * @param {OperationMode} [params.operationMode]
+ * @param {UiFeature[]} [params.disabledUiFeatures]
  * @param {ExternalLinkKey} [params.webApplication]
  * @return {URLSearchParams}
  */

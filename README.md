@@ -65,12 +65,14 @@ const cadenza = window.cadenza.noConflict();
 
 <small>API: [CadenzaClient#show](./classes/CadenzaClient.html#show)</small>
 
-Show an embedding target in an iframe and hide Cadenza's main header and footer as well as the workbook toolbar:
+Show an embedding target in an iframe and hide Cadenza's main header and footer as well as the workbook toolbar. Additionally, enable simplified operation mode and disable the designer.
 
 ```javascript
 cadenzaClient.show('{embeddingTargetId}', {
   hideMainHeaderAndFooter: true,
   hideWorkbookToolBar: true,
+  operationMode: 'simplified',
+  disabledUiFeatures: ['workbook-design']
 });
 ```
 
@@ -84,26 +86,6 @@ Views of type "JasperReports report" can be shown in an iframe like any other vi
 ```javascript
 cadenzaClient.show('{embeddingTargetId}', {
   mediaType: 'application/pdf'
-});
-```
-
-#### Show an Embedding Target in Simplified Operation Mode
-
-Workbook embedding targets can be shown with simplified operation mode enabled by setting the "operationMode" option to "simplified".
-
-```javascript
-cadenzaClient.show('{embeddingTargetId}', {
-  operationMode: 'simplified'
-});
-```
-
-#### Show an Embedding Target with Disabled Features
-
-Embedding targets can be shown with certain UI features disabled. To disable the designer, add "workbook-design" to the "disabledUiFeatures" option. To disable editing of workbook layout and design, add "workbook-view-management".
-
-```javascript
-cadenzaClient.show('{embeddingTargetId}', {
-  disabledUiFeatures: ['workbook-design', 'workbook-view-management']
 });
 ```
 
