@@ -70,7 +70,7 @@ globalThis.cadenza = Object.assign(
  *
  * _Note:_ Supported features are:
  * * 'workbook-design' - Disable the designer
- * * 'workbook-view-management' - Disable workbook layout/design editing
+ * * 'workbook-view-management' - Disable workbook layout/design editing (is included in 'workbook-design').
  * */
 
 /**
