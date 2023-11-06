@@ -76,7 +76,7 @@
           hideWorkbookToolBar: (hideWorkbookToolBar === 'on'),
           highlightGlobalId,
           ...(jasperReportAsPdf === 'on' && { mediaType: 'application/pdf' }),
-          operationMode: operationMode === 'on' ? 'simplified' : 'normal',
+          ...(operationMode === 'on' && { operationMode: 'normal' }),
           disabledUiFeatures: disabledUiFeatures && disabledUiFeatures.split(',')
         });
       },
