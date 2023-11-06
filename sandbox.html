@@ -68,7 +68,8 @@
       history.replaceState(null, '', url);
     };
 
-    const cadenzaClient = cadenza(location.origin + '/trunk', { iframe: 'iframe', debug: true });
+    const contextPath = new URLSearchParams(location.search).get('contextPath') ?? '';
+    const cadenzaClient = cadenza(location.origin + contextPath, { iframe: 'iframe', debug: true });
     const actionHandlers = {
       show ({ embeddingTargetId, hideMainHeaderAndFooter, hideWorkbookToolBar, jasperReportAsPdf, highlightGlobalId, operationMode, disabledUiFeatures }) {
         cadenzaClient.show(embeddingTargetId, {
