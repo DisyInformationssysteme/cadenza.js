@@ -126,13 +126,13 @@ export class CadenzaClient {
       baseUrl = baseUrl.substring(0, baseUrl.length - 1);
     }
 
-    this.#log('Create Cadenza client', baseUrl, iframe);
-
     this.#baseUrl = baseUrl;
     this.#origin = new URL(baseUrl).origin;
     this.#iframe = iframe;
     this.#debug = debug;
     this.#webApplication = webApplication;
+
+    this.#log('Create Cadenza client', baseUrl, iframe);
   }
 
   /** The base URL of the Cadenza server this client is requesting */
