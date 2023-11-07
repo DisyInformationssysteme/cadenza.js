@@ -6,7 +6,7 @@
  * @param {HTMLIFrameElement | string} [options.iframe] - An iframe for embedding Cadenza or the iframe's ID
  * @param {ExternalLinkKey} [options.webApplication] - An external link that Cadenza uses to resolve the [target origin](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage#targetorigin) when posting events. This is required if Cadenza and your application are not running on the same origin.
  * @param {boolean} [options.debug] - Whether to enable debug logging
- * @throws For invalid base URL
+ * @throws For invalid arguments
  */
 export function cadenza(baseUrl, options) {
   return new CadenzaClient(baseUrl, options);
@@ -54,6 +54,15 @@ globalThis.cadenza = Object.assign(
 /** @typedef {EmbeddingTargetId | WorksheetKey} WorksheetSource - A worksheet source */
 /** @typedef {EmbeddingTargetId | WorkbookViewKey} WorkbookViewSource - A workbook view source */
 
+/** @typedef {'normal'|'simplified'} OperationMode - The mode in which a workbook should be operated */
+/**
+ * @typedef {'workbook-design'|'workbook-view-management'} UiFeature - The name of a Cadenza UI feature
+ *
+ * _Note:_ Supported features are:
+ * * 'workbook-design' - The workbook designer
+ * * 'workbook-view-management' - Add/Edit/Remove workbook views (Is included in 'workbook-design'.)
+ * */
+
 /**
  * @typedef Geometry - A [GeoJSON](https://geojson.org/) geometry object
  * @property {GeometryType} type - The type of the geometry
@@ -64,14 +73,6 @@ globalThis.cadenza = Object.assign(
  * _Note:_ The GeoJSON geometry type "GeometryCollection" is currently not supported.
  */
 /** @typedef {[number,number,number,number]} Extent - An array of numbers representing an extent: [minx, miny, maxx, maxy] */
-/** @typedef {'normal'|'simplified'} OperationMode - The mode in which a workbook should be operated */
-/**
- * @typedef {'workbook-design'|'workbook-view-management'} UiFeature - The name of a Cadenza UI feature
- *
- * _Note:_ Supported features are:
- * * 'workbook-design' - Disable the designer
- * * 'workbook-view-management' - Disable workbook layout/design editing (is included in 'workbook-design').
- * */
 
 /**
  * _Notes:_
@@ -168,42 +169,36 @@ export class CadenzaClient {
    *
    * @param {WorkbookSource | WorksheetSource | WorkbookViewSource} source - The source to show
    * @param {object} [options]
+   * @param {UiFeature[]} [options.disabledUiFeatures] - Cadenza UI features to disable
    * @param {boolean} [options.hideMainHeaderAndFooter] - Whether to hide the main Cadenza header and footer
    * @param {boolean} [options.hideWorkbookToolBar] - Whether to hide the workbook toolbar
    * @param {GlobalId} [options.highlightGlobalId] - The ID of an item to highlight / expand in the navigator
    * @param {string} [options.mediaType] - Set to 'application/pdf' for views of type "JasperReports report"
    *     to show the report PDF directly, without any Cadenza headers or footers.
    * @param {OperationMode} [options.operationMode] - The mode in which a workbook should be operated
-   * @param {UiFeature[]} [options.disabledUiFeatures] - Cadenza UI features to disable
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A Promise for when the iframe is loaded
-   * @throws For an invalid source
+   * @throws For invalid arguments
    */
   show(
     source,
     {
+      disabledUiFeatures,
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
       highlightGlobalId,
       mediaType,
       operationMode,
-      disabledUiFeatures,
       signal,
     } = {},
   ) {
     this.#log('CadenzaClient#show', source);
-    if (mediaType) {
-      assertSupportedMediaType(mediaType, [MediaType.PDF]);
-    }
-    if (disabledUiFeatures) {
-      assertValidUiFeatures(disabledUiFeatures);
-    }
     const params = createParams({
+      disabledUiFeatures,
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
       highlightGlobalId,
       operationMode,
-      disabledUiFeatures,
       mediaType,
       webApplication: this.#webApplication,
     });
@@ -215,26 +210,30 @@ export class CadenzaClient {
    *
    * @param {WorkbookViewSource} mapView - The workbook map view to show
    * @param {object} [options] - Options
+   * @param {UiFeature[]} [options.disabledUiFeatures] - Cadenza UI features to disable
    * @param {Geometry} [options.geometry] - A geometry to show on the map
    * @param {boolean} [options.hideMainHeaderAndFooter] - Whether to hide the main Cadenza header and footer
    * @param {boolean} [options.hideWorkbookToolBar] - Whether to hide the workbook toolbar
    * @param {GlobalId} [options.highlightGlobalId] - The ID of an item to highlight / expand in the navigator
    * @param {string} [options.locationFinder] - A search query for the location finder
    * @param {Extent} [options.mapExtent] - A map extent to set
+   * @param {OperationMode} [options.operationMode] - The mode in which a workbook should be operated
    * @param {boolean} [options.useMapSrs] -  Whether the geometry and the extent are in the map's SRS (otherwise EPSG:4326 is assumed)
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A Promise for when the iframe is loaded
-   * @throws For an invalid workbook view source or geometry type
+   * @throws For invalid arguments
    */
   async showMap(
     mapView,
     {
+      disabledUiFeatures,
       geometry,
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
       highlightGlobalId,
       locationFinder,
       mapExtent,
+      operationMode,
       useMapSrs,
       signal,
     } = {},
@@ -244,11 +243,13 @@ export class CadenzaClient {
       assertValidGeometryType(geometry.type);
     }
     const params = createParams({
+      disabledUiFeatures,
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
       highlightGlobalId,
       locationFinder,
       mapExtent,
+      operationMode,
       useMapSrs,
       webApplication: this.#webApplication,
     });
@@ -271,7 +272,7 @@ export class CadenzaClient {
    * @param {boolean} [options.useMapSrs] - Whether the created geometry should use the map's SRS (otherwise EPSG:4326 will be used)
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A Promise for when the iframe is loaded
-   * @throws For an invalid workbook view source or geometry type
+   * @throws For invalid arguments
    * @fires `editGeometry:update` - When the user changed the geometry. The event includes the edited geometry.
    * @fires `editGeometry:ok` - When the user completed the geometry editing. The event includes the edited geometry.
    * @fires `editGeometry:cancel` - When the user cancelled the geometry editing in Cadenza.
@@ -306,7 +307,7 @@ export class CadenzaClient {
    * @param {boolean} [options.useMapSrs] - Whether the geometry is in the map's SRS (otherwise EPSG:4326 is assumed)
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A Promise for when the iframe is loaded
-   * @throws For an invalid workbook view source
+   * @throws For invalid arguments
    * @fires `editGeometry:update` - When the user changed the geometry. The event includes the edited geometry.
    * @fires `editGeometry:ok` - When the user completed the geometry editing. The event includes the edited geometry.
    * @fires `editGeometry:cancel` - When the user cancelled the geometry editing in Cadenza.
@@ -455,7 +456,7 @@ export class CadenzaClient {
    * @param {object} options - Options
    * @param {AbortSignal} [options.signal] - A signal to abort the data fetching
    * @return {Promise<Response>} A Promise for the fetch response
-   * @throws For an invalid workbook view source or media type
+   * @throws For invalid arguments
    */
   fetchData(source, mediaType, { signal } = {}) {
     this.#log('CadenzaClient#fetchData', source, mediaType);
@@ -497,7 +498,7 @@ export class CadenzaClient {
    * * 'text/csv'
    * @param {object} options - Options
    * @param {string} [options.fileName] - The file name to use; The file extension is appended by Cadenza.
-   * @throws For an invalid workbook view source or media type
+   * @throws For invalid arguments
    */
   downloadData(source, mediaType, { fileName }) {
     this.#log('CadenzaClient#downloadData', source, mediaType);
@@ -611,7 +612,7 @@ function validExternalLinkKey(/** @type ExternalLinkKey */ linkKey) {
 }
 
 function assertValidGeometryType(/** @type string */ value) {
-  assert(validGeometryType(value), 'Invalid geometry type');
+  assert(validGeometryType(value), `Invalid geometry type: ${value}`);
 }
 
 function validGeometryType(/** @type string */ value) {
@@ -625,13 +626,11 @@ function validGeometryType(/** @type string */ value) {
   ].includes(value);
 }
 
-function assertValidUiFeatures(/** @type UiFeature[] */ features) {
-  features.forEach((feature) =>
-    assert(validUiFeatures(feature), 'Invalid UI feature'),
-  );
+function validOperationMode(/** @type string */ value) {
+  return ['normal', 'simplified'].includes(value);
 }
 
-function validUiFeatures(/** @type string */ value) {
+function validUiFeature(/** @type string */ value) {
   return ['workbook-design', 'workbook-view-management'].includes(value);
 }
 
@@ -658,6 +657,7 @@ function assertSupportedMediaType(
 /**
  * @param {object} params - Options
  * @param {string} [params.action]
+ * @param {UiFeature[]} [params.disabledUiFeatures]
  * @param {string} [params.fileName]
  * @param {GeometryType} [params.geometryType]
  * @param {boolean} [params.hideMainHeaderAndFooter]
@@ -667,9 +667,8 @@ function assertSupportedMediaType(
  * @param {Extent} [params.mapExtent]
  * @param {string} [params.mediaType]
  * @param {number} [params.minScale]
- * @param {boolean} [params.useMapSrs]
  * @param {OperationMode} [params.operationMode]
- * @param {UiFeature[]} [params.disabledUiFeatures]
+ * @param {boolean} [params.useMapSrs]
  * @param {ExternalLinkKey} [params.webApplication]
  * @return {URLSearchParams}
  */
@@ -689,11 +688,28 @@ function createParams({
   operationMode,
   disabledUiFeatures,
 }) {
+  if (disabledUiFeatures) {
+    disabledUiFeatures.forEach((feature) =>
+      assert(validUiFeature(feature), `Invalid UI feature: ${feature}`),
+    );
+  }
   if (geometryType) {
     assertValidGeometryType(geometryType);
   }
+  if (mediaType) {
+    assertSupportedMediaType(mediaType, [MediaType.PDF]);
+  }
+  if (operationMode) {
+    assert(
+      validOperationMode(operationMode),
+      `Invalid operation mode: ${operationMode}`,
+    );
+  }
   return new URLSearchParams({
     ...(action && { action }),
+    ...(disabledUiFeatures && {
+      disabledUiFeatures: disabledUiFeatures.join(),
+    }),
     ...(fileName && { fileName }),
     ...(geometryType && { geometryType }),
     ...(hideMainHeaderAndFooter && { hideMainHeaderAndFooter: 'true' }),
@@ -703,14 +719,11 @@ function createParams({
     ...(mapExtent && { mapExtent: mapExtent.join() }),
     ...(mediaType && { mediaType }),
     ...(minScale && { minScale: String(minScale) }),
+    ...(operationMode && { operationMode }),
     ...(useMapSrs && { useMapSrs: 'true' }),
     ...(webApplication && {
       webApplicationLink: webApplication.externalLinkId,
       webApplicationLinkRepository: webApplication.repositoryName,
-    }),
-    ...(operationMode && { operationMode }),
-    ...(disabledUiFeatures && {
-      disabledUiFeatures: disabledUiFeatures.join(),
     }),
   });
 }
