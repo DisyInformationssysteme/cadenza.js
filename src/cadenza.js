@@ -193,6 +193,9 @@ export class CadenzaClient {
     } = {},
   ) {
     this.#log('CadenzaClient#show', source);
+    if (mediaType) {
+      assertSupportedMediaType(mediaType, [MediaType.PDF]);
+    }
     const params = createParams({
       disabledUiFeatures,
       hideMainHeaderAndFooter,
@@ -695,9 +698,6 @@ function createParams({
   }
   if (geometryType) {
     assertValidGeometryType(geometryType);
-  }
-  if (mediaType) {
-    assertSupportedMediaType(mediaType, [MediaType.PDF]);
   }
   if (operationMode) {
     assert(
