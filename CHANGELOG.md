@@ -9,13 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `operationMode` option for `CadenzaClient#show`
-- `disabledUiFeatures` option for `CadenzaClient#show`
-- `webApplication` constructor option
-- `mediaType` option for `CadenzaClient#show`
 - `CadenzaClient#fetchData`
 - `CadenzaClient#downloadData`
+- `webApplication` constructor option
+- `mediaType` option for `CadenzaClient#show`
+- `disabledUiFeatures` option for `CadenzaClient#show` and `CadenzaClient#showMap`
 - `highlightGlobalId` option for `CadenzaClient#show` and `CadenzaClient#showMap`
+- `operationMode` option for `CadenzaClient#show` and `CadenzaClient#showMap`
 
 ## 1.0.0 - 2023-09-07
 
