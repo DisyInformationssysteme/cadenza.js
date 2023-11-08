@@ -50,13 +50,6 @@ jobs:
         git commit -m "chore: release ${{ env.NEW_VERSION }}"
         git tag ${{ env.NEW_VERSION }}
 
-    - name: Publish npm package
-      run: |
-        npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
-        npm publish --verbose --access=public --tag=${{ env.RELEASE_TAG }}
-      env:
-        NPM_TOKEN: ${{ secrets.NPMJS_ACCESS_TOKEN }}
-
     - name: Push changes
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -77,3 +70,10 @@ jobs:
         body: ${{ steps.get-changelog.outputs.changelog }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Publish npm package
+      run: |
+        npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
+        npm publish --verbose --access=public --tag=${{ env.RELEASE_TAG }}
+      env:
+        NPM_TOKEN: ${{ secrets.NPMJS_ACCESS_TOKEN }}
