@@ -18,8 +18,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `operationMode` option for `CadenzaClient#show` and `CadenzaClient#showMap`
 - Development sandbox (`npm run sandbox`)
 
-## 1.0.0 - 2023-09-07
-
 ## 0.0.1 - 2023-09-07
 ### Added
 - `CadenzaClient#show`
