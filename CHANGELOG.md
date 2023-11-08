@@ -7,8 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 1.2.0 - 2023-11-08
 ### Added
-
 - `CadenzaClient#fetchData`
 - `CadenzaClient#downloadData`
 - `webApplication` constructor option
@@ -21,9 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## 1.0.0 - 2023-09-07
 
 ## 0.0.1 - 2023-09-07
-
 ### Added
-
 - `CadenzaClient#show`
 - `CadenzaClient#showMap`
 - `CadenzaClient#editGeometry`
