@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `disabledUiFeatures` option for `CadenzaClient#show` and `CadenzaClient#showMap`
 - `highlightGlobalId` option for `CadenzaClient#show` and `CadenzaClient#showMap`
 - `operationMode` option for `CadenzaClient#show` and `CadenzaClient#showMap`
+- Development sandbox (`npm run sandbox`)
 
 ## 1.0.0 - 2023-09-07
 
