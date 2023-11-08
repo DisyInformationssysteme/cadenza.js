@@ -51,8 +51,9 @@ jobs:
         git tag ${{ env.NEW_VERSION }}
 
     - name: Publish npm package
-      run: npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
-      run: npm publish --verbose --access=public --tag=${{ env.RELEASE_TAG }}
+      run: |
+        npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
+        npm publish --verbose --access=public --tag=${{ env.RELEASE_TAG }}
       env:
         NPM_TOKEN: ${{ secrets.NPMJS_ACCESS_TOKEN }}
 
