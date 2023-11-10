@@ -11,6 +11,7 @@
     "cadenza.js",
     "cadenza.d.ts",
     "CHANGELOG.md",
+    "sandbox.cjs",
     "sandbox.html"
   ],
   "scripts": {
