@@ -1,8 +1,14 @@
 Cadenza JS is a JavaScript library to use the [disy Cadenza](https://www.disy.net/en/products/disy-cadenza/) APIs conveniently without having to deal with technical details like parameter encoding or the `postMessage()` Web API.
 
+* [Installation](#installation)
+* [Usage Examples](#usage-examples)
+* [The development sandbox](#the-development-sandbox)
+
 ## Installation
 
-Install using npm:
+Cadenza JS is included in the Cadenza distribution in the corresponding version.
+
+Alternatively you can install the most recent version using npm:
 
 ```bash
 npm install @disy/cadenza.js
@@ -282,3 +288,34 @@ button.onclick = (event) => {
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 };
 ```
+
+## The Development Sandbox
+
+The development sandbox is a simple custom application (in fact a single `.html` file) for playing with Cadenza JS.
+
+To run it ...
+
+* You need a Cadenza installation running on http://localhost:8080/cadenza. (See [Customize the Cadenza URL](#customize-the-cadenza-url) below)
+* In `node_modules/@disy/cadenza.js` run `npm run sandbox` to start the sandbox.
+
+The command starts a proxy server that serves the `sandbox.html` and `cadenza.js` files and proxies all other requests to the Cadenza server. Since that way the sandbox and Cadenza run on the same origin, embedding and `postMessage` communication just work.
+
+### The Sandbox UI
+
+`npm run sandbox` also opens the sandbox in a new browser window. Select the Cadenza JS method you want to play with in the select box at the top. For each method there are controls to define the parameters. Hit "Go!" to call the method.
+
+The sandbox uses Cadenza JS with the "debug" option enabled, so you can see what is going on internally in the browser's devtools console. In the "Network" tab of the devtools you can see the requests to the Cadenza server.
+
+### Customize the Cadenza URL
+
+By default, the sandbox expects Cadenza to run on http://localhost:8080/cadenza. There are two ways to customize the Cadenza URL:
+
+* Pass an argument:
+  ```bash
+  npm run sandbox --cadenza-url http://localhost:8000/my-cadenza
+  ```
+* Set an environment variable:
+  ```bash
+  export CADENZA_URL=http://localhost:8000/my-cadenza
+  npm run sandbox
+  ```
