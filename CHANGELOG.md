@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `CadenzaClient#expandNavigator`
 - `PageSource` parameter to `CadenzaClient#show`
 - `expandNavigator` option for `CadenzaClient#show` and `CadenzaClient#showMap`
+- `parts` option for `CadenzaClient#fetchData` and `CadenzaClient#downloadData`
 
 ### Fixed
 - Included missing `sandbox.cjs` in npm package.
