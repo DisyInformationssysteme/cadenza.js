@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `CadenzaClient#expandNavigator`
 - `PageSource` parameter to `CadenzaClient#show`
 - `expandNavigator` option for `CadenzaClient#show` and `CadenzaClient#showMap`
+- `parts` option for `CadenzaClient#fetchData` and `CadenzaClient#downloadData`
 
 ## 1.2.0 - 2023-11-08
 ### Added
