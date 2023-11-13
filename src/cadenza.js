@@ -50,6 +50,10 @@ globalThis.cadenza = Object.assign(
  * @property {string} viewId - The ID of the view
  */
 
+/**
+ * @typedef PageSource - A well-known Cadenza page
+ * @property {'welcome'} page - The name of the page (Only `"welcome"` is currently supported.)
+ */
 /** @typedef {EmbeddingTargetId | WorkbookKey} WorkbookSource - A workbook source */
 /** @typedef {EmbeddingTargetId | WorksheetKey} WorksheetSource - A worksheet source */
 /** @typedef {EmbeddingTargetId | WorkbookViewKey} WorkbookViewSource - A workbook view source */
@@ -64,13 +68,6 @@ globalThis.cadenza = Object.assign(
  * */
 
 /**
- * @typedef PageSource - A well-known Cadenza page
- * @property {PageType} page - The name of the page
- *
- * @typedef {'welcome'} PageType - A Cadenza well-known page name
- */
-
-/**
  * @typedef Geometry - A [GeoJSON](https://geojson.org/) geometry object
  * @property {GeometryType} type - The type of the geometry
  */
@@ -80,6 +77,13 @@ globalThis.cadenza = Object.assign(
  * _Note:_ The GeoJSON geometry type "GeometryCollection" is currently not supported.
  */
 /** @typedef {[number,number,number,number]} Extent - An array of numbers representing an extent: [minx, miny, maxx, maxy] */
+
+/**
+ * @typedef {string} MediaType - A media type
+ *
+ * See {@link https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types}
+ */
+/** @typedef {'columns' | 'values' | 'totals'} TablePart - A part of a table to export. */
 
 /**
  * _Notes:_
@@ -480,7 +484,7 @@ export class CadenzaClient {
    * * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' (Excel)
    * * 'text/csv'
    * @param {object} options - Options
-   * @param {TablePart[]} [options.parts] - An optional array of table parts to export. If not specified, all parts are exported.
+   * @param {TablePart[]} [options.parts] - Table parts to export; If not specified, all parts are exported.
    * @param {AbortSignal} [options.signal] - A signal to abort the data fetching
    * @return {Promise<Response>} A Promise for the fetch response
    * @throws For invalid arguments
@@ -488,7 +492,6 @@ export class CadenzaClient {
   fetchData(source, mediaType, { parts, signal } = {}) {
     this.#log('CadenzaClient#fetchData', source, mediaType);
     assertSupportedMediaType(mediaType);
-    assertValidTableParts(parts);
     const params = createParams({ mediaType, parts });
     return this.#fetch(resolvePath(source), params, signal);
   }
@@ -526,13 +529,12 @@ export class CadenzaClient {
    * * 'text/csv'
    * @param {object} options - Options
    * @param {string} [options.fileName] - The file name to use; The file extension is appended by Cadenza.
-   * @param {TablePart[]} [options.parts] - An optional array of table parts to export. If not specified, all parts are exported.
+   * @param {TablePart[]} [options.parts] - Table parts to export; If not specified, all parts are exported.
    * @throws For invalid arguments
    */
   downloadData(source, mediaType, { fileName, parts }) {
     this.#log('CadenzaClient#downloadData', source, mediaType);
     assertSupportedMediaType(mediaType);
-    assertValidTableParts(parts);
     const params = createParams({ fileName, mediaType, parts });
     this.#download(resolvePath(source), params);
   }
@@ -664,21 +666,8 @@ function validGeometryType(/** @type string */ value) {
   ].includes(value);
 }
 
-/** @typedef {'columns' | 'values' | 'totals'} TablePart - A part of a table to export. */
-
 function validTablePart(/** @type TablePart */ value) {
   return ['columns', 'values', 'totals'].includes(value);
-}
-
-function assertValidTablePart(/** @type TablePart */ value) {
-  assert(validTablePart(value));
-}
-
-function assertValidTableParts(/** @type TablePart[] | undefined */ parts) {
-  if (parts) {
-    assert(Array.isArray(parts), `'parts' argument must be an array`);
-    parts.forEach(assertValidTablePart);
-  }
 }
 
 function validOperationMode(/** @type string */ value) {
@@ -688,12 +677,6 @@ function validOperationMode(/** @type string */ value) {
 function validUiFeature(/** @type string */ value) {
   return ['workbook-design', 'workbook-view-management'].includes(value);
 }
-
-/**
- * @typedef {string} MediaType - A media type
- *
- * See {@link https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types}
- */
 
 const MediaType = /** @type {Record<string, MediaType>} */ {
   CSV: 'text/csv',
@@ -759,6 +742,11 @@ function createParams({
     assert(
       validOperationMode(operationMode),
       `Invalid operation mode: ${operationMode}`,
+    );
+  }
+  if (parts) {
+    parts.forEach((part) =>
+      assert(validTablePart(part), `Invalid table part: ${part}`),
     );
   }
   return new URLSearchParams({
