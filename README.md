@@ -221,7 +221,7 @@ That's why the events use the `editGeometry` prefix.
 Show an embedding target in an iframe and highlight an item in the navigator. Additionally, expand the navigator tree.
 
 ```javascript
-cadenzaClient.show({embeddingTargetId}, {expandNavigator: true, highlightGlobalId: 'ROOT.MyFolder'});
+cadenzaClient.show('{embeddingTargetId}', {expandNavigator: true, highlightGlobalId: 'ROOT.MyFolder'});
 ```
 
 #### Highlight an Item in the Navigator on the Welcome Page
@@ -234,18 +234,14 @@ Show Cadenza's welcome page in an iframe and highlight an item in the navigator.
 cadenzaClient.show({page: 'welcome'}, {highlightGlobalId: 'ROOT.MyFolder'});
 ```
 
-### Expand/collapse the navigator tree
+#### Expand the Navigator
 
 <small>API: [CadenzaClient#expandNavigator](./classes/CadenzaClient.html#expandNavigator)</small>
 
-Expand the navigator tree.
+Expand the navigator.
 
 ```javascript
-const button = document.createElement('button');
-button.textContent = 'Expand Navigator';
-button.onclick = (event) => {
-  cadenzaClient.expandNavigator(true);
-};
+cadenzaClient.expandNavigator();
 ```
 
 ### Fetch Data From a Workbook View
@@ -261,13 +257,15 @@ const text = await response.text();
 ...
 ```
 
-#### Control the contents of the fetched table data
+#### Control the Contents of the Fetched Table Data
 
-Fetch data from a workbook view in JSON format and include only the data values and the aggregations (totals) and exclude
-the column names.
+Fetch data from a workbook view in JSON format and include only the data values and the aggregation totals. (Do not include the column names.)
 
 ```javascript
-const response = await cadenzaClient.fetchData('{embeddingTargetId}', 'application/json', { parts: ['values', 'totals'] });
+const response = await cadenzaClient.fetchData(
+  '{embeddingTargetId}',
+  'application/json',
+  { parts: ['values', 'totals'] });
 
 const tableData = await response.json();
 ...

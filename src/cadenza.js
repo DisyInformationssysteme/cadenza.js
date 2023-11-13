@@ -274,13 +274,13 @@ export class CadenzaClient {
   }
 
   /**
-   * Expand/collapse the navigator tree.
+   * Expand/collapse the navigator.
    *
-   * @param {boolean} expandNavigator - The expansion state of the navigator.
+   * @param {boolean} expanded - The expansion state of the navigator
    */
-  expandNavigator(expandNavigator) {
-    this.#log('CadenzaClient#expandNavigator', expandNavigator);
-    this.#postEvent('expandNavigator', { expandNavigator: !!expandNavigator });
+  expandNavigator(expanded = true) {
+    this.#log('CadenzaClient#expandNavigator', expanded);
+    this.#postEvent('expandNavigator', { expandNavigator: Boolean(expanded) });
   }
 
   /**
