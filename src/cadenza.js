@@ -185,6 +185,7 @@ export class CadenzaClient {
    * @param {boolean} [options.hideMainHeaderAndFooter] - Whether to hide the main Cadenza header and footer
    * @param {boolean} [options.hideWorkbookToolBar] - Whether to hide the workbook toolbar
    * @param {GlobalId} [options.highlightGlobalId] - The ID of an item to highlight / expand in the navigator
+   * @param {String} [options.labelSet] - The name of a label set defined in the `basicweb-config.xml` (only supported for the welcome page)
    * @param {MediaType} [options.mediaType] - Set to 'application/pdf' for views of type "JasperReports report"
    *     to show the report PDF directly, without any Cadenza headers or footers.
    * @param {OperationMode} [options.operationMode] - The mode in which a workbook should be operated
@@ -200,6 +201,7 @@ export class CadenzaClient {
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
       highlightGlobalId,
+      labelSet,
       mediaType,
       operationMode,
       signal,
@@ -209,14 +211,23 @@ export class CadenzaClient {
     if (mediaType) {
       assertSupportedMediaType(mediaType, [MediaType.PDF]);
     }
+    if (labelSet) {
+      assert(
+        typeof source !== 'string' &&
+          'page' in source &&
+          source.page === 'welcome',
+        'labelSet is only supported on the welcome page',
+      );
+    }
     const params = createParams({
       disabledUiFeatures,
       expandNavigator,
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
       highlightGlobalId,
-      operationMode,
+      labelSet,
       mediaType,
+      operationMode,
       webApplication: this.#webApplication,
     });
     return this.#show(resolvePath(source), params, signal);
@@ -702,6 +713,7 @@ function assertSupportedMediaType(
  * @param {boolean} [params.hideMainHeaderAndFooter]
  * @param {boolean} [params.hideWorkbookToolBar]
  * @param {GlobalId} [params.highlightGlobalId]
+ * @param {string} [params.labelSet]
  * @param {string} [params.locationFinder]
  * @param {Extent} [params.mapExtent]
  * @param {MediaType} [params.mediaType]
@@ -720,6 +732,7 @@ function createParams({
   hideMainHeaderAndFooter,
   hideWorkbookToolBar,
   highlightGlobalId,
+  labelSet,
   locationFinder,
   mapExtent,
   mediaType,
@@ -760,6 +773,7 @@ function createParams({
     ...(hideMainHeaderAndFooter && { hideMainHeaderAndFooter: 'true' }),
     ...(hideWorkbookToolBar && { hideWorkbookToolBar: 'true' }),
     ...(highlightGlobalId && { highlightGlobalId }),
+    ...(labelSet && { labelSet }),
     ...(locationFinder && { locationFinder }),
     ...(mapExtent && { mapExtent: mapExtent.join() }),
     ...(mediaType && { mediaType }),
