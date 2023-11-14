@@ -82,10 +82,11 @@
           disabledUiFeatures: disabledUiFeatures && disabledUiFeatures.split(',')
         });
       },
-      showPage ({ page, expandNavigator, highlightGlobalId }) {
+      showPage ({ page, expandNavigator, highlightGlobalId, labelSet }) {
         cadenzaClient.show({ page: page }, {
           expandNavigator: (expandNavigator === 'on'),
-          highlightGlobalId
+          highlightGlobalId,
+          labelSet
         });
       },
       expandNavigator ({ expandNavigator }) {
@@ -246,6 +247,10 @@
   <div>
     <label for="highlightGlobalId">Highlighted Global ID</label>
     <input name="highlightGlobalId" id="highlightGlobalId">
+  </div>
+  <div>
+    <label for="labelSet">Label Set</label>
+    <input name="labelSet" id="labelSet">
   </div>
 </template>
 

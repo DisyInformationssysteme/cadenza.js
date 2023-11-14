@@ -310,7 +310,7 @@ By default, the sandbox expects Cadenza to run on http://localhost:8080/cadenza.
 
 * Pass an argument:
   ```bash
-  npm run sandbox --cadenza-url http://localhost:8000/my-cadenza
+  npm run sandbox -- --cadenza-url http://localhost:8000/my-cadenza
   ```
 * Set an environment variable:
   ```bash
