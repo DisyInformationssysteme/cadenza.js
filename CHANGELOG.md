@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `labelSet` option for `CadenzaClient#showPage`
 
+### Changed
+- Made sandbox CLI more tolerant: The Cadenza URL can now also be passed with a '=' between `--cadenza-url` and the url.
+
 ## 1.4.0 - 2023-11-14
 ### Added
 - Documentation for the development sandbox
