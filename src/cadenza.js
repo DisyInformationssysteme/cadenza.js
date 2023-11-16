@@ -86,6 +86,9 @@ globalThis.cadenza = Object.assign(
 /** @typedef {'columns' | 'values' | 'totals'} TablePart - A part of a table to export. */
 
 /**
+ * @typedef {Record<string, string | number | Date>} FilterVariables - Filter variable values
+ */
+/**
  * _Notes:_
  * * Most public methods can be aborted using an [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal).
  *   When aborted, the result Promise is rejected with an {@link AbortError}.
@@ -182,6 +185,8 @@ export class CadenzaClient {
    * @param {object} [options]
    * @param {UiFeature[]} [options.disabledUiFeatures] - Cadenza UI features to disable
    * @param {boolean} [options.expandNavigator] - Indicates if the navigator should be expanded.
+   * @param {FilterVariables} [options.filter] - Filter variables. The keys should contain the
+   *     filter variable names and the values the filter variable values.
    * @param {boolean} [options.hideMainHeaderAndFooter] - Whether to hide the main Cadenza header and footer
    * @param {boolean} [options.hideWorkbookToolBar] - Whether to hide the workbook toolbar
    * @param {GlobalId} [options.highlightGlobalId] - The ID of an item to highlight / expand in the navigator
@@ -198,6 +203,7 @@ export class CadenzaClient {
     {
       disabledUiFeatures,
       expandNavigator,
+      filter,
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
       highlightGlobalId,
@@ -222,6 +228,7 @@ export class CadenzaClient {
     const params = createParams({
       disabledUiFeatures,
       expandNavigator,
+      filter,
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
       highlightGlobalId,
@@ -240,6 +247,8 @@ export class CadenzaClient {
    * @param {object} [options] - Options
    * @param {UiFeature[]} [options.disabledUiFeatures] - Cadenza UI features to disable
    * @param {boolean} [options.expandNavigator] - Indicates if the navigator should be expanded.
+   * @param {FilterVariables} [options.filter] - Filter variables. The keys should contain the
+   *     filter variable names and the values the filter variable values.
    * @param {Geometry} [options.geometry] - A geometry to show on the map
    * @param {boolean} [options.hideMainHeaderAndFooter] - Whether to hide the main Cadenza header and footer
    * @param {boolean} [options.hideWorkbookToolBar] - Whether to hide the workbook toolbar
@@ -257,6 +266,7 @@ export class CadenzaClient {
     {
       disabledUiFeatures,
       expandNavigator,
+      filter,
       geometry,
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
@@ -275,6 +285,7 @@ export class CadenzaClient {
     const params = createParams({
       disabledUiFeatures,
       expandNavigator,
+      filter,
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
       highlightGlobalId,
@@ -584,7 +595,7 @@ function resolvePath(
 ) {
   if (typeof source === 'string') {
     assert(
-      validEmbeddingTargetId(source),
+      validKebabCaseString(source),
       `Invalid embedding target ID: ${source}`,
     );
     return `/w/${source}`;
@@ -636,7 +647,7 @@ function validPageName(/** @type string */ value) {
   return ['welcome'].includes(value);
 }
 
-function validEmbeddingTargetId(/** @type string */ value) {
+function validKebabCaseString(/** @type string */ value) {
   return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value);
 }
 
@@ -709,6 +720,8 @@ function assertSupportedMediaType(
  * @param {UiFeature[]} [params.disabledUiFeatures]
  * @param {boolean} [params.expandNavigator]
  * @param {string} [params.fileName]
+ * @param {FilterVariables} [params.filter] - Filter variables. The keys should contain the filter
+ *     variable names and the values the filter variable values.
  * @param {GeometryType} [params.geometryType]
  * @param {boolean} [params.hideMainHeaderAndFooter]
  * @param {boolean} [params.hideWorkbookToolBar]
@@ -726,8 +739,10 @@ function assertSupportedMediaType(
  */
 function createParams({
   action,
+  disabledUiFeatures,
   expandNavigator,
   fileName,
+  filter,
   geometryType,
   hideMainHeaderAndFooter,
   hideWorkbookToolBar,
@@ -741,7 +756,6 @@ function createParams({
   useMapSrs,
   webApplication,
   operationMode,
-  disabledUiFeatures,
 }) {
   if (disabledUiFeatures) {
     disabledUiFeatures.forEach((feature) =>
@@ -760,6 +774,14 @@ function createParams({
   if (parts) {
     parts.forEach((part) =>
       assert(validTablePart(part), `Invalid table part: ${part}`),
+    );
+  }
+  if (filter) {
+    Object.keys(filter).forEach((varName) =>
+      assert(
+        validKebabCaseString(varName),
+        `Invalid filter variable name: ${varName}`,
+      ),
     );
   }
   return new URLSearchParams({
@@ -785,6 +807,13 @@ function createParams({
       webApplicationLink: webApplication.externalLinkId,
       webApplicationLinkRepository: webApplication.repositoryName,
     }),
+    ...(filter &&
+      Object.fromEntries(
+        Object.entries(filter).map(([variable, value]) => [
+          `filter.${variable}`,
+          JSON.stringify(value instanceof Date ? value.toISOString() : value),
+        ]),
+      )),
   });
 }
 

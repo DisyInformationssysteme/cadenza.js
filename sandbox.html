@@ -129,7 +129,8 @@
       minScale,
       parts,
       simplifiedOperationMode,
-      useMapSrs
+      useMapSrs,
+      filter
     }) {
       return {
         disabledUiFeatures: disabledUiFeatures && disabledUiFeatures.split(','),
@@ -145,8 +146,21 @@
         minScale,
         parts: parts && parts.split(','),
         ...(simplifiedOperationMode === 'on' && { operationMode: 'simplified' }),
-        useMapSrs: useMapSrs === 'on'
+        useMapSrs: useMapSrs === 'on',
+        filter: filter && parseFilterVariables(filter)
       };
+    }
+
+    function parseFilterVariables (filterString) {
+      return JSON.parse(filterString, (_, value) => {
+        if (value === '{{currentDate}}') { // convenience for current date
+          return new Date();
+        }
+        if (value.match?.(/....-..-..T..:..:..\....Z/)) {
+          return new Date(value);
+        }
+        return value;
+      });
     }
   </script>
 </head>
@@ -211,6 +225,10 @@
   <div>
     <label for="disabledUiFeatures">Disabled UI features</label>
     <input name="disabledUiFeatures" id="disabledUiFeatures" placeholder="feature1,feature2...">
+  </div>
+  <div>
+    <label for="filter">Filter</label>
+    <input name="filter" id="filter" placeholder='{ "textvar": "foo", "numbervar": 42.0, "datevar1": "2000-01-01T00.000Z", "datevar2": "{{currentDate}}" }'>
   </div>
 </template>
 
