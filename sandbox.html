@@ -80,7 +80,7 @@
     const actionHandlers = {
       show: data => cadenzaClient.show(data.embeddingTargetId, getOptions(data)),
       showPage: data => cadenzaClient.show({ page: data.page }, getOptions(data)),
-      expandNavigator: data => cadenzaClient.expandNavigator(getOptions(data)),
+      expandNavigator: data => cadenzaClient.expandNavigator(data.expandNavigator === 'on'),
       showMap: data => cadenzaClient.showMap(data.embeddingTargetId, getOptions(data)),
       createGeometry: data => cadenzaClient.createGeometry(data.embeddingTargetId, data.geometryType, getOptions(data)),
       editGeometry: data => cadenzaClient.editGeometry(data.embeddingTargetId, JSON.parse(data.geometry), getOptions(data)),
@@ -267,12 +267,6 @@
       <option>welcome</option>
       <option>an-invalid-page-name</option>
     </select>
-  </div>
-  <div>
-    <label>
-      <input type="checkbox" name="expandNavigator">
-      Expand navigator tree
-    </label>
   </div>
   <div>
     <label for="labelSet">Label Set</label>
