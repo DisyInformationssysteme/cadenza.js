@@ -778,7 +778,7 @@ function createParams({
     ...(mapExtent && { mapExtent: mapExtent.join() }),
     ...(mediaType && { mediaType }),
     ...(minScale && { minScale: String(minScale) }),
-    ...(operationMode && { operationMode }),
+    ...(operationMode !== 'normal' && { operationMode }),
     ...(parts && { parts: parts.join() }),
     ...(useMapSrs && { useMapSrs: 'true' }),
     ...(webApplication && {

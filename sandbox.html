@@ -41,7 +41,7 @@
     label {
       font-weight: 600;
     }
-    select, input:is(:not([type]), [type=text], [type=number]), textarea {
+    select, input:is(:not([type]), [type=text], [type=number]), textarea, hr {
       display: block;
       width: 100%
     }
@@ -57,6 +57,12 @@
       const action = actionSelect.value;
       const settingsTemplate = document.querySelector(`[data-action=${action}]`);
       settingsContainer.append(settingsTemplate.content.cloneNode(true));
+      const commonSettingsTemplate = document.getElementById(`common-${settingsTemplate.dataset.common}`);
+      if (commonSettingsTemplate) {
+        settingsContainer.append(
+          document.createElement('hr'),
+          commonSettingsTemplate.content.cloneNode(true));
+      }
 
       const data = localStorage.getItem(`cadenzajs-sandbox-${action}`);
       if (data) {
@@ -72,64 +78,17 @@
       ?? location.pathname.slice(0, location.pathname.indexOf('/sandbox'));
     const cadenzaClient = cadenza(location.origin + contextPath, { iframe: 'iframe', debug: true });
     const actionHandlers = {
-      show ({ embeddingTargetId, expandNavigator, hideMainHeaderAndFooter, hideWorkbookToolBar, jasperReportAsPdf, highlightGlobalId, operationMode, disabledUiFeatures }) {
-        cadenzaClient.show(embeddingTargetId, {
-          expandNavigator: (expandNavigator === 'on'),
-          hideMainHeaderAndFooter: (hideMainHeaderAndFooter === 'on'),
-          hideWorkbookToolBar: (hideWorkbookToolBar === 'on'),
-          highlightGlobalId,
-          ...(jasperReportAsPdf === 'on' && { mediaType: 'application/pdf' }),
-          ...(operationMode === 'on' && { operationMode: 'normal' }),
-          disabledUiFeatures: disabledUiFeatures && disabledUiFeatures.split(',')
-        });
-      },
-      showPage ({ page, expandNavigator, highlightGlobalId, labelSet }) {
-        cadenzaClient.show({ page: page }, {
-          expandNavigator: (expandNavigator === 'on'),
-          highlightGlobalId,
-          labelSet
-        });
-      },
-      expandNavigator ({ expandNavigator }) {
-        cadenzaClient.expandNavigator(expandNavigator === 'on');
-      },
-      showMap ({ embeddingTargetId, useMapSrs, geometry, mapExtent, locationFinder, highlightGlobalId }) {
-        cadenzaClient.showMap(embeddingTargetId, {
-          useMapSrs: useMapSrs === 'on',
-          geometry: geometry && JSON.parse(geometry),
-          mapExtent: mapExtent && mapExtent.split(','),
-          locationFinder,
-          highlightGlobalId
-        });
-      },
-      createGeometry ({ embeddingTargetId, geometryType, useMapSrs, minScale, mapExtent, locationFinder }) {
-        cadenzaClient.createGeometry(embeddingTargetId, geometryType, {
-          useMapSrs: useMapSrs === 'on',
-          minScale,
-          mapExtent: mapExtent && mapExtent.split(','),
-          locationFinder
-        });
-      },
-      editGeometry ({ embeddingTargetId, geometry, useMapSrs, minScale, mapExtent, locationFinder }) {
-        cadenzaClient.editGeometry(embeddingTargetId, JSON.parse(geometry), {
-          useMapSrs: useMapSrs === 'on',
-          minScale,
-          mapExtent: mapExtent && mapExtent.split(','),
-          locationFinder
-        });
-      },
-      fetchData ({ embeddingTargetId, mediaType, parts }) {
+      show: data => cadenzaClient.show(data.embeddingTargetId, getOptions(data)),
+      showPage: data => cadenzaClient.show({ page: data.page }, getOptions(data)),
+      expandNavigator: data => cadenzaClient.expandNavigator(getOptions(data)),
+      showMap: data => cadenzaClient.showMap(data.embeddingTargetId, getOptions(data)),
+      createGeometry: data => cadenzaClient.createGeometry(data.embeddingTargetId, data.geometryType, getOptions(data)),
+      editGeometry: data => cadenzaClient.editGeometry(data.embeddingTargetId, JSON.parse(data.geometry), getOptions(data)),
+      fetchData: data => {
         console.log('Inspect the fetchData() request in the devtools.');
-        cadenzaClient.fetchData(embeddingTargetId, mediaType, {
-          parts: parts && parts.split(',')
-        });
+        cadenzaClient.fetchData(data.embeddingTargetId, data.mediaType, getOptions(data));
       },
-      downloadData ({ embeddingTargetId, mediaType, fileName, parts }) {
-        cadenzaClient.downloadData(embeddingTargetId, mediaType, {
-          fileName,
-          parts: parts && parts.split(',')
-        });
-      }
+      downloadData: data => cadenzaClient.downloadData(data.embeddingTargetId, data.mediaType, getOptions(data))
     };
 
     const form = document.getElementById('form');
@@ -154,6 +113,40 @@
           }
         }
       }
+    }
+
+    function getOptions ({
+      disabledUiFeatures,
+      expandNavigator,
+      geometry,
+      hideMainHeaderAndFooter,
+      hideWorkbookToolBar,
+      highlightGlobalId,
+      jasperReportAsPdf,
+      labelSet,
+      locationFinder,
+      mapExtent,
+      minScale,
+      parts,
+      simplifiedOperationMode,
+      useMapSrs
+    }) {
+      return {
+        disabledUiFeatures: disabledUiFeatures && disabledUiFeatures.split(','),
+        expandNavigator: (expandNavigator === 'on'),
+        geometry: geometry && JSON.parse(geometry),
+        hideMainHeaderAndFooter: (hideMainHeaderAndFooter === 'on'),
+        hideWorkbookToolBar: (hideWorkbookToolBar === 'on'),
+        highlightGlobalId,
+        ...(jasperReportAsPdf === 'on' && { mediaType: 'application/pdf' }),
+        labelSet,
+        locationFinder,
+        mapExtent: mapExtent && mapExtent.split(','),
+        minScale,
+        parts: parts && parts.split(','),
+        ...(simplifiedOperationMode === 'on' && { operationMode: 'simplified' }),
+        useMapSrs: useMapSrs === 'on'
+      };
     }
   </script>
 </head>
@@ -186,17 +179,7 @@
   <iframe id="iframe"></iframe>
 </main>
 
-<template data-action="show">
-  <div>
-    <label for="embeddingTargetId">Embedding target ID *</label>
-    <input name="embeddingTargetId" id="embeddingTargetId" required>
-  </div>
-  <div>
-    <label>
-      <input type="checkbox" name="jasperReportAsPdf" id="jasperReportAsPdf"/>
-      Show Jasper Report as PDF
-    </label>
-  </div>
+<template id="common-show">
   <div>
     <label>
       <input type="checkbox" name="expandNavigator">
@@ -217,8 +200,8 @@
   </div>
   <div>
     <label>
-      <input type="checkbox" name="operationMode">
-      Enable simplified operation mode
+      <input type="checkbox" name="simplifiedOperationMode">
+      Simplified operation mode
     </label>
   </div>
   <div>
@@ -231,7 +214,53 @@
   </div>
 </template>
 
-<template data-action="showPage">
+<template id="common-map">
+  <div>
+    <label>
+      <input type="checkbox" name="useMapSrs">
+      Use map SRS
+    </label>
+  </div>
+  <div>
+    <label for="mapExtent">Map extent coordinates</label>
+    <input name="mapExtent" id="mapExtent" placeholder="minX,minY,maxX,maxY">
+  </div>
+  <div>
+    <label for="locationFinder">Location finder search query</label>
+    <input name="locationFinder" id="locationFinder">
+  </div>
+</template>
+
+<template id="common-data">
+  <div>
+    <label for="mediaType">Media type *</label>
+    <select name="mediaType" id="mediaType" required>
+      <option>text/csv</option>
+      <option>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</option>
+      <option>application/json</option>
+      <option>application/pdf</option>
+    </select>
+  </div>
+  <div>
+    <label for="parts">Parts</label>
+    <input name="parts" id="parts" placeholder="columns,values,totals">
+  </div>
+</template>
+
+<template data-action="show" data-common="show">
+  <div>
+    <label for="embeddingTargetId">Embedding target ID *</label>
+    <input name="embeddingTargetId" id="embeddingTargetId" required>
+  </div>
+  <div>
+    <label>
+      <input type="checkbox" name="jasperReportAsPdf" id="jasperReportAsPdf"/>
+      Show Jasper Report as PDF
+    </label>
+  </div>
+</template>
+
+<template data-action="showPage" data-common="show">
   <div>
     <label for="page">Page *</label>
     <select name="page" id="page" required>
@@ -244,10 +273,6 @@
       <input type="checkbox" name="expandNavigator">
       Expand navigator tree
     </label>
-  </div>
-  <div>
-    <label for="highlightGlobalId">Highlighted Global ID</label>
-    <input name="highlightGlobalId" id="highlightGlobalId">
   </div>
   <div>
     <label for="labelSet">Label Set</label>
@@ -264,45 +289,21 @@
   </div>
 </template>
 
-<template data-action="showMap">
+<template data-action="showMap" data-common="show">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
-  </div>
-  <div>
-    <label>
-      <input type="checkbox" name="useMapSrs">
-      Use map SRS
-    </label>
   </div>
   <div>
     <label for="geometry">Geometry (GeoJSON)</label>
     <textarea name="geometry" id="geometry" rows="5"></textarea>
   </div>
-  <div>
-    <label for="mapExtent">Map extent coordinates</label>
-    <input name="mapExtent" id="mapExtent" placeholder="minX,minY,maxX,maxY">
-  </div>
-  <div>
-    <label for="locationFinder">Location finder search query</label>
-    <input name="locationFinder" id="locationFinder">
-  </div>
-  <div>
-    <label for="highlightGlobalId">Highlighted Global ID</label>
-    <input name="highlightGlobalId" id="highlightGlobalId">
-  </div>
 </template>
 
-<template data-action="createGeometry">
+<template data-action="createGeometry" data-common="map">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
-  </div>
-  <div>
-    <label>
-      <input type="checkbox" name="useMapSrs">
-      Use map SRS
-    </label>
   </div>
   <div>
     <label for="geometryType">Geometry type</label>
@@ -319,26 +320,12 @@
     <label for="minScale">Minimum Scale</label>
     <input type="number" name="minScale" id="minScale">
   </div>
-  <div>
-    <label for="mapExtent">Map extent coordinates</label>
-    <input name="mapExtent" id="mapExtent" placeholder="minX,minY,maxX,maxY">
-  </div>
-  <div>
-    <label for="locationFinder">Location finder search query</label>
-    <input name="locationFinder" id="locationFinder">
-  </div>
 </template>
 
-<template data-action="editGeometry">
+<template data-action="editGeometry" data-common="map">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
-  </div>
-  <div>
-    <label>
-      <input type="checkbox" name="useMapSrs">
-      Use map SRS
-    </label>
   </div>
   <div>
     <label for="geometry">Geometry (GeoJSON) *</label>
@@ -348,33 +335,12 @@
     <label for="minScale">Minimum Scale</label>
     <input type="number" name="minScale" id="minScale">
   </div>
-  <div>
-    <label for="mapExtent">Map extent coordinates</label>
-    <input name="mapExtent" id="mapExtent" placeholder="minX,minY,maxX,maxY">
-  </div>
-  <div>
-    <label for="locationFinder">Location finder search query</label>
-    <input name="locationFinder" id="locationFinder">
-  </div>
 </template>
 
-<template data-action="downloadData">
+<template data-action="downloadData" data-common="data">
   <div>
     <label for="embeddingTargetId">Embedding target ID *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
-  </div>
-  <div>
-    <label for="parts">Parts</label>
-    <input name="parts" id="parts" placeholder="columns,values,totals">
-  </div>
-  <div>
-    <label for="mediaType">Media type *</label>
-    <select name="mediaType" id="mediaType" required>
-      <option>text/csv</option>
-      <option>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</option>
-      <option>application/json</option>
-      <option>application/pdf</option>
-    </select>
   </div>
   <div>
     <label for="fileName">Filename</label>
@@ -382,23 +348,10 @@
   </div>
 </template>
 
-<template data-action="fetchData">
+<template data-action="fetchData" data-common="data">
   <div>
     <label for="embeddingTargetId">Embedding target ID *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
-  </div>
-  <div>
-    <label for="parts">Parts</label>
-    <input name="parts" id="parts" placeholder="columns,values,totals">
-  </div>
-  <div>
-    <label for="mediaType">Media type *</label>
-    <select name="mediaType" id="mediaType" required>
-      <option>text/csv</option>
-      <option>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</option>
-      <option>application/json</option>
-      <option>application/pdf</option>
-    </select>
   </div>
 </template>
 
