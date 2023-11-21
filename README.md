@@ -71,14 +71,17 @@ const cadenza = window.cadenza.noConflict();
 
 <small>API: [CadenzaClient#show](./classes/CadenzaClient.html#show)</small>
 
-Show an embedding target in an iframe and hide Cadenza's main header and footer as well as the workbook toolbar. Additionally, enable simplified operation mode and disable the designer.
+Show an embedding target in an iframe and hide Cadenza's main header and footer as well as the workbook toolbar. Additionally, enable simplified operation mode, disable the designer and set the filter variable "var1" to "foo".
 
 ```javascript
 cadenzaClient.show('{embeddingTargetId}', {
   hideMainHeaderAndFooter: true,
   hideWorkbookToolBar: true,
   operationMode: 'simplified',
-  disabledUiFeatures: ['workbook-design']
+  disabledUiFeatures: ['workbook-design'],
+  filter: {
+    var1: 'foo'
+  }
 });
 ```
 
