@@ -28,7 +28,21 @@
     form, fieldset {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 12px;
+    }
+    fieldset > div {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    fieldset small {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      & > * {
+        margin-block: 0;
+      }
     }
     main {
       flex: 1;
@@ -57,11 +71,13 @@
       const action = actionSelect.value;
       const settingsTemplate = document.querySelector(`[data-action=${action}]`);
       settingsContainer.append(settingsTemplate.content.cloneNode(true));
-      const commonSettingsTemplate = document.getElementById(`common-${settingsTemplate.dataset.common}`);
-      if (commonSettingsTemplate) {
-        settingsContainer.append(
-          document.createElement('hr'),
-          commonSettingsTemplate.content.cloneNode(true));
+      if (settingsTemplate.dataset.common) {
+        settingsTemplate.dataset.common.split(',').forEach(commonId => {
+          const commonSettingsTemplate = document.getElementById(`common-${commonId}`);
+          settingsContainer.append(
+            document.createElement('hr'),
+            commonSettingsTemplate.content.cloneNode(true));
+        })
       }
 
       const data = localStorage.getItem(`cadenzajs-sandbox-${action}`);
@@ -118,6 +134,7 @@
     function getOptions ({
       disabledUiFeatures,
       expandNavigator,
+      filter,
       geometry,
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
@@ -129,12 +146,12 @@
       minScale,
       parts,
       simplifiedOperationMode,
-      useMapSrs,
-      filter
+      useMapSrs
     }) {
       return {
         disabledUiFeatures: disabledUiFeatures && disabledUiFeatures.split(','),
         expandNavigator: (expandNavigator === 'on'),
+        filter: filter && parseFilterVariables(filter),
         geometry: geometry && JSON.parse(geometry),
         hideMainHeaderAndFooter: (hideMainHeaderAndFooter === 'on'),
         hideWorkbookToolBar: (hideWorkbookToolBar === 'on'),
@@ -146,8 +163,7 @@
         minScale,
         parts: parts && parts.split(','),
         ...(simplifiedOperationMode === 'on' && { operationMode: 'simplified' }),
-        useMapSrs: useMapSrs === 'on',
-        filter: filter && parseFilterVariables(filter)
+        useMapSrs: useMapSrs === 'on'
       };
     }
 
@@ -224,11 +240,25 @@
   </div>
   <div>
     <label for="disabledUiFeatures">Disabled UI features</label>
-    <input name="disabledUiFeatures" id="disabledUiFeatures" placeholder="feature1,feature2...">
+    <input name="disabledUiFeatures" id="disabledUiFeatures" placeholder="feature1,feature2,...">
+
+    <small>
+      <p>Comma-separated list of features</p>
+
+      Supported features:
+      <ul>
+        <li>workbook-design</li>
+        <li>workbook-view-management</li>
+      </ul>
+    </small>
   </div>
   <div>
     <label for="filter">Filter</label>
-    <input name="filter" id="filter" placeholder='{ "textvar": "foo", "numbervar": 42.0, "datevar1": "2000-01-01T00.000Z", "datevar2": "{{currentDate}}" }'>
+    <textarea name="filter" id="filter" rows="3"></textarea>
+    <small>
+      <p>A JSON object with filter variable names and values</p>
+      <p>Dates need to be ISO strings<br>(e.g. <code>"2023-11-17T17:12:06.175Z"</code>).<br>Use <code>"{{currentDate}}"</code> for the current date.</p>
+    </small>
   </div>
 </template>
 
@@ -301,7 +331,7 @@
   </div>
 </template>
 
-<template data-action="showMap" data-common="show">
+<template data-action="showMap" data-common="map,show">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
