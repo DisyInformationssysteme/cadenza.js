@@ -78,12 +78,8 @@ globalThis.cadenza = Object.assign(
  */
 /** @typedef {[number,number,number,number]} Extent - An array of numbers representing an extent: [minx, miny, maxx, maxy] */
 
-/**
- * @typedef {string} MediaType - A media type
- *
- * See {@link https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types}
- */
-/** @typedef {'columns' | 'values' | 'totals'} TablePart - A part of a table to export. */
+/** @typedef {'csv' | 'excel' | 'json' | 'pdf'} DataType - A data type */
+/** @typedef {'columns' | 'values' | 'totals'} TablePart - A part of a table to export */
 /** @typedef {Record<string, string | number | Date>} FilterVariables - Filter variable names and values */
 /**
  * _Notes:_
@@ -180,6 +176,8 @@ export class CadenzaClient {
    *
    * @param {PageSource | WorkbookSource | WorksheetSource | WorkbookViewSource} source - The source to show
    * @param {object} [options]
+   * @param {DataType} [options.dataType] - Set to 'pdf' for views of type "JasperReports report"
+   *     to show the report PDF directly, without any Cadenza headers or footers.
    * @param {UiFeature[]} [options.disabledUiFeatures] - Cadenza UI features to disable
    * @param {boolean} [options.expandNavigator] - Indicates if the navigator should be expanded.
    * @param {FilterVariables} [options.filter] - Filter variables
@@ -187,8 +185,6 @@ export class CadenzaClient {
    * @param {boolean} [options.hideWorkbookToolBar] - Whether to hide the workbook toolbar
    * @param {GlobalId} [options.highlightGlobalId] - The ID of an item to highlight / expand in the navigator
    * @param {String} [options.labelSet] - The name of a label set defined in the `basicweb-config.xml` (only supported for the welcome page)
-   * @param {MediaType} [options.mediaType] - Set to 'application/pdf' for views of type "JasperReports report"
-   *     to show the report PDF directly, without any Cadenza headers or footers.
    * @param {OperationMode} [options.operationMode] - The mode in which a workbook should be operated
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A Promise for when the iframe is loaded
@@ -197,6 +193,7 @@ export class CadenzaClient {
   show(
     source,
     {
+      dataType,
       disabledUiFeatures,
       expandNavigator,
       filter,
@@ -204,14 +201,13 @@ export class CadenzaClient {
       hideWorkbookToolBar,
       highlightGlobalId,
       labelSet,
-      mediaType,
       operationMode,
       signal,
     } = {},
   ) {
     this.#log('CadenzaClient#show', source);
-    if (mediaType) {
-      assertSupportedMediaType(mediaType, [MediaType.PDF]);
+    if (dataType) {
+      assertSupportedDataType(dataType, ['pdf']);
     }
     if (labelSet) {
       assert(
@@ -229,7 +225,7 @@ export class CadenzaClient {
       hideWorkbookToolBar,
       highlightGlobalId,
       labelSet,
-      mediaType,
+      dataType,
       operationMode,
       webApplication: this.#webApplication,
     });
@@ -495,21 +491,17 @@ export class CadenzaClient {
    * Fetch data from a workbook view.
    *
    * @param {WorkbookViewSource} source - The workbook view to fetch data from
-   * @param {MediaType} mediaType - The media type to use for the data. Allowed are:
-   * * 'application/json'
-   * * 'application/pdf' (for Jasper Report views)
-   * * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' (Excel)
-   * * 'text/csv'
+   * @param {DataType} dataType - The data type you want to get back from the server
    * @param {object} options - Options
    * @param {TablePart[]} [options.parts] - Table parts to export; If not specified, all parts are exported.
    * @param {AbortSignal} [options.signal] - A signal to abort the data fetching
    * @return {Promise<Response>} A Promise for the fetch response
    * @throws For invalid arguments
    */
-  fetchData(source, mediaType, { parts, signal } = {}) {
-    this.#log('CadenzaClient#fetchData', source, mediaType);
-    assertSupportedMediaType(mediaType);
-    const params = createParams({ mediaType, parts });
+  fetchData(source, dataType, { parts, signal } = {}) {
+    this.#log('CadenzaClient#fetchData', source, dataType);
+    assertSupportedDataType(dataType);
+    const params = createParams({ dataType, parts });
     return this.#fetch(resolvePath(source), params, signal);
   }
 
@@ -539,20 +531,16 @@ export class CadenzaClient {
    * _Note:_ The file name, if not provided, is generated from the name of the workbook view and the current date.
    *
    * @param {WorkbookViewSource} source - The workbook view to download data from
-   * @param {MediaType} mediaType - The media type to use for the data. Allowed are:
-   * * 'application/json'
-   * * 'application/pdf' (for Jasper Report views)
-   * * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' (Excel)
-   * * 'text/csv'
+   * @param {DataType} dataType - The data type you want to get back from the server
    * @param {object} options - Options
    * @param {string} [options.fileName] - The file name to use; The file extension is appended by Cadenza.
    * @param {TablePart[]} [options.parts] - Table parts to export; If not specified, all parts are exported.
    * @throws For invalid arguments
    */
-  downloadData(source, mediaType, { fileName, parts }) {
-    this.#log('CadenzaClient#downloadData', source, mediaType);
-    assertSupportedMediaType(mediaType);
-    const params = createParams({ fileName, mediaType, parts });
+  downloadData(source, dataType, { fileName, parts }) {
+    this.#log('CadenzaClient#downloadData', source, dataType);
+    assertSupportedDataType(dataType);
+    const params = createParams({ dataType, fileName, parts });
     this.#download(resolvePath(source), params);
   }
 
@@ -695,23 +683,17 @@ function validUiFeature(/** @type string */ value) {
   return ['workbook-design', 'workbook-view-management'].includes(value);
 }
 
-const MediaType = /** @type {Record<string, MediaType>} */ {
-  CSV: 'text/csv',
-  EXCEL: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  JSON: 'application/json',
-  PDF: 'application/pdf',
-};
-
-function assertSupportedMediaType(
-  /** @type MediaType */ type,
-  /** @type MediaType[] */ supportedTypes = Object.values(MediaType),
+function assertSupportedDataType(
+  /** @type DataType */ type,
+  /** @type DataType[] */ supportedTypes = ['csv', 'excel', 'json', 'pdf'], // default: All types are supported.
 ) {
-  assert(supportedTypes.includes(type), `Invalid media type: ${type}`);
+  assert(supportedTypes.includes(type), `Invalid data type: ${type}`);
 }
 
 /**
  * @param {object} params - Options
  * @param {string} [params.action]
+ * @param {DataType} [params.dataType]
  * @param {UiFeature[]} [params.disabledUiFeatures]
  * @param {boolean} [params.expandNavigator]
  * @param {string} [params.fileName]
@@ -723,7 +705,6 @@ function assertSupportedMediaType(
  * @param {string} [params.labelSet]
  * @param {string} [params.locationFinder]
  * @param {Extent} [params.mapExtent]
- * @param {MediaType} [params.mediaType]
  * @param {number} [params.minScale]
  * @param {OperationMode} [params.operationMode]
  * @param {TablePart[]} [params.parts]
@@ -733,6 +714,7 @@ function assertSupportedMediaType(
  */
 function createParams({
   action,
+  dataType,
   disabledUiFeatures,
   expandNavigator,
   fileName,
@@ -744,7 +726,6 @@ function createParams({
   labelSet,
   locationFinder,
   mapExtent,
-  mediaType,
   minScale,
   parts,
   useMapSrs,
@@ -780,6 +761,7 @@ function createParams({
   }
   return new URLSearchParams({
     ...(action && { action }),
+    ...(dataType && { dataType }),
     ...(disabledUiFeatures && {
       disabledUiFeatures: disabledUiFeatures.join(),
     }),
@@ -799,7 +781,6 @@ function createParams({
     ...(labelSet && { labelSet }),
     ...(locationFinder && { locationFinder }),
     ...(mapExtent && { mapExtent: mapExtent.join() }),
-    ...(mediaType && { mediaType }),
     ...(minScale && { minScale: String(minScale) }),
     ...(operationMode && operationMode !== 'normal' && { operationMode }),
     ...(parts && { parts: parts.join() }),

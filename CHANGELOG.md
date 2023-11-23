@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Common map options for "Show map" in the sandbox
 
+### Changed
+- Replaced `mediaType` with `dataType` throughout the whole library.
+
 ## 1.7.0 - 2023-11-21
 ### Added
 - `filter` option for `CadenzaClient#show` and `CadenzaClient#showMap`

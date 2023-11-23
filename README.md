@@ -90,11 +90,11 @@ cadenzaClient.show('{embeddingTargetId}', {
 
 #### Show the Generated PDF of a "JasperReports report" View Directly
 
-Views of type "JasperReports report" can be shown in an iframe like any other view. Additionally, there is an option to show only the generated PDF without any Cadenza footers or headers. This is done by setting the "mediaType" option to "application/pdf".
+Views of type "JasperReports report" can be shown in an iframe like any other view. Additionally, there is an option to show only the generated PDF without any Cadenza footers or headers. This is done by setting the "dataType" option to "pdf".
 
 ```javascript
 cadenzaClient.show('{embeddingTargetId}', {
-  mediaType: 'application/pdf'
+  dataType: 'pdf'
 });
 ```
 
@@ -254,7 +254,7 @@ cadenzaClient.expandNavigator();
 Fetch data from a workbook view in CSV format.
 
 ```javascript
-const response = await cadenzaClient.fetchData('{embeddingTargetId}', 'text/csv');
+const response = await cadenzaClient.fetchData('{embeddingTargetId}', 'csv');
 
 const text = await response.text();
 ...
@@ -265,10 +265,9 @@ const text = await response.text();
 Fetch data from a workbook view in JSON format and include only the data values and the aggregation totals. (Do not include the column names.)
 
 ```javascript
-const response = await cadenzaClient.fetchData(
-  '{embeddingTargetId}',
-  'application/json',
-  { parts: ['values', 'totals'] });
+const response = await cadenzaClient.fetchData('{embeddingTargetId}', 'json', {
+  parts: ['values', 'totals']
+});
 
 const tableData = await response.json();
 ...
@@ -283,11 +282,7 @@ Download data from a workbook view in Excel format. This triggers the browser's 
 ```javascript
 const button = document.createElement('button');
 button.textContent = 'Download Excel';
-
-button.onclick = (event) => {
-  cadenzaClient.downloadData('{embeddingTargetId}',
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-};
+button.onclick = () => cadenzaClient.downloadData('{embeddingTargetId}', 'excel');
 ```
 
 ## The Development Sandbox

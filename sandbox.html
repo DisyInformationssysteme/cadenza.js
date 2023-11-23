@@ -102,9 +102,9 @@
       editGeometry: data => cadenzaClient.editGeometry(data.embeddingTargetId, JSON.parse(data.geometry), getOptions(data)),
       fetchData: data => {
         console.log('Inspect the fetchData() request in the devtools.');
-        cadenzaClient.fetchData(data.embeddingTargetId, data.mediaType, getOptions(data));
+        cadenzaClient.fetchData(data.embeddingTargetId, data.dataType, getOptions(data));
       },
-      downloadData: data => cadenzaClient.downloadData(data.embeddingTargetId, data.mediaType, getOptions(data))
+      downloadData: data => cadenzaClient.downloadData(data.embeddingTargetId, data.dataType, getOptions(data))
     };
 
     const form = document.getElementById('form');
@@ -156,7 +156,7 @@
         hideMainHeaderAndFooter: (hideMainHeaderAndFooter === 'on'),
         hideWorkbookToolBar: (hideWorkbookToolBar === 'on'),
         highlightGlobalId,
-        ...(jasperReportAsPdf === 'on' && { mediaType: 'application/pdf' }),
+        ...(jasperReportAsPdf === 'on' && { dataType: 'pdf' }),
         labelSet,
         locationFinder,
         mapExtent: mapExtent && mapExtent.split(','),
@@ -281,12 +281,12 @@
 
 <template id="common-data">
   <div>
-    <label for="mediaType">Media type *</label>
-    <select name="mediaType" id="mediaType" required>
-      <option>text/csv</option>
-      <option>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</option>
-      <option>application/json</option>
-      <option>application/pdf</option>
+    <label for="dataType">Data type *</label>
+    <select name="dataType" id="dataType" required>
+      <option>csv</option>
+      <option>excel</option>
+      <option>json</option>
+      <option>pdf</option>
     </select>
   </div>
   <div>
