@@ -296,6 +296,13 @@ To run it ...
 
 The command starts a proxy server that serves the `sandbox.html` and `cadenza.js` files and proxies all other requests to the Cadenza server. Since that way the sandbox and Cadenza run on the same origin, embedding and `postMessage` communication just work.
 
+Alternatively ...
+
+* Set the system variable `"net.disy.cadenza.sandbox"` in Cadenza to enable the sandbox.
+* Now, `sandbox.html` is served on http://localhost:8080/cadenza/sandbox (replace with custom Cadenza url `/sandbox` as needed).
+
+`cadenza.js` is automatically served when Cadenza starts.
+
 ### The Sandbox UI
 
 `npm run sandbox` also opens the sandbox in a new browser window. Select the Cadenza JS method you want to play with in the select box at the top. For each method there are controls to define the parameters. Hit "Go!" to call the method.
