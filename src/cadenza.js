@@ -189,6 +189,10 @@ export class CadenzaClient {
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A Promise for when the iframe is loaded
    * @throws For invalid arguments
+   * @fires `drillThrough` - When the user executed a POST message drill-through.
+   *   The event includes a row of values for each row in the workbook selection, each row consisting of the values of
+   *   the attributes that were selected for the POST message content. If the drill-through was executed from a map
+   *   view, each row includes the geometry of the select object as the last value.
    */
   show(
     source,
@@ -251,6 +255,9 @@ export class CadenzaClient {
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A Promise for when the iframe is loaded
    * @throws For invalid arguments
+   * @fires `drillThrough` - When the user executed a POST message drill-through.
+   *   The event includes a row of values for each row in the workbook selection, each row consisting of the values of
+   *   the attributes that were selected for the POST message content plus the geometry of the select object as the last value.
    */
   async showMap(
     mapView,
