@@ -168,7 +168,7 @@
     }
 
     function parseFilterVariables (filterString) {
-      return JSON.parse(filterString, (_, value) => {
+      return JSON.parse(filterString.trim(), (_, value) => {
         if (value === '{{currentDate}}') { // convenience for current date
           return new Date();
         }
@@ -258,6 +258,7 @@
     <small>
       <p>A JSON object with filter variable names and values</p>
       <p>Dates need to be ISO strings<br>(e.g. <code>"2023-11-17T17:12:06.175Z"</code>).<br>Use <code>"{{currentDate}}"</code> for the current date.</p>
+      <p>Pass multiple values for an <code>IN</code> expression as <code>["a", "b", ...]</code></p>
     </small>
   </div>
 </template>
