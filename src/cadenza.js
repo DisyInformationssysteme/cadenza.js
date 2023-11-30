@@ -1,10 +1,14 @@
 /**
- * Creates a new Cadenza instance of the Cadenza JS client.
+ * Creates an instance of the Cadenza JS client.
  *
  * @param {string} baseUrl - The base URL of the Cadenza server
  * @param {object} [options] - Options
- * @param {HTMLIFrameElement | string} [options.iframe] - An iframe for embedding Cadenza or the iframe's ID
- * @param {ExternalLinkKey} [options.webApplication] - An external link that Cadenza uses to resolve the [target origin](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage#targetorigin) when posting events. This is required if Cadenza and your application are not running on the same origin.
+ * @param {HTMLIFrameElement | string} [options.iframe] - An iframe for embedding Cadenza or the iframe's ID.
+ *   The iframe is required only for methods that embed Cadenza in an iframe, so e.g. not for {@link CadenzaClient#fetchData}.
+ *   If you want to embed Cadenza in multiple iframes, you need to create an instance of the `CadenzaClient` per iframe.
+ * @param {ExternalLinkKey} [options.webApplication] - An external link that Cadenza uses to resolve the
+ *   [target origin](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage#targetorigin) when posting events.
+ *   This is required if Cadenza and your application are not running on the same origin.
  * @param {boolean} [options.debug] - Whether to enable debug logging
  * @throws For invalid arguments
  */
