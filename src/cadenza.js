@@ -473,7 +473,6 @@ export class CadenzaClient {
 
   // Use arrow function so that it's bound to this.
   #onMessage = (/** @type MessageEvent<CadenzaEvent<never>> */ event) => {
-    this.#log('Received message', event);
     if (
       event.origin !== this.#origin ||
       event.source !== this.#requiredIframe.contentWindow
@@ -482,6 +481,7 @@ export class CadenzaClient {
     }
 
     const cadenzaEvent = event.data;
+    this.#log('Received message', cadenzaEvent);
     this.#subscriptions.forEach(([type, subscriber]) => {
       if (type === cadenzaEvent.type) {
         subscriber(cadenzaEvent);
@@ -490,12 +490,12 @@ export class CadenzaClient {
   };
 
   #postEvent(/** @type string */ type, /** @type unknown */ detail) {
-    const event = { type, detail };
-    this.#log('postMessage', event);
+    const cadenzaEvent = { type, detail };
+    this.#log('postMessage', cadenzaEvent);
     const contentWindow = /** @type {WindowProxy} */ (
       this.#requiredIframe.contentWindow
     );
-    contentWindow.postMessage(event, { targetOrigin: this.#origin });
+    contentWindow.postMessage(cadenzaEvent, { targetOrigin: this.#origin });
   }
 
   /**
