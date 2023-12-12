@@ -134,6 +134,7 @@
     function getOptions ({
       disabledUiFeatures,
       expandNavigator,
+      fileName,
       filter,
       geometry,
       hideMainHeaderAndFooter,
@@ -151,6 +152,7 @@
       return {
         disabledUiFeatures: disabledUiFeatures && disabledUiFeatures.split(','),
         expandNavigator: (expandNavigator === 'on'),
+        fileName,
         filter: filter && parseFilterVariables(filter),
         geometry: geometry && JSON.parse(geometry),
         hideMainHeaderAndFooter: (hideMainHeaderAndFooter === 'on'),
