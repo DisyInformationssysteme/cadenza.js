@@ -332,12 +332,12 @@ By default, the sandbox expects Cadenza to run on http://localhost:8080/cadenza.
 |-------------------------------------|-----------|--------------------------|-------|
 | Text (String)                       | string    | `"Text"`                 | |
 | Number (Integer)                    | number    | `1`                      | |
-| Number (Long)                       | string    | `"1"`                    | The `Long` value range exceeds the range of the JSON `number` type. So it's represented as a string.
+| Number (Long)                       | string    | `"1"`                    | The Long value range exceeds the range of the JSON number type. So it's represented as a string.
 | Floating point number (Double)      | number    | `1.23`                   |
-| Floating point number (Big decimal) | string    | `"1.23"`                 | The `BigDecimal` value range exceeds the range of the JSON `number` type. So it's represented as a string. |
-| Date                                | string    | `"1999-12-31T23:00:00Z"` | A `Date` value is represented as an [ISO string in universal time](https://en.wikipedia.org/wiki/ISO_8601#Coordinated_Universal_Time_(UTC)) (UTC). |
-| Duration                            | number    | `1`                      | A `Duration` is represented by its numeric value. |
-| Geometry                            | object    | <pre lang="json">{<br>  "type": "Point"<br>  "coordinates": [125.6, 10.1]<br>}</pre> | A `Geometry` is represented as a [GeoJSON](https://geojson.org/) object.<br>_Note:_ By default, coordinates in GeoJSON use the WGS84 projection. |
+| Floating point number (Big decimal) | string    | `"1.23"`                 | The Big-Decimal value range exceeds the range of the JSON number type. So it's represented as a string. |
+| Date                                | string    | `"1999-12-31T23:00:00Z"` | A date is represented as an [ISO string in universal time](https://en.wikipedia.org/wiki/ISO_8601#Coordinated_Universal_Time_(UTC)) (UTC). |
+| Duration                            | number    | `1`                      | A duration is represented by its numeric value. |
+| Geometry                            | object    | <pre lang="json">{<br>  "type": "Point"<br>  "coordinates": [125.6, 10.1]<br>}</pre> | A geometry is represented as a [GeoJSON](https://geojson.org/) object.<br>_Note:_ By default, coordinates in GeoJSON use the WGS84 projection. |
 | IP address                          | string    | `"127.0.0.1"`            | |
 | URL                                 | string    | `"http://example.com"`   | |
 | LOB                                 | string    |                          | |
