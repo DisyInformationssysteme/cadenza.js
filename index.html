@@ -142,7 +142,7 @@ That&#39;s why the events use the <code>editGeometry</code> prefix.</p>
 <td>Number (Long)</td>
 <td>string</td>
 <td><code>&quot;1&quot;</code></td>
-<td>The <code>Long</code> value range exceeds the range of the JSON <code>number</code> type. So it&#39;s represented as a string.</td>
+<td>The Long value range exceeds the range of the JSON number type. So it&#39;s represented as a string.</td>
 </tr>
 <tr>
 <td>Floating point number (Double)</td>
@@ -154,25 +154,25 @@ That&#39;s why the events use the <code>editGeometry</code> prefix.</p>
 <td>Floating point number (Big decimal)</td>
 <td>string</td>
 <td><code>&quot;1.23&quot;</code></td>
-<td>The <code>BigDecimal</code> value range exceeds the range of the JSON <code>number</code> type. So it&#39;s represented as a string.</td>
+<td>The Big-Decimal value range exceeds the range of the JSON number type. So it&#39;s represented as a string.</td>
 </tr>
 <tr>
 <td>Date</td>
 <td>string</td>
 <td><code>&quot;1999-12-31T23:00:00Z&quot;</code></td>
-<td>A <code>Date</code> value is represented as an <a href="https://en.wikipedia.org/wiki/ISO_8601#Coordinated_Universal_Time_(UTC)">ISO string in universal time</a> (UTC).</td>
+<td>A date is represented as an <a href="https://en.wikipedia.org/wiki/ISO_8601#Coordinated_Universal_Time_(UTC)">ISO string in universal time</a> (UTC).</td>
 </tr>
 <tr>
 <td>Duration</td>
 <td>number</td>
 <td><code>1</code></td>
-<td>A <code>Duration</code> is represented by its numeric value.</td>
+<td>A duration is represented by its numeric value.</td>
 </tr>
 <tr>
 <td>Geometry</td>
 <td>object</td>
 <td><pre lang="json">{<br>  "type": "Point"<br>  "coordinates": [125.6, 10.1]<br>}</pre></td>
-<td>A <code>Geometry</code> is represented as a <a href="https://geojson.org/">GeoJSON</a> object.<br><em>Note:</em> By default, coordinates in GeoJSON use the WGS84 projection.</td>
+<td>A geometry is represented as a <a href="https://geojson.org/">GeoJSON</a> object.<br><em>Note:</em> By default, coordinates in GeoJSON use the WGS84 projection.</td>
 </tr>
 <tr>
 <td>IP address</td>
