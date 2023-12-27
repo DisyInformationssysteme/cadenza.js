@@ -127,28 +127,40 @@ That&#39;s why the events use the <code>editGeometry</code> prefix.</p>
 </tr>
 </thead>
 <tbody><tr>
-<td>BigDecimal</td>
+<td>Text (String)</td>
+<td>string</td>
+<td><code>&quot;Text&quot;</code></td>
+<td></td>
+</tr>
+<tr>
+<td>Number (Integer)</td>
+<td>number</td>
+<td><code>1</code></td>
+<td></td>
+</tr>
+<tr>
+<td>Number (Long)</td>
+<td>string</td>
+<td><code>&quot;1&quot;</code></td>
+<td>The <code>Long</code> value range exceeds the range of the JSON <code>number</code> type. So it&#39;s represented as a string.</td>
+</tr>
+<tr>
+<td>Floating point number (Double)</td>
+<td>number</td>
+<td><code>1.23</code></td>
+<td></td>
+</tr>
+<tr>
+<td>Floating point number (Big decimal)</td>
 <td>string</td>
 <td><code>&quot;1.23&quot;</code></td>
 <td>The <code>BigDecimal</code> value range exceeds the range of the JSON <code>number</code> type. So it&#39;s represented as a string.</td>
 </tr>
 <tr>
-<td>Boolean</td>
-<td>boolean</td>
-<td><code>true</code></td>
-<td></td>
-</tr>
-<tr>
 <td>Date</td>
 <td>string</td>
 <td><code>&quot;1999-12-31T23:00:00Z&quot;</code></td>
-<td>A <code>Date</code> value is represented as an <a href="https://en.wikipedia.org/wiki/ISO_8601#Coordinated_Universal_Time_(UTC)">ISO string in universal time</a>.</td>
-</tr>
-<tr>
-<td>Double</td>
-<td>number</td>
-<td><code>1.23</code></td>
-<td></td>
+<td>A <code>Date</code> value is represented as an <a href="https://en.wikipedia.org/wiki/ISO_8601#Coordinated_Universal_Time_(UTC)">ISO string in universal time</a> (UTC).</td>
 </tr>
 <tr>
 <td>Duration</td>
@@ -163,39 +175,21 @@ That&#39;s why the events use the <code>editGeometry</code> prefix.</p>
 <td>A <code>Geometry</code> is represented as a <a href="https://geojson.org/">GeoJSON</a> object.<br><em>Note:</em> By default, coordinates in GeoJSON use the WGS84 projection.</td>
 </tr>
 <tr>
-<td>Int</td>
-<td>number</td>
-<td><code>1</code></td>
-<td></td>
-</tr>
-<tr>
-<td>Lob</td>
-<td>string</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Long</td>
-<td>string</td>
-<td><code>&quot;1&quot;</code></td>
-<td>The <code>Long</code> value range exceeds the range of the JSON <code>number</code> type. So it&#39;s represented as a string.</td>
-</tr>
-<tr>
-<td>String</td>
-<td>string</td>
-<td><code>&quot;Text&quot;</code></td>
-<td></td>
-</tr>
-<tr>
-<td>IpAddress</td>
+<td>IP address</td>
 <td>string</td>
 <td><code>&quot;127.0.0.1&quot;</code></td>
 <td></td>
 </tr>
 <tr>
-<td>Url</td>
-<td>String</td>
+<td>URL</td>
+<td>string</td>
 <td><code>&quot;http://example.com&quot;</code></td>
+<td></td>
+</tr>
+<tr>
+<td>LOB</td>
+<td>string</td>
+<td></td>
 <td></td>
 </tr>
 </tbody></table>
