@@ -82,7 +82,11 @@ globalThis.cadenza = Object.assign(
  */
 /** @typedef {[number,number,number,number]} Extent - An array of numbers representing an extent: [minx, miny, maxx, maxy] */
 
-/** @typedef {'csv' | 'excel' | 'json' | 'pdf'} DataType - A data type */
+/**
+ * @typedef {'csv' | 'excel' | 'json' | 'pdf'} DataType - A data type
+ *
+ * See [JSON Representation of Cadenza Object Data](../index.html#md:json-representation-of-cadenza-object-data) for JSON data.
+ */
 /** @typedef {'columns' | 'values' | 'totals'} TablePart - A part of a table to export */
 /** @typedef {Record<string, string | number | Date>} FilterVariables - Filter variable names and values */
 /**
@@ -194,9 +198,12 @@ export class CadenzaClient {
    * @return {Promise<void>} A Promise for when the iframe is loaded
    * @throws For invalid arguments
    * @fires `drillThrough` - When the user executed a POST message drill-through.
-   *   The event includes a row of values for each row in the workbook selection, each row consisting of the values of
+   *   <p>
+   *   The event includes a data row for every item in the workbook selection, each row consisting of the values of
    *   the attributes that were selected for the POST message content. If the drill-through was executed from a map
-   *   view, each row includes the geometry of the select object as the last value.
+   *   view, each row includes the geometry of the selected object as the last value.
+   *   <p>
+   *   See also: [JSON Representation of Cadenza Object Data](../index.html#md:json-representation-of-cadenza-object-data)
    */
   show(
     source,
