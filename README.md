@@ -328,17 +328,16 @@ By default, the sandbox expects Cadenza to run on http://localhost:8080/cadenza.
 [JSON](https://www.json.org/) is a simple data-interchange format, which is also used in the Cadenza API. It does not support all the attribute types of Cadenza objects, that's why there are some rules for representing Cadenza object data in JSON.
 
 
-| Cadenza Attribute Type | JSON Type | JSON Example Value       | Notes |
-|------------------------|-----------|--------------------------|-------|
-| BigDecimal             | string    | `"1.23"`                 | The `BigDecimal` value range exceeds the range of the JSON `number` type. So it's represented as a string. |
-| Boolean                | boolean   | `true`                   | |
-| Date                   | string    | `"1999-12-31T23:00:00Z"` | A `Date` value is represented as an [ISO string in universal time](https://en.wikipedia.org/wiki/ISO_8601#Coordinated_Universal_Time_(UTC)). |
-| Double                 | number    | `1.23`                   |
-| Duration               | number    | `1`                      | A `Duration` is represented by its numeric value. |
-| Geometry               | object    | <pre lang="json">{<br>  "type": "Point"<br>  "coordinates": [125.6, 10.1]<br>}</pre> | A `Geometry` is represented as a [GeoJSON](https://geojson.org/) object.<br>_Note:_ By default, coordinates in GeoJSON use the WGS84 projection. |
-| Int                    | number    | `1`                      | |
-| Lob                    | string    |                          | |
-| Long                   | string    | `"1"`                    | The `Long` value range exceeds the range of the JSON `number` type. So it's represented as a string.
-| String                 | string    | `"Text"`                 | |
-| IpAddress              | string    | `"127.0.0.1"`            | |
-| Url                    | String    | `"http://example.com"`   | |
+| Cadenza Attribute Type              | JSON Type | JSON Example Value       | Notes |
+|-------------------------------------|-----------|--------------------------|-------|
+| Text (String)                       | string    | `"Text"`                 | |
+| Number (Integer)                    | number    | `1`                      | |
+| Number (Long)                       | string    | `"1"`                    | The `Long` value range exceeds the range of the JSON `number` type. So it's represented as a string.
+| Floating point number (Double)      | number    | `1.23`                   |
+| Floating point number (Big decimal) | string    | `"1.23"`                 | The `BigDecimal` value range exceeds the range of the JSON `number` type. So it's represented as a string. |
+| Date                                | string    | `"1999-12-31T23:00:00Z"` | A `Date` value is represented as an [ISO string in universal time](https://en.wikipedia.org/wiki/ISO_8601#Coordinated_Universal_Time_(UTC)) (UTC). |
+| Duration                            | number    | `1`                      | A `Duration` is represented by its numeric value. |
+| Geometry                            | object    | <pre lang="json">{<br>  "type": "Point"<br>  "coordinates": [125.6, 10.1]<br>}</pre> | A `Geometry` is represented as a [GeoJSON](https://geojson.org/) object.<br>_Note:_ By default, coordinates in GeoJSON use the WGS84 projection. |
+| IP address                          | string    | `"127.0.0.1"`            | |
+| URL                                 | string    | `"http://example.com"`   | |
+| LOB                                 | string    |                          | |
