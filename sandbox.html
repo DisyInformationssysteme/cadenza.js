@@ -100,6 +100,7 @@
       showMap: data => cadenzaClient.showMap(data.embeddingTargetId, getOptions(data)),
       createGeometry: data => cadenzaClient.createGeometry(data.embeddingTargetId, data.geometryType, getOptions(data)),
       editGeometry: data => cadenzaClient.editGeometry(data.embeddingTargetId, JSON.parse(data.geometry), getOptions(data)),
+      selectObjects: data => cadenzaClient.selectObjects(data.embeddingTargetId, getOptions(data)),
       fetchData: data => {
         console.log('Inspect the fetchData() request in the devtools.');
         cadenzaClient.fetchData(data.embeddingTargetId, data.dataType, getOptions(data));
@@ -195,6 +196,7 @@
         <option value="showMap">Show Map</option>
         <option value="createGeometry">Create Geometry</option>
         <option value="editGeometry">Edit Geometry</option>
+        <option value="selectObjects">Select Objects</option>
         <option value="downloadData">Download data</option>
         <option value="fetchData">Fetch data</option>
       </select>
@@ -379,6 +381,13 @@
   <div>
     <label for="minScale">Minimum Scale</label>
     <input type="number" name="minScale" id="minScale">
+  </div>
+</template>
+
+<template data-action="selectObjects" data-common="map">
+  <div>
+    <label for="embeddingTargetId">Embedding target ID of the map view *</label>
+    <input name="embeddingTargetId" id="embeddingTargetId" required>
   </div>
 </template>
 

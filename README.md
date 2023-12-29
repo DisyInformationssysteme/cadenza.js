@@ -217,6 +217,18 @@ cadenzaClient.on('editGeometry:ok', (event) => {
 _Note:_ Under the hood, creating a geometry is similar to editing a geometry.
 That's why the events use the `editGeometry` prefix.
 
+### Select Objects in a Workbook Map
+
+<small>API: [CadenzaClient#selectObjects](./classes/CadenzaClient.html#selectObjects)</small>
+
+```javascript
+cadenzaClient.selectObjects('{embeddingTargetId}');
+
+cadenzaClient.on('selectObjects:ok', (event) => {
+  console.log('Object selection was completed', event.detail.selection);
+});
+```
+
 ### Highlight an Item in the Navigator
 
 <small>API: [CadenzaClient#show](./classes/CadenzaClient.html#show)</small>

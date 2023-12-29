@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- `CadenzaClient#selectObjects`
 - Documentation for the "JSON Representation of Cadenza Object Data"
 
 ## 2.2.1 - 2023-12-12

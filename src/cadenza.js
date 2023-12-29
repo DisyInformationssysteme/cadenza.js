@@ -242,7 +242,6 @@ export class CadenzaClient {
       labelSet,
       dataType,
       operationMode,
-      webApplication: this.#webApplication,
     });
     return this.#show(resolvePath(source), params, signal);
   }
@@ -302,7 +301,6 @@ export class CadenzaClient {
       mapExtent,
       operationMode,
       useMapSrs,
-      webApplication: this.#webApplication,
     });
     await this.#show(resolvePath(mapView), params, signal);
     this.#postEvent('setGeometry', { geometry });
@@ -351,7 +349,6 @@ export class CadenzaClient {
       mapExtent,
       minScale,
       useMapSrs,
-      webApplication: this.#webApplication,
     });
     return this.#show(resolvePath(backgroundMapView), params, signal);
   }
@@ -386,10 +383,38 @@ export class CadenzaClient {
       mapExtent,
       minScale,
       useMapSrs,
-      webApplication: this.#webApplication,
     });
     await this.#show(resolvePath(backgroundMapView), params, signal);
     this.#postEvent('setGeometry', { geometry });
+  }
+
+  /**
+   * Select objects in a workbook map.
+   *
+   * @param {WorkbookViewSource} backgroundMapView - The workbook map view
+   * @param {object} [options] - Options
+   * @param {string} [options.locationFinder] - A search query for the location finder
+   * @param {Extent} [options.mapExtent] - A map extent to set
+   * @param {boolean} [options.useMapSrs] - Whether the geometry is in the map's SRS (otherwise EPSG:4326 is assumed)
+   * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
+   * @return {Promise<void>} A Promise for when the iframe is loaded
+   * @throws For invalid arguments
+   * @fires `selectObjects:update` - When the user changed the selection. The event includes the selected objects.
+   * @fires `selectObjects:ok` - When the user completed the selection. The event includes the selected objects.
+   * @fires `selectObjects:cancel` - When the user cancelled the selection in Cadenza.
+   */
+  selectObjects(
+    backgroundMapView,
+    { locationFinder, mapExtent, useMapSrs, signal } = {},
+  ) {
+    this.#log('CadenzaClient#selectObjects', backgroundMapView);
+    const params = createParams({
+      action: 'selectObjects',
+      locationFinder,
+      mapExtent,
+      useMapSrs,
+    });
+    return this.#show(resolvePath(backgroundMapView), params, signal);
   }
 
   #show(
@@ -397,6 +422,12 @@ export class CadenzaClient {
     /** @type URLSearchParams */ params,
     /** @type AbortSignal | undefined */ signal,
   ) {
+    const webApplication = this.#webApplication;
+    if (webApplication) {
+      params.set('webApplicationLink', webApplication.externalLinkId);
+      params.set('webApplicationLinkRepository', webApplication.repositoryName);
+    }
+
     const url = this.#createUrl(path, params);
     this.#log('Load iframe', url.toString());
     this.#requiredIframe.src = url.toString();
@@ -727,7 +758,6 @@ function assertSupportedDataType(
  * @param {OperationMode} [params.operationMode]
  * @param {TablePart[]} [params.parts]
  * @param {boolean} [params.useMapSrs]
- * @param {ExternalLinkKey} [params.webApplication]
  * @return {URLSearchParams}
  */
 function createParams({
@@ -747,7 +777,6 @@ function createParams({
   minScale,
   parts,
   useMapSrs,
-  webApplication,
   operationMode,
 }) {
   if (disabledUiFeatures) {
@@ -803,10 +832,6 @@ function createParams({
     ...(operationMode && operationMode !== 'normal' && { operationMode }),
     ...(parts && { parts: parts.join() }),
     ...(useMapSrs && { useMapSrs: 'true' }),
-    ...(webApplication && {
-      webApplicationLink: webApplication.externalLinkId,
-      webApplicationLinkRepository: webApplication.repositoryName,
-    }),
   });
 }
 
