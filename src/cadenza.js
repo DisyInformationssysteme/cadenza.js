@@ -88,7 +88,7 @@ globalThis.cadenza = Object.assign(
  * See [JSON Representation of Cadenza Object Data](../index.html#md:json-representation-of-cadenza-object-data) for JSON data.
  */
 /** @typedef {'columns' | 'values' | 'totals'} TablePart - A part of a table to export */
-/** @typedef {Record<string, string | number | Date>} FilterVariables - Filter variable names and values */
+/** @typedef {Record<string, string | string[] | number | Date>} FilterVariables - Filter variable names and values */
 /**
  * _Notes:_
  * * Most public methods can be aborted using an [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal).
