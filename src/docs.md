@@ -73,7 +73,12 @@ const cadenza = window.cadenza.noConflict();
 
 <small>API: [CadenzaClient#show](./classes/CadenzaClient.html#show)</small>
 
-Show an embedding target in an iframe and hide Cadenza's main header and footer as well as the workbook toolbar. Additionally, enable simplified operation mode, disable the designer and set the filter variable "var1" to "foo".
+Show an embedding target in an iframe and ...
+
+- Hide Cadenza's main header and footer and the workbook toolbar.
+- Enable the simplified operation mode.
+- Disable the designer.
+- Set the filter variable "var1" to "foo".
 
 ```javascript
 cadenzaClient.show('{embeddingTargetId}', {
@@ -128,7 +133,7 @@ Show the embedding target of a workbook map view in an iframe and ...
 - Set the initial map extent.
 - Show the given GeoJSON geometry on the map.
 
-The coordinates of extent and geometry are in the map's SRS.
+The coordinates of extent and geometry are in the map's SRS (`useMapSrs: true`).
 
 ```javascript
 cadenzaClient.showMap('{embeddingTargetId}', {
@@ -155,7 +160,7 @@ cadenzaClient.showMap('{embeddingTargetId}', {
 
 <small>API: [CadenzaClient#editGeometry](./classes/CadenzaClient.html#editGeometry), [CadenzaClient#on](./classes/CadenzaClient.html#on)</small>
 
-Edit a GeoJSON geometry with a workbook map view in the background. The geometry coordinates are in the map's SRS.
+Edit a GeoJSON geometry with a workbook map view in the background. The geometry coordinates are in the map's SRS (`useMapSrs: true`).
 
 ```javascript
 const geometry = {
@@ -204,7 +209,7 @@ unsubscribe();
 
 <small>API: [CadenzaClient#createGeometry](./classes/CadenzaClient.html#createGeometry)</small>
 
-Edit a GeoJSON point geometry with a workbook map view in the background. The geometry coordinates are in the map's SRS.
+Edit a GeoJSON point geometry with a workbook map view in the background. The geometry coordinates are in the map's SRS (`useMapSrs: true`).
 
 ```javascript
 cadenzaClient.createGeometry('{embeddingTargetId}', 'Point', {
