@@ -53,6 +53,10 @@ globalThis.cadenza = Object.assign(
  * @property {string} workbookId - The ID of the workbook
  * @property {string} viewId - The ID of the view
  */
+/**
+ * @typedef {string[]} WorkbookLayerPath - Identifies a workbook layer within a view
+ *   using the print names of the layer and - if the layer is grouped - its ancestors
+ */
 
 /**
  * @typedef PageSource - A well-known Cadenza page
@@ -117,7 +121,7 @@ export class CadenzaClient {
   /** @readonly */
   #debug;
 
-  /** @type {[ string, (event: CadenzaEvent<never>) => void ][]} */
+  /** @type {[ string, (event: CadenzaEvent<never, never>) => void ][]} */
   #subscriptions = [];
 
   /**
@@ -197,13 +201,7 @@ export class CadenzaClient {
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A Promise for when the iframe is loaded
    * @throws For invalid arguments
-   * @fires `drillThrough` - When the user executed a POST message drill-through.
-   *   <p>
-   *   The event includes a data row for every item in the workbook selection, each row consisting of the values of
-   *   the attributes that were selected for the POST message content. If the drill-through was executed from a map
-   *   view, each row includes the geometry of the selected object as the last value.
-   *   <p>
-   *   See also: [JSON Representation of Cadenza Object Data](../index.html#md:json-representation-of-cadenza-object-data)
+   * @fires {@link CadenzaDrillThroughEvent}
    */
   show(
     source,
@@ -265,9 +263,7 @@ export class CadenzaClient {
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A Promise for when the iframe is loaded
    * @throws For invalid arguments
-   * @fires `drillThrough` - When the user executed a POST message drill-through.
-   *   The event includes a row of values for each row in the workbook selection, each row consisting of the values of
-   *   the attributes that were selected for the POST message content plus the geometry of the select object as the last value.
+   * @fires {@link CadenzaDrillThroughEvent}
    */
   async showMap(
     mapView,
@@ -332,9 +328,10 @@ export class CadenzaClient {
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A Promise for when the iframe is loaded
    * @throws For invalid arguments
-   * @fires `editGeometry:update` - When the user changed the geometry. The event includes the edited geometry.
-   * @fires `editGeometry:ok` - When the user completed the geometry editing. The event includes the edited geometry.
-   * @fires `editGeometry:cancel` - When the user cancelled the geometry editing in Cadenza.
+   * @fires
+   * - {@link CadenzaEditGeometryUpdateEvent}
+   * - {@link CadenzaEditGeometryOkEvent}
+   * - {@link CadenzaEditGeometryCancelEvent}
    */
   createGeometry(
     backgroundMapView,
@@ -366,9 +363,10 @@ export class CadenzaClient {
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A Promise for when the iframe is loaded
    * @throws For invalid arguments
-   * @fires `editGeometry:update` - When the user changed the geometry. The event includes the edited geometry.
-   * @fires `editGeometry:ok` - When the user completed the geometry editing. The event includes the edited geometry.
-   * @fires `editGeometry:cancel` - When the user cancelled the geometry editing in Cadenza.
+   * @fires
+   * - {@link CadenzaEditGeometryUpdateEvent}
+   * - {@link CadenzaEditGeometryOkEvent}
+   * - {@link CadenzaEditGeometryCancelEvent}
    */
   async editGeometry(
     backgroundMapView,
@@ -399,9 +397,10 @@ export class CadenzaClient {
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A Promise for when the iframe is loaded
    * @throws For invalid arguments
-   * @fires `selectObjects:update` - When the user changed the selection. The event includes the selected objects.
-   * @fires `selectObjects:ok` - When the user completed the selection. The event includes the selected objects.
-   * @fires `selectObjects:cancel` - When the user cancelled the selection in Cadenza.
+   * @fires
+   * - {@link CadenzaSelectObjectsUpdateEvent}
+   * - {@link CadenzaSelectObjectsOkEvent}
+   * - {@link CadenzaSelectObjectsCancelEvent}
    */
   selectObjects(
     backgroundMapView,
@@ -482,9 +481,10 @@ export class CadenzaClient {
   /**
    * Subscribe to a `postMessage()` event.
    *
-   * @template [T=unknown]
-   * @param {string} type - The event type
-   * @param {(event: CadenzaEvent<T>) => void} subscriber - The subscriber function
+   * @template {string} TYPE
+   * @template [DETAIL=unknown]
+   * @param {TYPE} type - The event type
+   * @param {(event: CadenzaEvent<TYPE, DETAIL>) => void} subscriber - The subscriber function
    * @return {() => void} An unsubscribe function
    */
   on(type, subscriber) {
@@ -510,7 +510,9 @@ export class CadenzaClient {
   }
 
   // Use arrow function so that it's bound to this.
-  #onMessage = (/** @type MessageEvent<CadenzaEvent<never>> */ event) => {
+  #onMessage = (
+    /** @type MessageEvent<CadenzaEvent<never, never>> */ event,
+  ) => {
     if (
       event.origin !== this.#origin ||
       event.source !== this.#requiredIframe.contentWindow
@@ -836,13 +838,28 @@ function createParams({
 }
 
 /**
- * @template [T=unknown]
+ * @template {string} TYPE
+ * @template [DETAIL=unknown]
  * @typedef CadenzaEvent - A Cadenza `postMessage()` event
- * @property {string} type - The event type
- * @property {T} detail - Optional event details (depending on the event type)
+ * @property {TYPE} type - The event type
+ * @property {DETAIL} detail - Optional event details (depending on the event type)
  */
-
-/** @typedef {CadenzaEvent<{type: string, message?: string}>} CadenzaErrorEvent - An error event that is mapped to a {@link CadenzaError} */
+/**
+ * @typedef {CadenzaEvent<'drillThrough', {values: unknown[][]}>} CadenzaDrillThroughEvent - When the user executed a POST message drill-through.
+ * <p>
+ * The event includes a data row for every item in the workbook selection, each row consisting of the values of
+ * the attributes that were selected for the POST message content. If the drill-through was executed from a map
+ * view, each row includes the geometry of the selected object as the last value.
+ * <p>
+ * See also: <a href="../index.html#md:json-representation-of-cadenza-object-data">JSON Representation of Cadenza Object Data</a>
+ */
+/** @typedef {CadenzaEvent<'editGeometry:update', {geometry: Geometry}>} CadenzaEditGeometryUpdateEvent - When the user changed the geometry. */
+/** @typedef {CadenzaEvent<'editGeometry:ok', {geometry: Geometry}>} CadenzaEditGeometryOkEvent - When the user submitted the geometry. */
+/** @typedef {CadenzaEvent<'editGeometry:cancel'>} CadenzaEditGeometryCancelEvent - When the user cancelled the geometry editing. */
+/** @typedef {CadenzaEvent<'error', {type: string, message?: string}>} CadenzaErrorEvent - An error event that is mapped to a {@link CadenzaError} */
+/** @typedef {CadenzaEvent<'selectObjects:update', {layer: WorkbookLayerPath, values: unknown[][]}>} CadenzaSelectObjectsUpdateEvent - When the user changed the selection. */
+/** @typedef {CadenzaEvent<'selectObjects:ok', {layer: WorkbookLayerPath, values: unknown[][]}>} CadenzaSelectObjectsOkEvent - When the user submitted the selection. */
+/** @typedef {CadenzaEvent<'selectObjects:cancel'>} CadenzaSelectObjectsCancelEvent - When the user cancelled the selection. */
 
 export class AbortError extends DOMException {
   constructor() {
