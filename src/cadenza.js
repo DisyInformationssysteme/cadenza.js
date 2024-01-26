@@ -92,7 +92,7 @@ globalThis.cadenza = Object.assign(
  * See [JSON Representation of Cadenza Object Data](../index.html#md:json-representation-of-cadenza-object-data) for JSON data.
  */
 /** @typedef {'columns' | 'values' | 'totals'} TablePart - A part of a table to export */
-/** @typedef {Record<string, string | string[] | number | Date>} FilterVariables - Filter variable names and values */
+/** @typedef {Record<string, string | string[] | number | Date | null>} FilterVariables - Filter variable names and values */
 /**
  * _Notes:_
  * * Most public methods can be aborted using an [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal).
@@ -199,7 +199,7 @@ export class CadenzaClient {
    * @param {String} [options.labelSet] - The name of a label set defined in the `basicweb-config.xml` (only supported for the welcome page)
    * @param {OperationMode} [options.operationMode] - The mode in which a workbook should be operated
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
-   * @return {Promise<void>} A Promise for when the iframe is loaded
+   * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires {@link CadenzaDrillThroughEvent}
    */
@@ -261,7 +261,7 @@ export class CadenzaClient {
    * @param {OperationMode} [options.operationMode] - The mode in which a workbook should be operated
    * @param {boolean} [options.useMapSrs] -  Whether the geometry and the extent are in the map's SRS (otherwise EPSG:4326 is assumed)
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
-   * @return {Promise<void>} A Promise for when the iframe is loaded
+   * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires {@link CadenzaDrillThroughEvent}
    */
@@ -313,6 +313,17 @@ export class CadenzaClient {
   }
 
   /**
+   * Set filter variables in the currently shown workbook.
+   *
+   * @param {FilterVariables} filter - The variable values
+   * @return {Promise<void>} A `Promise` for when the filter variables were set.
+   */
+  setFilter(filter) {
+    this.#log('CadenzaClient#setFilter', filter);
+    return this.#postRequest('setFilter', { filter });
+  }
+
+  /**
    * Create a geometry.
    *
    * _Note:_ Under the hood, creating a geometry is similar to editing a geometry.
@@ -326,7 +337,7 @@ export class CadenzaClient {
    * @param {number} [options.minScale] - The minimum scale where the user should work on. A warning is shown when the map is zoomed out above the threshold.
    * @param {boolean} [options.useMapSrs] - Whether the created geometry should use the map's SRS (otherwise EPSG:4326 will be used)
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
-   * @return {Promise<void>} A Promise for when the iframe is loaded
+   * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires
    * - {@link CadenzaEditGeometryUpdateEvent}
@@ -361,7 +372,7 @@ export class CadenzaClient {
    * @param {number} [options.minScale] - The minimum scale where the user should work on. A warning is shown when the map is zoomed out above the threshold.
    * @param {boolean} [options.useMapSrs] - Whether the geometry is in the map's SRS (otherwise EPSG:4326 is assumed)
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
-   * @return {Promise<void>} A Promise for when the iframe is loaded
+   * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires
    * - {@link CadenzaEditGeometryUpdateEvent}
@@ -395,7 +406,7 @@ export class CadenzaClient {
    * @param {Extent} [options.mapExtent] - A map extent to set
    * @param {boolean} [options.useMapSrs] - Whether the geometry is in the map's SRS (otherwise EPSG:4326 is assumed)
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
-   * @return {Promise<void>} A Promise for when the iframe is loaded
+   * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires
    * - {@link CadenzaSelectObjectsUpdateEvent}
@@ -435,14 +446,14 @@ export class CadenzaClient {
 
   #getIframePromise(/** @type AbortSignal | undefined */ signal) {
     const iframe = this.#requiredIframe;
-    /** @type {() => void} */
+    /** @type {EventListener} */
     let onerror;
-    /** @type {() => void} */
+    /** @type {EventListener} */
     let onabort;
     /** @type {(() => void)[]} */
     let unsubscribes;
     /** @type {Promise<void>} */
-    let promise = new Promise((resolve, reject) => {
+    const promise = new Promise((resolve, reject) => {
       onerror = () =>
         reject(new CadenzaError('loading-error', 'Loading failed'));
       iframe.addEventListener('error', onerror);
@@ -475,6 +486,21 @@ export class CadenzaClient {
         unsubscribes.forEach((unsubscribe) => unsubscribe());
       });
 
+    return promise;
+  }
+
+  #postRequest(/** @type string */ type, /** @type unknown */ detail) {
+    /** @type {(() => void)[]} */
+    let unsubscribes;
+    /** @type {Promise<void>} */
+    const promise = new Promise((resolve, reject) => {
+      unsubscribes = [
+        this.on(`${type}:success`, () => resolve()),
+        this.on(`${type}:error`, () => reject()),
+      ];
+    });
+    promise.finally(() => unsubscribes.forEach((unsubscribe) => unsubscribe()));
+    this.#postEvent(type, detail);
     return promise;
   }
 
@@ -546,7 +572,7 @@ export class CadenzaClient {
    * @param {object} options - Options
    * @param {TablePart[]} [options.parts] - Table parts to export; If not specified, all parts are exported.
    * @param {AbortSignal} [options.signal] - A signal to abort the data fetching
-   * @return {Promise<Response>} A Promise for the fetch response
+   * @return {Promise<Response>} A `Promise` for the fetch response
    * @throws For invalid arguments
    */
   fetchData(source, dataType, { parts, signal } = {}) {

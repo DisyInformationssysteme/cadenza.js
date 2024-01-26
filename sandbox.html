@@ -98,6 +98,7 @@
       showPage: data => cadenzaClient.show({ page: data.page }, getOptions(data)),
       expandNavigator: data => cadenzaClient.expandNavigator(data.expandNavigator === 'on'),
       showMap: data => cadenzaClient.showMap(data.embeddingTargetId, getOptions(data)),
+      setFilter: data => cadenzaClient.setFilter(data.filter),
       createGeometry: data => cadenzaClient.createGeometry(data.embeddingTargetId, data.geometryType, getOptions(data)),
       editGeometry: data => cadenzaClient.editGeometry(data.embeddingTargetId, JSON.parse(data.geometry), getOptions(data)),
       selectObjects: data => cadenzaClient.selectObjects(data.embeddingTargetId, getOptions(data)),
@@ -194,6 +195,7 @@
         <option value="showPage">Show Page</option>
         <option value="expandNavigator">Expand Navigator</option>
         <option value="showMap">Show Map</option>
+        <option value="setFilter">Set Filter</option>
         <option value="createGeometry">Create Geometry</option>
         <option value="editGeometry">Edit Geometry</option>
         <option value="selectObjects">Select Objects</option>
@@ -202,8 +204,7 @@
       </select>
     </div>
 
-    <fieldset id="settings">
-    </fieldset>
+    <fieldset id="settings"></fieldset>
 
     <button>Go!</button>
   </form>
@@ -263,6 +264,7 @@
       <p>A JSON object with filter variable names and values</p>
       <p>Dates need to be ISO strings<br>(e.g. <code>"2023-11-17T17:12:06.175Z"</code>).<br>Use <code>"{{currentDate}}"</code> for the current date.</p>
       <p>Pass multiple values for an <code>IN</code> expression as <code>["a", "b", ...]</code></p>
+      <p>Pass <code>null</code> to unset a variable.</p>
     </small>
   </div>
 </template>
@@ -344,6 +346,19 @@
   <div>
     <label for="geometry">Geometry (GeoJSON)</label>
     <textarea name="geometry" id="geometry" rows="5"></textarea>
+  </div>
+</template>
+
+<template data-action="setFilter">
+  <div>
+    <label for="filter">Filter</label>
+    <textarea name="filter" id="filter" rows="3"></textarea>
+    <small>
+      <p>A JSON object with filter variable names and values</p>
+      <p>Dates need to be ISO strings<br>(e.g. <code>"2023-11-17T17:12:06.175Z"</code>).<br>Use <code>"{{currentDate}}"</code> for the current date.</p>
+      <p>Pass multiple values for an <code>IN</code> expression as <code>["a", "b", ...]</code></p>
+      <p>Pass <code>null</code> to unset a variable.</p>
+    </small>
   </div>
 </template>
 
