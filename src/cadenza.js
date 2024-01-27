@@ -204,6 +204,8 @@ export class CadenzaClient {
    *   view, each row includes the geometry of the selected object as the last value.
    *   <p>
    *   See also: [JSON Representation of Cadenza Object Data](../index.html#md:json-representation-of-cadenza-object-data)
+   * @fires `change:extent` - When the map extent is changed a POST message 'change:extent' is fired.
+   *   The event details contain the new {@link Extent} of the map (transformed to EPSG:4326).
    */
   show(
     source,
@@ -268,6 +270,8 @@ export class CadenzaClient {
    * @fires `drillThrough` - When the user executed a POST message drill-through.
    *   The event includes a row of values for each row in the workbook selection, each row consisting of the values of
    *   the attributes that were selected for the POST message content plus the geometry of the select object as the last value.
+   * @fires `change:extent` - When the map extent is changed a POST message 'change:extent' is fired.
+   *   The event details contain the new {@link Extent} of the map (transformed to EPSG:4326).
    */
   async showMap(
     mapView,

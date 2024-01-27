@@ -205,6 +205,19 @@ const unsubscribe = cadenzaClient.on('editGeometry:ok', (event) => ...);
 unsubscribe();
 ```
 
+### Subscribe to map extent change
+
+Subscribe to `extent:change` event to be notified about map extent changes. The event details contain the new map extent (transformed to EPSG:4326):
+
+```typescript
+cadenzaClient.on(
+  'change:extent',
+  (event: CadenzaEvent<{ extent: Extent }>) => {
+    console.log('Map extent has been changed to:', event.detail.extent);
+  },
+);
+```
+
 ### Create a New Geometry
 
 <small>API: [CadenzaClient#createGeometry](./classes/CadenzaClient.html#createGeometry)</small>
