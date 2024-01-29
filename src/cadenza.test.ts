@@ -1,4 +1,10 @@
-import { cadenza, CadenzaClient, CadenzaError, PageSource } from './cadenza.js';
+import {
+  cadenza,
+  CadenzaClient,
+  CadenzaDrillThroughEvent,
+  CadenzaError,
+  PageSource,
+} from './cadenza.js';
 
 const BASE_URL = 'http://example.com';
 const EMBEDDING_TARGET_ID = 'embedding-target';
@@ -217,10 +223,12 @@ describe('Given a Cadenza JS client instance', () => {
   });
 
   describe('When subscribing to a Cadenza event', () => {
-    const EVENT = {
-      type: 'whatever',
-      detail: 42,
-    } as const;
+    const EVENT: CadenzaDrillThroughEvent = {
+      type: 'drillThrough',
+      detail: {
+        values: [],
+      },
+    };
 
     const subscriber = jest.fn();
     let unsubscribe: () => void;

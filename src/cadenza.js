@@ -121,7 +121,7 @@ export class CadenzaClient {
   /** @readonly */
   #debug;
 
-  /** @type {[ string, (event: CadenzaEvent<never, never>) => void ][]} */
+  /** @type {[ CadenzaEventType | string, (event: CadenzaEvent<never>) => void ][]} */
   #subscriptions = [];
 
   /**
@@ -202,7 +202,6 @@ export class CadenzaClient {
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires {@link CadenzaDrillThroughEvent}
-   * @fires {@link CadenzaChangeExtentEvent}
    */
   show(
     source,
@@ -264,8 +263,9 @@ export class CadenzaClient {
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
-   * @fires {@link CadenzaDrillThroughEvent}
-   * @fires {@link CadenzaChangeExtentEvent}
+   * @fires
+   * - {@link CadenzaChangeExtentEvent}
+   * - {@link CadenzaDrillThroughEvent}
    */
   async showMap(
     mapView,
@@ -469,8 +469,8 @@ export class CadenzaClient {
       }
 
       unsubscribes = [
-        this.on('ready', () => resolve()),
-        this.on('error', (/** @type {CadenzaErrorEvent} */ event) => {
+        this.#on('ready', () => resolve()),
+        this.#on('error', (/** @type {CadenzaErrorEvent} */ event) => {
           const { type, message } = event.detail;
           reject(new CadenzaError(type, message ?? 'Loading failed'));
         }),
@@ -497,8 +497,8 @@ export class CadenzaClient {
     /** @type {Promise<void>} */
     const promise = new Promise((resolve, reject) => {
       unsubscribes = [
-        this.on(`${type}:success`, () => resolve()),
-        this.on(`${type}:error`, () => reject()),
+        this.#on(`${type}:success`, () => resolve()),
+        this.#on(`${type}:error`, () => reject()),
       ];
     });
     promise.finally(() => unsubscribes.forEach((unsubscribe) => unsubscribe()));
@@ -509,18 +509,31 @@ export class CadenzaClient {
   /**
    * Subscribe to a `postMessage()` event.
    *
-   * @template {string} TYPE
-   * @template [DETAIL=unknown]
+   * @template {CadenzaEventType} TYPE
    * @param {TYPE} type - The event type
-   * @param {(event: CadenzaEvent<TYPE, DETAIL>) => void} subscriber - The subscriber function
+   * @param {(event: CadenzaEvent<TYPE, CadenzaEventByType<TYPE>['detail']>) => void} subscriber - The subscriber function
    * @return {() => void} An unsubscribe function
    */
   on(type, subscriber) {
+    return this.#on(type, subscriber);
+  }
+
+  /**
+   * @template {CadenzaEventType | string} TYPE
+   * @template [DETAIL=unknown]
+   * @param {TYPE} type
+   * @param {(event: CadenzaEvent<TYPE, DETAIL>) => void} subscriber
+   * @return {() => void} An unsubscribe function
+   */
+  #on(type, subscriber) {
     const subscriptions = this.#subscriptions;
     if (subscriptions.length === 0) {
       window.addEventListener('message', this.#onMessage);
     }
-    subscriptions.push([type, subscriber]);
+    subscriptions.push([
+      type,
+      /** @type {(event: CadenzaEvent<never>) => void} */ (subscriber),
+    ]);
 
     return () => {
       subscriptions.forEach(([subscriptionType, subscriptionSubscriber], i) => {
@@ -865,12 +878,43 @@ function createParams({
   });
 }
 
+// Please do not add internal event types like 'ready' here.
 /**
- * @template {string} TYPE
+ * @typedef {'change:extent'
+ * | 'drillThrough'
+ * | 'editGeometry:ok'
+ * | 'editGeometry:update'
+ * | 'editGeometry:cancel'
+ * | 'selectObjects:ok'
+ * | 'selectObjects:update'
+ * | 'selectObjects:cancel'
+ * } CadenzaEventType - An event type to subscribe to using {@link CadenzaClient#on}
+ */
+
+/**
+ * @template {CadenzaEventType} T
+ * @typedef { T extends 'change:extent' ? CadenzaChangeExtentEvent
+ *  : T extends 'drillThrough' ? CadenzaDrillThroughEvent
+ *  : T extends 'editGeometry:update' ? CadenzaEditGeometryUpdateEvent
+ *  : T extends 'editGeometry:ok' ? CadenzaEditGeometryOkEvent
+ *  : T extends 'editGeometry:cancel' ? CadenzaEditGeometryCancelEvent
+ *  : T extends 'selectObjects:update' ? CadenzaEditGeometryUpdateEvent
+ *  : T extends 'selectObjects:ok' ? CadenzaEditGeometryOkEvent
+ *  : T extends 'selectObjects:cancel' ? CadenzaEditGeometryCancelEvent
+ *  : never
+ * } CadenzaEventByType
+ */
+
+/**
+ * @template {CadenzaEventType | string} TYPE
  * @template [DETAIL=unknown]
  * @typedef CadenzaEvent - A Cadenza `postMessage()` event
  * @property {TYPE} type - The event type
  * @property {DETAIL} detail - Optional event details (depending on the event type)
+ */
+/**
+ * @typedef {CadenzaEvent<'change:extent', {extent: Extent}>} CadenzaChangeExtentEvent - When the user moved the map.
+ *   The extent is transformed according to the `useMapSrs` option.
  */
 /**
  * @typedef {CadenzaEvent<'drillThrough', {values: unknown[][]}>} CadenzaDrillThroughEvent - When the user executed a POST message drill-through.
@@ -880,10 +924,6 @@ function createParams({
  * view, each row includes the geometry of the selected object as the last value.
  * <p>
  * See also: <a href="../index.html#md:json-representation-of-cadenza-object-data">JSON Representation of Cadenza Object Data</a>
- */
-/**  
- * @typedef {CadenzaEvent<'change:extent', {extent: Extent}>} CadenzaChangeExtentEvent - When the user moved the map. 
- * The extent is transformed according to the `useMapSrs` option. 
  */
 /** @typedef {CadenzaEvent<'editGeometry:update', {geometry: Geometry}>} CadenzaEditGeometryUpdateEvent - When the user changed the geometry. */
 /** @typedef {CadenzaEvent<'editGeometry:ok', {geometry: Geometry}>} CadenzaEditGeometryOkEvent - When the user submitted the geometry. */

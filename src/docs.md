@@ -182,19 +182,6 @@ cadenzaClient.on('editGeometry:cancel', (event) => {
 });
 ```
 
-### Subscribe to an Event With Types
-
-If you develop your application in TypeScript, you need to define the type of the `event.detail` in order to access its properties:
-
-```typescript
-cadenzaClient.on(
-  'editGeometry:ok',
-  (event: CadenzaEvent<{ geometry: Geometry }>) => {
-    console.log('Geometry editing was completed', event.detail.geometry);
-  },
-);
-```
-
 ### Unsubscribe From an Event
 
 The `on()` method returns an unsubscribe function.
