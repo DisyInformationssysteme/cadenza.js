@@ -298,6 +298,7 @@ export class CadenzaClient {
       operationMode,
       useMapSrs,
     });
+    params.append('targetType', 'MAP');
     await this.#show(resolvePath(mapView), params, signal);
     this.#postEvent('setGeometry', { geometry });
   }
