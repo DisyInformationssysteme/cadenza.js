@@ -92,6 +92,7 @@ cadenzaClient.show('{embeddingTargetId}', {
 });
 ```
 
+- The embedded target id can be defined for an open "workbook" in the menu under "more -> Manage workbook -> Embeddeding"
 - If the embedding target cannot be resolved, a 404 page is shown to the user.
 - Cadenza JS does not handle user authentication: If the user is not already logged in, the normal authentication flow of Cadenza will run. By default, the login page would be shown to the user.
 

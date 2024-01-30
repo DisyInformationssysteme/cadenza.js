@@ -329,6 +329,21 @@ export class CadenzaClient {
   }
 
   /**
+   * Set filter Selection in the currently shown map view.
+   *
+   * @param {WorkbookLayerPath} layerPath - The variable values
+   * @param {string[]} values - The variable values
+   * @return {Promise<void>} A `Promise` for when the filter variables were set.
+   */
+  setSelection(
+    /** @type WorkbookLayerPath */ layerPath,
+    /** @type string[] */ values,
+  ) {
+    this.#log('CadenzaClient#setSelection', layerPath, values);
+    return this.#postRequest('setSelection', { layerPath, values });
+  }
+
+  /**
    * Create a geometry.
    *
    * _Note:_ Under the hood, creating a geometry is similar to editing a geometry.
