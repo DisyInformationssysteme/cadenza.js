@@ -407,6 +407,7 @@ export class CadenzaClient {
    * @param {string} [options.locationFinder] - A search query for the location finder
    * @param {Extent} [options.mapExtent] - A map extent to set
    * @param {boolean} [options.useMapSrs] - Whether the geometry is in the map's SRS (otherwise EPSG:4326 is assumed)
+   * @param {WorkbookLayerPath[]} [options.selectableLayers] - Paths of the layers to select objects from
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
@@ -417,7 +418,7 @@ export class CadenzaClient {
    */
   selectObjects(
     backgroundMapView,
-    { locationFinder, mapExtent, useMapSrs, signal } = {},
+    { locationFinder, mapExtent, useMapSrs, selectableLayers, signal } = {},
   ) {
     this.#log('CadenzaClient#selectObjects', backgroundMapView);
     const params = createParams({
@@ -425,6 +426,7 @@ export class CadenzaClient {
       locationFinder,
       mapExtent,
       useMapSrs,
+      selectableLayers,
     });
     return this.#show(resolvePath(backgroundMapView), params, signal);
   }
@@ -800,6 +802,7 @@ function assertSupportedDataType(
  * @param {number} [params.minScale]
  * @param {OperationMode} [params.operationMode]
  * @param {TablePart[]} [params.parts]
+ * @param {WorkbookLayerPath[]} [params.selectableLayers]
  * @param {boolean} [params.useMapSrs]
  * @return {URLSearchParams}
  */
@@ -819,6 +822,7 @@ function createParams({
   mapExtent,
   minScale,
   parts,
+  selectableLayers,
   useMapSrs,
   operationMode,
 }) {
@@ -874,6 +878,10 @@ function createParams({
     ...(minScale && { minScale: String(minScale) }),
     ...(operationMode && operationMode !== 'normal' && { operationMode }),
     ...(parts && { parts: parts.join() }),
+    ...(selectableLayers &&
+      selectableLayers.length && {
+        selectableLayers: JSON.stringify(selectableLayers),
+      }),
     ...(useMapSrs && { useMapSrs: 'true' }),
   });
 }

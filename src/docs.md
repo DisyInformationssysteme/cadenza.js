@@ -223,6 +223,20 @@ cadenzaClient.on('selectObjects:ok', (event) => {
 });
 ```
 
+#### Limit selection to specific map layer
+
+<small>API: [CadenzaClient#selectObjects](./classes/CadenzaClient.html#selectObjects)</small>
+
+Limit object selection to specific map layers. For layers in groups, pass the layer path.
+
+```javascript
+cadenzaClient.selectObjects('{embeddingTargetId}', {
+  selectableLayers: [
+      [ 'layerGroupName', 'layerName' ], [ 'layerName' ]
+    ]
+  });
+```
+
 ### Highlight an Item in the Navigator
 
 <small>API: [CadenzaClient#show](./classes/CadenzaClient.html#show)</small>

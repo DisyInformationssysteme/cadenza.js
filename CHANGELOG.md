@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `CadenzaClient#selectObjects`
 - `CadenzaChangeExtentEvent`
 - Documentation for the "JSON Representation of Cadenza Object Data"
+- `selectableLayers` parameter to `CadenzaClient#selectObjects` and relevant documentation 
 
 ### Changed
 - Improved the documentation and types of events.
