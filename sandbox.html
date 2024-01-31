@@ -141,7 +141,7 @@
       showMap: data => cadenzaClient.showMap(data.embeddingTargetId, getOptions(data)),
       setFilter: data => cadenzaClient.setFilter(data.filter),
       createGeometry: data => cadenzaClient.createGeometry(data.embeddingTargetId, data.geometryType, getOptions(data)),
-      editGeometry: data => cadenzaClient.editGeometry(data.embeddingTargetId, JSON.parse(data.geometry), getOptions(data)),
+      editGeometry: ({ geometry, ...data }) => cadenzaClient.editGeometry(data.embeddingTargetId, JSON.parse(geometry), getOptions(data)),
       selectObjects: data => cadenzaClient.selectObjects(data.embeddingTargetId, getOptions(data)),
       fetchData: data => {
         console.log('Inspect the fetchData() request in the devtools.');
@@ -205,8 +205,8 @@
         ...(jasperReportAsPdf === 'on' && { dataType: 'pdf' }),
         labelSet,
         locationFinder,
-        mapExtent: mapExtent && mapExtent.split(','),
-        minScale,
+        mapExtent: mapExtent && mapExtent.split(',').map(Number),
+        minScale: minScale && Number(minScale),
         parts: parts && parts.split(','),
         ...(simplifiedOperationMode === 'on' && { operationMode: 'simplified' }),
         selectableLayers: selectableLayers && JSON.parse(selectableLayers),
@@ -401,8 +401,8 @@
 
 <template data-action="setFilter">
   <div>
-    <label for="filter">Filter</label>
-    <textarea name="filter" id="filter" rows="3"></textarea>
+    <label for="filter">Filter *</label>
+    <textarea name="filter" id="filter" rows="3" required></textarea>
     <small>
       <p>A JSON object with filter variable names and values</p>
       <p>Dates need to be ISO strings<br>(e.g. <code>"2023-11-17T17:12:06.175Z"</code>).<br>Use <code>"{{currentDate}}"</code> for the current date.</p>
