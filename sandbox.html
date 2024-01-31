@@ -7,6 +7,11 @@
   <title>Cadenza JS Development Sandbox</title>
 
   <style>
+    :root {
+      --bg: #eee;
+      --gap: 12px;
+      --padding: 16px;
+    }
     * {
       box-sizing: border-box;
     }
@@ -14,26 +19,26 @@
       height: 100%;
     }
     body {
-      display: flex;
+      display: grid;
+      grid-template-areas:
+        'aside  main'
+        'footer footer';
+      grid-template-columns: 368px 1fr;
+      grid-template-rows: 1fr auto;
       margin: 0;
     }
-    aside, main {
-      --padding: 16px;
-    }
     aside {
-      --bg: #eee;
       background: var(--bg);
+      grid-area: aside;
       overflow: hidden auto;
-      width: 368px;
     }
     form {
       padding-inline: var(--padding);
     }
     form, fieldset {
-      --form-gap: 12px;
       display: flex;
       flex-direction: column;
-      gap: var(--form-gap);
+      gap: var(--gap);
     }
     fieldset > div {
       display: flex;
@@ -45,7 +50,7 @@
       flex-direction: column;
       gap: 4px;
 
-      & > * {
+      > * {
         margin-block: 0;
       }
     }
@@ -57,7 +62,7 @@
     }
     .action-container {
       border-bottom: var(--border);
-      padding-bottom: var(--form-gap);
+      padding-bottom: var(--gap);
       padding-top: var(--padding);
       top: 0;
     }
@@ -65,10 +70,10 @@
       border-top: var(--border);
       bottom: 0;
       padding-bottom: var(--padding);
-      padding-top: var(--form-gap);
+      padding-top: var(--gap);
     }
     main {
-      flex: 1;
+      grid-area: main;
       padding: var(--padding);
     }
     iframe {
@@ -82,6 +87,18 @@
     select, input:is(:not([type]), [type=text], [type=number]), textarea, hr {
       display: block;
       width: 100%
+    }
+    footer {
+      background: var(--bg);
+      display: flex;
+      font-size: small;
+      grid-area: footer;
+      justify-content: space-between;
+      padding: 4px var(--padding);
+
+      > * {
+        margin: 0;
+      }
     }
   </style>
 
@@ -241,6 +258,11 @@
 <main>
   <iframe id="iframe"></iframe>
 </main>
+
+<footer>
+  <a href="https://disyinformationssysteme.github.io/cadenza.js/">Cadenza JS Documentation</a>
+  <p>Open the browser's devtools (<kbd>F12</kbd>) to see requests and events.</p>
+</footer>
 
 <template id="common-show">
   <div>
