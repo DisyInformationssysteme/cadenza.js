@@ -218,7 +218,7 @@ export class CadenzaClient {
       signal,
     } = {},
   ) {
-    this.#log('CadenzaClient#show', source);
+    this.#log('CadenzaClient#show', ...arguments);
     if (dataType) {
       assertSupportedDataType(dataType, ['pdf']);
     }
@@ -284,7 +284,7 @@ export class CadenzaClient {
       signal,
     } = {},
   ) {
-    this.#log('CadenzaClient#showMap', mapView, geometry);
+    this.#log('CadenzaClient#showMap', ...arguments);
     if (geometry) {
       assertValidGeometryType(geometry.type);
     }
@@ -310,7 +310,7 @@ export class CadenzaClient {
    * @param {boolean} expanded - The expansion state of the navigator
    */
   expandNavigator(expanded = true) {
-    this.#log('CadenzaClient#expandNavigator', expanded);
+    this.#log('CadenzaClient#expandNavigator', ...arguments);
     this.#postEvent('expandNavigator', { expandNavigator: Boolean(expanded) });
   }
 
@@ -321,7 +321,7 @@ export class CadenzaClient {
    * @return {Promise<void>} A `Promise` for when the filter variables were set.
    */
   setFilter(filter) {
-    this.#log('CadenzaClient#setFilter', filter);
+    this.#log('CadenzaClient#setFilter', ...arguments);
     return this.#postRequest('setFilter', { filter });
   }
 
@@ -351,7 +351,7 @@ export class CadenzaClient {
     geometryType,
     { locationFinder, mapExtent, minScale, useMapSrs, signal } = {},
   ) {
-    this.#log('CadenzaClient#createGeometry', backgroundMapView, geometryType);
+    this.#log('CadenzaClient#createGeometry', ...arguments);
     const params = createParams({
       action: 'editGeometry',
       geometryType,
@@ -386,7 +386,7 @@ export class CadenzaClient {
     geometry,
     { locationFinder, mapExtent, minScale, useMapSrs, signal } = {},
   ) {
-    this.#log('CadenzaClient#editGeometry', backgroundMapView, geometry);
+    this.#log('CadenzaClient#editGeometry', ...arguments);
     assertValidGeometryType(geometry.type);
     const params = createParams({
       action: 'editGeometry',
@@ -419,7 +419,7 @@ export class CadenzaClient {
     backgroundMapView,
     { locationFinder, mapExtent, useMapSrs, signal } = {},
   ) {
-    this.#log('CadenzaClient#selectObjects', backgroundMapView);
+    this.#log('CadenzaClient#selectObjects', ...arguments);
     const params = createParams({
       action: 'selectObjects',
       locationFinder,
@@ -591,7 +591,7 @@ export class CadenzaClient {
    * @throws For invalid arguments
    */
   fetchData(source, dataType, { parts, signal } = {}) {
-    this.#log('CadenzaClient#fetchData', source, dataType);
+    this.#log('CadenzaClient#fetchData', ...arguments);
     assertSupportedDataType(dataType);
     const params = createParams({ dataType, parts });
     return this.#fetch(resolvePath(source), params, signal);
@@ -630,7 +630,7 @@ export class CadenzaClient {
    * @throws For invalid arguments
    */
   downloadData(source, dataType, { fileName, parts }) {
-    this.#log('CadenzaClient#downloadData', source, dataType);
+    this.#log('CadenzaClient#downloadData', ...arguments);
     assertSupportedDataType(dataType);
     const params = createParams({ dataType, fileName, parts });
     this.#download(resolvePath(source), params);
@@ -660,7 +660,28 @@ export class CadenzaClient {
 
   #log(/** @type unknown[] */ ...args) {
     if (this.#debug) {
-      console.log(...args);
+      /** @type {unknown[]} */
+      const redundantValues = [undefined, '', false];
+      /** @type {(value: unknown) => value is object} */
+      const isObject = (/** @type {unknown} */ value) =>
+        value != null && typeof value === 'object';
+      const sanitizedArgs = args
+        .map((arg) => {
+          if (isObject(arg)) {
+            return Object.fromEntries(
+              Object.entries(arg).filter(
+                ([, value]) => !redundantValues.includes(value),
+              ),
+            );
+          }
+          return arg;
+        })
+        .filter(
+          (arg) =>
+            !redundantValues.includes(arg) &&
+            !(isObject(arg) && Object.keys(arg).length === 0),
+        );
+      console.log(...sanitizedArgs);
     }
   }
 }

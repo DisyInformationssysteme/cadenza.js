@@ -11,9 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `CadenzaClient#selectObjects`
 - `CadenzaChangeExtentEvent`
 - Documentation for the "JSON Representation of Cadenza Object Data"
+- Sandbox footer with link to docs and devtools hint
 
 ### Changed
 - Improved the documentation and types of events.
+- Improved logging
 
 ### Fixed
 - The `FilterVariables` type was missing `string[]`.
