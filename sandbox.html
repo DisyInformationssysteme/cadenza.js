@@ -217,7 +217,7 @@
         if (value === '{{currentDate}}') { // convenience for current date
           return new Date();
         }
-        if (value.match?.(/....-..-..T..:..:..\....Z/)) {
+        if (value?.match?.(/....-..-..T..:..:..\....Z/)) {
           return new Date(value);
         }
         return value;
