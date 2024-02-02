@@ -54,23 +54,20 @@
         margin-block: 0;
       }
     }
-    .action-container,
-    .submit-container {
-      --border: 2px solid gray;
-      background: var(--bg);
-      position: sticky;
-    }
     .action-container {
-      border-bottom: var(--border);
+      align-items: end;
+      background: var(--bg);
+      border-bottom: 2px solid gray;
+      display: flex;
+      gap: 4px;
       padding-bottom: var(--gap);
       padding-top: var(--padding);
+      position: sticky;
       top: 0;
-    }
-    .submit-container {
-      border-top: var(--border);
-      bottom: 0;
-      padding-bottom: var(--padding);
-      padding-top: var(--gap);
+
+      > :first-child {
+        flex: 1;
+      }
     }
     main {
       grid-area: main;
@@ -232,26 +229,26 @@
 <aside>
   <form id="form">
     <div class="action-container">
-      <label for="action">Action</label>
-      <select name="action" id="action">
-        <option value="show">Show</option>
-        <option value="showPage">Show Page</option>
-        <option value="expandNavigator">Expand Navigator</option>
-        <option value="showMap">Show Map</option>
-        <option value="setFilter">Set Filter</option>
-        <option value="createGeometry">Create Geometry</option>
-        <option value="editGeometry">Edit Geometry</option>
-        <option value="selectObjects">Select Objects</option>
-        <option value="downloadData">Download data</option>
-        <option value="fetchData">Fetch data</option>
-      </select>
+      <div>
+        <label for="action">Action</label>
+        <select name="action" id="action">
+          <option value="show">Show</option>
+          <option value="showPage">Show Page</option>
+          <option value="expandNavigator">Expand Navigator</option>
+          <option value="showMap">Show Map</option>
+          <option value="setFilter">Set Filter</option>
+          <option value="createGeometry">Create Geometry</option>
+          <option value="editGeometry">Edit Geometry</option>
+          <option value="selectObjects">Select Objects</option>
+          <option value="downloadData">Download data</option>
+          <option value="fetchData">Fetch data</option>
+        </select>
+      </div>
+      
+      <button>Go!</button>
     </div>
 
     <fieldset id="settings"></fieldset>
-
-    <div class="submit-container">
-      <button>Go!</button>
-    </div>
   </form>
 </aside>
 
