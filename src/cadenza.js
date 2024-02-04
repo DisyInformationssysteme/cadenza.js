@@ -899,7 +899,8 @@ function createParams({
     ...(minScale && { minScale: String(minScale) }),
     ...(operationMode && operationMode !== 'normal' && { operationMode }),
     ...(parts && { parts: parts.join() }),
-    ...(layers && layers.length && {
+    ...(layers &&
+      layers.length && {
         layers: JSON.stringify(layers),
       }),
     ...(useMapSrs && { useMapSrs: 'true' }),
