@@ -186,7 +186,7 @@
       mapExtent,
       minScale,
       parts,
-      selectableLayers,
+      layers,
       simplifiedOperationMode,
       useMapSrs
     }) {
@@ -206,7 +206,7 @@
         minScale: minScale && Number(minScale),
         parts: parts && parts.split(','),
         ...(simplifiedOperationMode === 'on' && { operationMode: 'simplified' }),
-        selectableLayers: selectableLayers && JSON.parse(selectableLayers),
+        layers: layers && JSON.parse(layers),
         useMapSrs: useMapSrs === 'on'
       };
     }
@@ -244,7 +244,7 @@
           <option value="fetchData">Fetch data</option>
         </select>
       </div>
-      
+
       <button>Go!</button>
     </div>
 
@@ -452,8 +452,8 @@
     <input name="embeddingTargetId" id="embeddingTargetId" required>
   </div>
   <div>
-    <label for="selectableLayers">Layers to select objects from</label>
-    <input name="selectableLayers" id="selectableLayers" placeholder="[[&quot;layerGroupName&quot;,&quot;layerName&quot;],[&quot;layerName&quot;]]...">
+    <label for="layers">Layers to select objects from</label>
+    <input name="layers" id="layers" placeholder="[[&quot;layerGroupName&quot;,&quot;layerName&quot;],[&quot;layerName&quot;]]...">
   </div>
 </template>
 
