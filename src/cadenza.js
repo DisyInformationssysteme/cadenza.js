@@ -301,7 +301,9 @@ export class CadenzaClient {
       useMapSrs,
     });
     await this.#show(resolvePath(mapView), params, signal);
-    this.#postEvent('setGeometry', { geometry });
+    if (geometry) {
+      this.#postEvent('setGeometry', { geometry });
+    }
   }
 
   /**
@@ -396,7 +398,9 @@ export class CadenzaClient {
       useMapSrs,
     });
     await this.#show(resolvePath(backgroundMapView), params, signal);
-    this.#postEvent('setGeometry', { geometry });
+    if (geometry) {
+      this.#postEvent('setGeometry', { geometry });
+    }
   }
 
   /**
