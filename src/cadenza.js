@@ -411,6 +411,7 @@ export class CadenzaClient {
    * @param {string} [options.locationFinder] - A search query for the location finder
    * @param {Extent} [options.mapExtent] - A map extent to set
    * @param {boolean} [options.useMapSrs] - Whether the geometry is in the map's SRS (otherwise EPSG:4326 is assumed)
+   * @param {WorkbookLayerPath[]} [options.layers] - Paths of the layers to select objects from
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
@@ -421,7 +422,7 @@ export class CadenzaClient {
    */
   selectObjects(
     backgroundMapView,
-    { locationFinder, mapExtent, useMapSrs, signal } = {},
+    { locationFinder, mapExtent, useMapSrs, layers, signal } = {},
   ) {
     this.#log('CadenzaClient#selectObjects', ...arguments);
     const params = createParams({
@@ -429,6 +430,7 @@ export class CadenzaClient {
       locationFinder,
       mapExtent,
       useMapSrs,
+      layers,
     });
     return this.#show(resolvePath(backgroundMapView), params, signal);
   }
@@ -825,6 +827,7 @@ function assertSupportedDataType(
  * @param {number} [params.minScale]
  * @param {OperationMode} [params.operationMode]
  * @param {TablePart[]} [params.parts]
+ * @param {WorkbookLayerPath[]} [params.layers]
  * @param {boolean} [params.useMapSrs]
  * @return {URLSearchParams}
  */
@@ -844,6 +847,7 @@ function createParams({
   mapExtent,
   minScale,
   parts,
+  layers,
   useMapSrs,
   operationMode,
 }) {
@@ -899,6 +903,10 @@ function createParams({
     ...(minScale && { minScale: String(minScale) }),
     ...(operationMode && operationMode !== 'normal' && { operationMode }),
     ...(parts && { parts: parts.join() }),
+    ...(layers &&
+      layers.length && {
+        layers: JSON.stringify(layers),
+      }),
     ...(useMapSrs && { useMapSrs: 'true' }),
   });
 }

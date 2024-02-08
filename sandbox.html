@@ -186,6 +186,7 @@
       mapExtent,
       minScale,
       parts,
+      layers,
       simplifiedOperationMode,
       useMapSrs
     }) {
@@ -205,6 +206,7 @@
         minScale: minScale && Number(minScale),
         parts: parts && parts.split(','),
         ...(simplifiedOperationMode === 'on' && { operationMode: 'simplified' }),
+        layers: layers && JSON.parse(layers),
         useMapSrs: useMapSrs === 'on'
       };
     }
@@ -242,7 +244,7 @@
           <option value="fetchData">Fetch data</option>
         </select>
       </div>
-      
+
       <button>Go!</button>
     </div>
 
@@ -448,6 +450,10 @@
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
+  </div>
+  <div>
+    <label for="layers">Layers to select objects from</label>
+    <input name="layers" id="layers" placeholder="[[&quot;layerGroupName&quot;,&quot;layerName&quot;],[&quot;layerName&quot;]]...">
   </div>
 </template>
 
