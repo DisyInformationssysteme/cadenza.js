@@ -215,26 +215,19 @@ That's why the events use the `editGeometry` prefix.
 
 <small>API: [CadenzaClient#selectObjects](./classes/CadenzaClient.html#selectObjects)</small>
 
-```javascript
-cadenzaClient.selectObjects('{embeddingTargetId}');
-
-cadenzaClient.on('selectObjects:ok', (event) => {
-  console.log('Object selection was completed', event.detail.selection);
-});
-```
-
-#### Limit selection to specific map layers
-
-<small>API: [CadenzaClient#selectObjects](./classes/CadenzaClient.html#selectObjects)</small>
-
-Limit object selection to specific map layers. For layers in groups, pass the layer path.
+Select objects in a workbook map view. In the example the selection is restricted to specific layers. For layers in groups, pass the layer path.
 
 ```javascript
 cadenzaClient.selectObjects('{embeddingTargetId}', {
   layers: [
-      [ 'layerGroupName', 'layerName' ], [ 'layerName' ]
-    ]
-  });
+    [ '{layerGroupPrintName}', '{layerPrintName}' ],
+    [ '{layerPrintName}' ]
+  ]
+});
+
+cadenzaClient.on('selectObjects:ok', (event) => {
+  console.log('Object selection was completed', event.detail.selection);
+});
 ```
 
 ### Highlight an Item in the Navigator

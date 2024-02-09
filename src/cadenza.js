@@ -408,10 +408,10 @@ export class CadenzaClient {
    *
    * @param {WorkbookViewSource} backgroundMapView - The workbook map view
    * @param {object} [options] - Options
+   * @param {WorkbookLayerPath[]} [options.layers] - Layers to restrict the selection to
    * @param {string} [options.locationFinder] - A search query for the location finder
    * @param {Extent} [options.mapExtent] - A map extent to set
    * @param {boolean} [options.useMapSrs] - Whether the geometry is in the map's SRS (otherwise EPSG:4326 is assumed)
-   * @param {WorkbookLayerPath[]} [options.layers] - Paths of the layers to select objects from
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
@@ -422,15 +422,15 @@ export class CadenzaClient {
    */
   selectObjects(
     backgroundMapView,
-    { locationFinder, mapExtent, useMapSrs, layers, signal } = {},
+    { layers, locationFinder, mapExtent, useMapSrs, signal } = {},
   ) {
     this.#log('CadenzaClient#selectObjects', ...arguments);
     const params = createParams({
       action: 'selectObjects',
+      layers,
       locationFinder,
       mapExtent,
       useMapSrs,
-      layers,
     });
     return this.#show(resolvePath(backgroundMapView), params, signal);
   }
@@ -810,7 +810,7 @@ function assertSupportedDataType(
 }
 
 /**
- * @param {object} params - Options
+ * @param {object} params
  * @param {string} [params.action]
  * @param {DataType} [params.dataType]
  * @param {UiFeature[]} [params.disabledUiFeatures]
@@ -822,12 +822,12 @@ function assertSupportedDataType(
  * @param {boolean} [params.hideWorkbookToolBar]
  * @param {GlobalId} [params.highlightGlobalId]
  * @param {string} [params.labelSet]
+ * @param {WorkbookLayerPath[]} [params.layers]
  * @param {string} [params.locationFinder]
  * @param {Extent} [params.mapExtent]
  * @param {number} [params.minScale]
  * @param {OperationMode} [params.operationMode]
  * @param {TablePart[]} [params.parts]
- * @param {WorkbookLayerPath[]} [params.layers]
  * @param {boolean} [params.useMapSrs]
  * @return {URLSearchParams}
  */
@@ -843,13 +843,13 @@ function createParams({
   hideWorkbookToolBar,
   highlightGlobalId,
   labelSet,
+  layers,
   locationFinder,
   mapExtent,
   minScale,
-  parts,
-  layers,
-  useMapSrs,
   operationMode,
+  parts,
+  useMapSrs,
 }) {
   if (disabledUiFeatures) {
     disabledUiFeatures.forEach((feature) =>
@@ -898,15 +898,15 @@ function createParams({
     ...(hideWorkbookToolBar && { hideWorkbookToolBar: 'true' }),
     ...(highlightGlobalId && { highlightGlobalId }),
     ...(labelSet && { labelSet }),
+    ...(layers &&
+      layers.length && {
+        layers: JSON.stringify(layers),
+      }),
     ...(locationFinder && { locationFinder }),
     ...(mapExtent && { mapExtent: mapExtent.join() }),
     ...(minScale && { minScale: String(minScale) }),
     ...(operationMode && operationMode !== 'normal' && { operationMode }),
     ...(parts && { parts: parts.join() }),
-    ...(layers &&
-      layers.length && {
-        layers: JSON.stringify(layers),
-      }),
     ...(useMapSrs && { useMapSrs: 'true' }),
   });
 }
