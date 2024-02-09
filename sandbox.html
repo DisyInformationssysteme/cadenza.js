@@ -136,6 +136,7 @@
       showPage: data => cadenzaClient.show({ page: data.page }, getOptions(data)),
       expandNavigator: data => cadenzaClient.expandNavigator(data.expandNavigator === 'on'),
       showMap: data => cadenzaClient.showMap(data.embeddingTargetId, getOptions(data)),
+      setLayerVisibility: data => cadenzaClient.setLayerVisibility(JSON.parse(data.layer), data.visibility === 'on'),
       setFilter: data => cadenzaClient.setFilter(parseFilterVariables(data.filter)),
       createGeometry: data => cadenzaClient.createGeometry(data.embeddingTargetId, data.geometryType, getOptions(data)),
       editGeometry: ({ geometry, ...data }) => cadenzaClient.editGeometry(data.embeddingTargetId, JSON.parse(geometry), getOptions(data)),
@@ -239,6 +240,7 @@
           <option value="showPage">Show Page</option>
           <option value="expandNavigator">Expand Navigator</option>
           <option value="showMap">Show Map</option>
+          <option value="setLayerVisibility">Set Layer Visibility</option>
           <option value="setFilter">Set Filter</option>
           <option value="createGeometry">Create Geometry</option>
           <option value="editGeometry">Edit Geometry</option>
@@ -352,6 +354,14 @@
   <div>
     <label for="parts">Parts</label>
     <input name="parts" id="parts" placeholder="columns,values,totals">
+    <small>
+      A comma-separated list of parts. Supported parts are:
+      <ul>
+        <li>columns</li>
+        <li>values</li>
+        <li>totals</li>
+      </ul>
+    </small>
   </div>
 </template>
 
@@ -460,6 +470,23 @@
   <div>
     <label for="layers">Layers to select objects from</label>
     <input name="layers" id="layers" placeholder="[[&quot;layerGroupName&quot;,&quot;layerName&quot;],[&quot;layerName&quot;]]...">
+    <small>
+      A JSON array of arrays. Each top level array element is a layer path, represented by an array of strings composed of layer print names.
+    </small>
+  </div>
+</template>
+
+<template data-action="setLayerVisibility">
+  <div>
+    <label for="layer">Layer *</label>
+    <input name="layer" id="layer" placeholder="[&quot;layerGroupName&quot;,&quot;layerName&quot;]" required>
+    <small>A layer path represented by a JSON array of strings, each element being a layer print name.</small>
+  </div>
+  <div>
+    <label>
+      <input type="checkbox" name="visibility">
+      Visibile
+    </label>
   </div>
 </template>
 

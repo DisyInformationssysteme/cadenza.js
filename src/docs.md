@@ -231,6 +231,17 @@ cadenzaClient.on('selectObjects:ok', (event) => {
 });
 ```
 
+### Change visibility of Layers in a Workbook Map
+
+<small>API: [CadenzaClient#setLayerVisibility](./classes/CadenzaClient.html#setLayerVisibility)</small>
+
+To change the visibility of a layer in an already shown map view, pass the layer path and the desired visibility.
+The operation is asynchronous and returns a Promise. 
+
+```javascript
+cadenzaClient.setLayerVisibility([ '{layerGroupPrintName}', '{layerPrintName}' ], false);
+```
+
 ### Highlight an Item in the Navigator
 
 <small>API: [CadenzaClient#show](./classes/CadenzaClient.html#show)</small>
