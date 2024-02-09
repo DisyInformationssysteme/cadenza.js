@@ -71,8 +71,8 @@ globalThis.cadenza = Object.assign(
  * @typedef {'workbook-design'|'workbook-view-management'} UiFeature - The name of a Cadenza UI feature
  *
  * _Note:_ Supported features are:
- * * 'workbook-design' - The workbook designer
- * * 'workbook-view-management' - Add/Edit/Remove workbook views (Is included in 'workbook-design'.)
+ * * `"workbook-design"` - The workbook designer
+ * * `"workbook-view-management"` - Add/Edit/Remove workbook views (Is included in 'workbook-design'.)
  * */
 
 /**
