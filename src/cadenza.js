@@ -588,8 +588,10 @@ export class CadenzaClient {
   /**
    * Fetch data from a workbook view.
    *
-   * @param {WorkbookViewSource} source - The workbook view to fetch data from
-   * @param {DataType} dataType - The data type you want to get back from the server
+   * @param {WorkbookViewSource} source - The workbook view to fetch data from.
+   *   Currently only table and indicator views are supported.
+   * @param {DataType} dataType - The data type you want to get back from the server.
+   *   Currently the `"pdf"` type is not supported.
    * @param {object} options - Options
    * @param {TablePart[]} [options.parts] - Table parts to export; If not specified, all parts are exported.
    * @param {AbortSignal} [options.signal] - A signal to abort the data fetching
@@ -628,8 +630,10 @@ export class CadenzaClient {
    *
    * _Note:_ The file name, if not provided, is generated from the name of the workbook view and the current date.
    *
-   * @param {WorkbookViewSource} source - The workbook view to download data from
-   * @param {DataType} dataType - The data type you want to get back from the server
+   * @param {WorkbookViewSource} source - The workbook view to download data from.
+   *   Currently only table and indicator views are supported.
+   * @param {DataType} dataType - The data type you want to get back from the server.
+   *   Currently the `"pdf"` type is not supported.
    * @param {object} options - Options
    * @param {string} [options.fileName] - The file name to use; The file extension is appended by Cadenza.
    * @param {TablePart[]} [options.parts] - Table parts to export; If not specified, all parts are exported.
