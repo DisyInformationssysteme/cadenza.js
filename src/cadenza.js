@@ -33,6 +33,12 @@ globalThis.cadenza = Object.assign(
 
 /**
  * @typedef ExternalLinkKey - A tuple qualifying a Cadenza external link
+ *
+ * You get the `repositoryName` and `externalLinkId` from the URL of the external link's page in the Cadenza management center:
+ * ```
+ * {baseUrl}/admin/repositories/{repositoryName}/external-links/{externalLinkId}?...
+ * ```
+ *
  * @property {string} repositoryName - The name of the link's repository
  * @property {string} externalLinkId - The ID of the external link
  */
