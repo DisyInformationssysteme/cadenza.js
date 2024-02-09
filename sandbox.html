@@ -141,6 +141,8 @@
       editGeometry: ({ geometry, ...data }) => cadenzaClient.editGeometry(data.embeddingTargetId, JSON.parse(geometry), getOptions(data)),
       selectObjects: data => cadenzaClient.selectObjects(data.embeddingTargetId, getOptions(data)),
       setSelection: data => cadenzaClient.setSelection(JSON.parse(data.layerPath), JSON.parse(data.values)),
+      addSelection: data => cadenzaClient.addSelection(JSON.parse(data.layerPath), JSON.parse(data.values)),
+      removeSelection: data => cadenzaClient.removeSelection(JSON.parse(data.layerPath), JSON.parse(data.values)),
       fetchData: data => {
         console.log('Inspect the fetchData() request in the devtools.');
         cadenzaClient.fetchData(data.embeddingTargetId, data.dataType, getOptions(data));
@@ -242,6 +244,8 @@
           <option value="editGeometry">Edit Geometry</option>
           <option value="selectObjects">Select Objects</option>
           <option value="setSelection">Set Selection</option>
+          <option value="addSelection">Add Selection</option>
+          <option value="removeSelection">Remove Selection</option>
           <option value="downloadData">Download data</option>
           <option value="fetchData">Fetch data</option>
         </select>
@@ -461,9 +465,33 @@
 
 <template data-action="setSelection">
   <div>
-    <label for="layerPath">Path to the dataview layer * (GeoJSON Array)</label>
+    <label for="layerPath">Path to the dataview layer * (JSON Array)</label>
     <textarea name="layerPath" id="layerPath" rows="5" required></textarea>
-    <label for="values">List of Object identifiers * (GeoJSON Array)</label>
+  </div>
+  <div>
+    <label for="values">List of Object identifiers * (JSON Array)</label>
+    <textarea name="values" id="values" rows="5" required></textarea>
+  </div>
+</template>
+
+<template data-action="addSelection">
+  <div>
+    <label for="layerPath">Path to the dataview layer * (JSON Array)</label>
+    <textarea name="layerPath" id="layerPath" rows="5" required></textarea>
+  </div>
+  <div>
+    <label for="values">List of Object identifiers * (JSON Array)</label>
+    <textarea name="values" id="values" rows="5" required></textarea>
+  </div>
+</template>
+
+<template data-action="removeSelection">
+  <div>
+    <label for="layerPath">Path to the dataview layer * (JSON Array)</label>
+    <textarea name="layerPath" id="layerPath" rows="5" required></textarea>
+  </div>
+  <div>
+    <label for="values">List of Object identifiers * (JSON Array)</label>
     <textarea name="values" id="values" rows="5" required></textarea>
   </div>
 </template>

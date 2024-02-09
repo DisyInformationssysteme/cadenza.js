@@ -329,18 +329,48 @@ export class CadenzaClient {
   }
 
   /**
-   * Set filter Selection in the currently shown map view.
+   * Set Selection in the currently shown map view.
    *
-   * @param {WorkbookLayerPath} layerPath - The variable values
+   * @param {WorkbookLayerPath} layer - The data view layer to set the selection in
    * @param {string[]} values - The variable values
-   * @return {Promise<void>} A `Promise` for when the filter variables were set.
+   * @return {Promise<void>} A 'Promise' for when the selection was set.
    */
   setSelection(
-    /** @type WorkbookLayerPath */ layerPath,
+    /** @type WorkbookLayerPath */ layer,
     /** @type string[] */ values,
   ) {
-    this.#log('CadenzaClient#setSelection', layerPath, values);
-    return this.#postRequest('setSelection', { layerPath, values });
+    this.#log('CadenzaClient#setSelection', layer, values);
+    return this.#postRequest('setSelection', { layer, values });
+  }
+
+  /**
+   * Add Selection in the currently shown map view.
+   *
+   * @param {WorkbookLayerPath} layer - The data view layer to add the selection in
+   * @param {string[]} values - The variable values
+   * @return {Promise<void>} A 'Promise' for when the selection was added.
+   */
+  addSelection(
+    /** @type WorkbookLayerPath */ layer,
+    /** @type string[] */ values,
+  ) {
+    this.#log('CadenzaClient#addSelection', layer, values);
+    return this.#postRequest('addSelection', { layer, values });
+  }
+
+  /**
+   * Remove Selection in the currently shown map view.
+   *
+   * @param {WorkbookLayerPath} layer - The data view layer to remove the selection from
+   * @param {string[]} values - The variable values
+   * @return {Promise<void>} A 'Promise' for when the selection was removed.
+   */
+  removeSelection(
+    /** @type WorkbookLayerPath */ layer,
+    /** @type string[] */ values,
+  ) {
+    this.#log('CadenzaClient#removeSelection', layer, values);
+    return this.#postRequest('removeSelection', { layer, values });
   }
 
   /**
