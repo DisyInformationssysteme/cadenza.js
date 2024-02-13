@@ -28,7 +28,18 @@ globalThis.cadenza = Object.assign(
   },
 );
 
-/** @typedef {string} EmbeddingTargetId - The ID of an embedding target */
+/**
+ * @typedef {string} EmbeddingTargetId - The ID of a Cadenza embedding target
+ *
+ * Embedding targets are called 🇩🇪 "Einbettbarer Inhalt" / 🇺🇸 "Embeddable content" throughout the Cadenza UI and help.
+ * They're managed within the respective workbook:
+ *
+ * - 🇩🇪 "Mehr" > "Arbeitsmappe verwalten" > "Einbettung"
+ * - 🇺🇸 "More" > "Manage workbook" > "Embedding"
+ *
+ * The name of an embedding target (as entered in the UI) is its ID.
+ */
+
 /** @typedef {string} GlobalId - The ID of a navigator item */
 
 /**
