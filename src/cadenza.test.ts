@@ -13,19 +13,9 @@ const REPOSITORY_NAME = 'repository';
 const WORKBOOK_ID = 'abcdefghijklmnopqrst'; // length=20, Base64
 const WORKSHEET_ID = WORKBOOK_ID;
 
-const WORKBOOK_KEY = {
-  repositoryName: REPOSITORY_NAME,
-  workbookId: WORKBOOK_ID,
-};
-
 const EXTERNAL_LINK_KEY = {
   repositoryName: REPOSITORY_NAME,
   externalLinkId: EXTERNAL_LINK_ID,
-};
-
-const WORKSHEET_KEY = {
-  ...WORKBOOK_KEY,
-  worksheetId: WORKSHEET_ID,
 };
 
 const WELCOME_PAGE: PageSource = {
@@ -72,31 +62,6 @@ describe('Given a Cadenza JS client instance', () => {
 
   it('Throws when attempting to show an embedding target with an invalid ID', () =>
     expect(() => cad.show('Invalid')).toThrow());
-
-  it('Throws when attempting to show a workbook key with an invalid repository name', () => {
-    const key = {
-      repositoryName: '',
-      workbookId: WORKBOOK_ID,
-    };
-    expect(() => cad.show(key)).toThrow();
-  });
-
-  it('Throws when attempting to show a workbook key with an invalid workbook ID', () => {
-    const key = {
-      repositoryName: REPOSITORY_NAME,
-      workbookId: '',
-    };
-    expect(() => cad.show(key)).toThrow();
-  });
-
-  it('Throws when attempting to show a worksheet key with an invalid worksheet ID', () => {
-    const key = {
-      repositoryName: REPOSITORY_NAME,
-      workbookId: WORKBOOK_ID,
-      worksheetId: '',
-    };
-    expect(() => cad.show(key)).toThrow();
-  });
 
   describe('When showing an embedding target', () => {
     let abortController: AbortController;
@@ -187,18 +152,6 @@ describe('Given a Cadenza JS client instance', () => {
     });
   });
 
-  describe('When showing a workbook key', () => {
-    beforeEach(() => {
-      cad.show(WORKBOOK_KEY);
-    });
-
-    it("Sets the iframe's src accordingly", () => {
-      const { repositoryName, workbookId } = WORKBOOK_KEY;
-      const expectedSrc = `${BASE_URL}/public/repositories/${repositoryName}/workbooks/${workbookId}`;
-      expect(cad.iframe!.src).toBe(expectedSrc);
-    });
-  });
-
   describe('When showing the welcome page', () => {
     beforeEach(() => {
       cad.show(WELCOME_PAGE);
@@ -206,18 +159,6 @@ describe('Given a Cadenza JS client instance', () => {
 
     it("Sets the iframe's src accordingly", () => {
       const expectedSrc = `${BASE_URL}/public/pages/welcome`;
-      expect(cad.iframe!.src).toBe(expectedSrc);
-    });
-  });
-
-  describe('When showing a worksheet key', () => {
-    beforeEach(() => {
-      cad.show(WORKSHEET_KEY);
-    });
-
-    it("Sets the iframe's src accordingly", () => {
-      const { repositoryName, workbookId, worksheetId } = WORKSHEET_KEY;
-      const expectedSrc = `${BASE_URL}/public/repositories/${repositoryName}/workbooks/${workbookId}/worksheets/${worksheetId}`;
       expect(cad.iframe!.src).toBe(expectedSrc);
     });
   });

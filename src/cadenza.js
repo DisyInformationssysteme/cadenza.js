@@ -43,23 +43,6 @@ globalThis.cadenza = Object.assign(
  * @property {string} externalLinkId - The ID of the external link
  */
 /**
- * @typedef WorkbookKey - A tuple qualifying a workbook
- * @property {string} repositoryName - The name of the workbook's repository
- * @property {string} workbookId - The ID of the workbook
- */
-/**
- * @typedef WorksheetKey - A tuple qualifying a worksheet
- * @property {string} repositoryName - The name of the workbook's repository
- * @property {string} workbookId - The ID of the workbook
- * @property {string} worksheetId - The ID of the worksheet
- */
-/**
- * @typedef WorkbookViewKey - A tuple qualifying a workbook view
- * @property {string} repositoryName - The name of the workbook's repository
- * @property {string} workbookId - The ID of the workbook
- * @property {string} viewId - The ID of the view
- */
-/**
  * @typedef {string[]} WorkbookLayerPath - Identifies a workbook layer within a view
  *   using the print names of the layer and - if the layer is grouped - its ancestors
  */
@@ -68,9 +51,6 @@ globalThis.cadenza = Object.assign(
  * @typedef PageSource - A well-known Cadenza page
  * @property {'welcome'} page - The name of the page (Only `"welcome"` is currently supported.)
  */
-/** @typedef {EmbeddingTargetId | WorkbookKey} WorkbookSource - A workbook source */
-/** @typedef {EmbeddingTargetId | WorksheetKey} WorksheetSource - A worksheet source */
-/** @typedef {EmbeddingTargetId | WorkbookViewKey} WorkbookViewSource - A workbook view source */
 
 /** @typedef {'normal'|'simplified'} OperationMode - The mode in which a workbook should be operated */
 /**
@@ -192,7 +172,7 @@ export class CadenzaClient {
   /**
    * Show a page, workbook, worksheet or workbook view in an iframe.
    *
-   * @param {PageSource | WorkbookSource | WorksheetSource | WorkbookViewSource} source - The source to show
+   * @param {PageSource | EmbeddingTargetId} source - The source to show
    * @param {object} [options]
    * @param {DataType} [options.dataType] - Set to 'pdf' for views of type "JasperReports report"
    *     to show the report PDF directly, without any Cadenza headers or footers.
@@ -253,7 +233,7 @@ export class CadenzaClient {
   /**
    * Show a workbook map view in an iframe.
    *
-   * @param {WorkbookViewSource} mapView - The workbook map view to show
+   * @param {EmbeddingTargetId} mapView - The workbook map view to show
    * @param {object} [options] - Options
    * @param {UiFeature[]} [options.disabledUiFeatures] - Cadenza UI features to disable
    * @param {boolean} [options.expandNavigator] - Indicates if the navigator should be expanded.
@@ -339,7 +319,7 @@ export class CadenzaClient {
    * _Note:_ Under the hood, creating a geometry is similar to editing a geometry.
    * That's why the events use the `editGeometry` prefix.
    *
-   * @param {WorkbookViewSource} backgroundMapView - The workbook map view in the background
+   * @param {EmbeddingTargetId} backgroundMapView - The workbook map view in the background
    * @param {GeometryType} geometryType - The geometry type
    * @param {object} [options] - Options
    * @param {string} [options.locationFinder] - A search query for the location finder
@@ -374,7 +354,7 @@ export class CadenzaClient {
   /**
    * Edit a geometry.
    *
-   * @param {WorkbookViewSource} backgroundMapView - The workbook map view in the background
+   * @param {EmbeddingTargetId} backgroundMapView - The workbook map view in the background
    * @param {Geometry} geometry - The geometry
    * @param {object} [options] - Options
    * @param {string} [options.locationFinder] - A search query for the location finder
@@ -412,7 +392,7 @@ export class CadenzaClient {
   /**
    * Select objects in a workbook map.
    *
-   * @param {WorkbookViewSource} backgroundMapView - The workbook map view
+   * @param {EmbeddingTargetId} backgroundMapView - The workbook map view
    * @param {object} [options] - Options
    * @param {WorkbookLayerPath[]} [options.layers] - Layers to restrict the selection to
    * @param {string} [options.locationFinder] - A search query for the location finder
@@ -594,7 +574,7 @@ export class CadenzaClient {
   /**
    * Fetch data from a workbook view.
    *
-   * @param {WorkbookViewSource} source - The workbook view to fetch data from.
+   * @param {EmbeddingTargetId} source - The workbook view to fetch data from.
    *   Currently only table and indicator views are supported.
    * @param {DataType} dataType - The data type you want to get back from the server.
    *   Currently the `"pdf"` type is not supported.
@@ -636,7 +616,7 @@ export class CadenzaClient {
    *
    * _Note:_ The file name, if not provided, is generated from the name of the workbook view and the current date.
    *
-   * @param {WorkbookViewSource} source - The workbook view to download data from.
+   * @param {EmbeddingTargetId} source - The workbook view to download data from.
    *   Currently only table and indicator views are supported.
    * @param {DataType} dataType - The data type you want to get back from the server.
    *   Currently the `"pdf"` type is not supported.
@@ -702,41 +682,17 @@ export class CadenzaClient {
   }
 }
 
-function resolvePath(
-  /** @type PageSource | WorkbookSource | WorksheetSource | WorkbookViewSource */ source,
-) {
+function resolvePath(/** @type PageSource | EmbeddingTargetId */ source) {
   if (typeof source === 'string') {
     assert(
       validKebabCaseString(source),
       `Invalid embedding target ID: ${source}`,
     );
     return `/w/${source}`;
-  } else if ('page' in source) {
+  } else {
     const page = source.page;
     assert(validPageName(page), `Invalid page name: ${page}`);
     return `/public/pages/${page}`;
-  } else {
-    const { repositoryName, workbookId } = source;
-    assert(
-      validRepositoryName(repositoryName),
-      `Invalid repository name: ${repositoryName}`,
-    );
-    assert(validWorkbookId(workbookId), `Invalid workbook ID: ${workbookId}`);
-    const path = `/public/repositories/${repositoryName}/workbooks/${workbookId}`;
-    if ('worksheetId' in source) {
-      const worksheetId = source.worksheetId;
-      assert(
-        validWorkbookId(worksheetId),
-        `Invalid worksheet ID: ${worksheetId}`,
-      );
-      return `${path}/worksheets/${worksheetId}`;
-    }
-    if ('viewId' in source) {
-      const viewId = source.viewId;
-      assert(validWorkbookId(viewId), `Invalid view ID: ${viewId}`);
-      return `${path}/views/${viewId}`;
-    }
-    return path;
   }
 }
 
@@ -767,7 +723,7 @@ function validRepositoryName(/** @type string */ value) {
   return /^[\w -]{1,255}$/.test(value);
 }
 
-function validWorkbookId(/** @type string */ value) {
+function validBase64String(/** @type string */ value) {
   try {
     // Workbook IDs are url-safe base64 strings.
     // https://stackoverflow.com/a/44528376
@@ -781,7 +737,7 @@ function validWorkbookId(/** @type string */ value) {
 function validExternalLinkKey(/** @type ExternalLinkKey */ linkKey) {
   return (
     validRepositoryName(linkKey.repositoryName) &&
-    validWorkbookId(linkKey.externalLinkId)
+    validBase64String(linkKey.externalLinkId)
   );
 }
 
