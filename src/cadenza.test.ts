@@ -10,8 +10,6 @@ const BASE_URL = 'http://example.com';
 const EMBEDDING_TARGET_ID = 'embedding-target';
 const EXTERNAL_LINK_ID = 'qwertzuioplkjhgfdsay';
 const REPOSITORY_NAME = 'repository';
-const WORKBOOK_ID = 'abcdefghijklmnopqrst'; // length=20, Base64
-const WORKSHEET_ID = WORKBOOK_ID;
 
 const EXTERNAL_LINK_KEY = {
   repositoryName: REPOSITORY_NAME,
