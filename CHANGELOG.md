@@ -20,6 +20,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - The `FilterVariables` type was missing `string[]`.
 
+### Removed
+- Supposedly unused types: `WorkbookKey`, `WorksheetKey`, `WorkbookViewKey`
+
 ## 2.2.1 - 2023-12-12
 ### Fixed
 - In the sandbox, the `fileName` input was not used.
