@@ -960,7 +960,7 @@ function createParams({
 /** @typedef {CadenzaEvent<'selectObjects:update', {layer: WorkbookLayerPath, values: unknown[][]}>} CadenzaSelectObjectsUpdateEvent - When the user changed the selection. */
 /** @typedef {CadenzaEvent<'selectObjects:ok', {layer: WorkbookLayerPath, values: unknown[][]}>} CadenzaSelectObjectsOkEvent - When the user submitted the selection. */
 /** @typedef {CadenzaEvent<'selectObjects:cancel'>} CadenzaSelectObjectsCancelEvent - When the user cancelled the selection. */
-/** @typedef {CadenzaEvent<'objectInfo', {layer: WorkbookLayerPath, objectInfos: {selectedIndex: number, formattedValues: Record<string, string>}[]}>} CadenzaObjectInfoEvent - When the user opened the object info flyout. */
+/** @typedef {CadenzaEvent<'objectInfo', {layer: WorkbookLayerPath, objectInfos: {selectionIndex: number, formattedValues: Record<string, string>}[]}>} CadenzaObjectInfoEvent - When the user opened the object info flyout. */
 
 export class AbortError extends DOMException {
   constructor() {
