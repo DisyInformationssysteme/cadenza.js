@@ -212,7 +212,7 @@ cadenzaClient.on('editGeometry:ok', (event) => {
 _Note:_ Under the hood, creating a geometry is similar to editing a geometry.
 That's why the events use the `editGeometry` prefix.
 
-### Select Objects in a Workbook Map
+### Select Objects in a Workbook Map View
 
 <small>API: [CadenzaClient#selectObjects](./classes/CadenzaClient.html#selectObjects)</small>
 
@@ -231,12 +231,11 @@ cadenzaClient.on('selectObjects:ok', (event) => {
 });
 ```
 
-### Change visibility of Layers in a Workbook Map
+### Set the Visibility of a Workbook Map View Layer
 
 <small>API: [CadenzaClient#setLayerVisibility](./classes/CadenzaClient.html#setLayerVisibility)</small>
 
-To change the visibility of a layer in an already shown map view, pass the layer path and the desired visibility.
-The operation is asynchronous and returns a Promise. 
+To set the visibility of a layer in the currently shown map, pass the layer path and the desired visibility.
 
 ```javascript
 cadenzaClient.setLayerVisibility([ '{layerGroupPrintName}', '{layerPrintName}' ], false);

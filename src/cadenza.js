@@ -480,14 +480,14 @@ export class CadenzaClient {
   }
 
   /**
-   * Set the visibility of a layer in an embedded map view. The map view must be shown prior to calling this.
-   * For layers in groups, the layer path contains the ancestors also. When making a layer visible, its ancestors will
-   * be made visible also. When hiding a layer, the ancestors are not affected. The operation is asynchronous and its
-   * completion is signaled by an event of type 'setLayerVisibility:success' or 'setLayerVisibility:error'.
+   * Set the visibility of a layer in the currently shown workbook map view.
    *
-   * @param {WorkbookLayerPath} layer - The layer to show or hide, identified by its path
+   * When making a layer visible, its ancestors will be made visible, too.
+   * When hiding a layer, the ancestors are not affected.
+   *
+   * @param {WorkbookLayerPath} layer - The layer to show or hide
    * @param {boolean} visible - The visibility state of the layer
-   * @return {Promise<void>} A `Promise` for when the layer visibility change is actually complete.
+   * @return {Promise<void>} A `Promise` for when the layer visibility is set.
    */
   setLayerVisibility(layer, visible) {
     this.#log('CadenzaClient#setLayerVisibility', ...arguments);
