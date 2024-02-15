@@ -190,7 +190,7 @@
       mapExtent,
       minScale,
       parts,
-      layers,
+      layer,
       simplifiedOperationMode,
       useMapSrs
     }) {
@@ -210,7 +210,7 @@
         minScale: minScale && Number(minScale),
         parts: parts && parts.split(','),
         ...(simplifiedOperationMode === 'on' && { operationMode: 'simplified' }),
-        layers: layers && JSON.parse(layers),
+        layers: layer && [ JSON.parse(layer) ],
         useMapSrs: useMapSrs === 'on'
       };
     }
@@ -474,24 +474,22 @@
     <input name="embeddingTargetId" id="embeddingTargetId" required>
   </div>
   <div>
-    <label for="layers">Layers to select objects from</label>
-    <input name="layers" id="layers" placeholder="[[&quot;layerGroupName&quot;,&quot;layerName&quot;],[&quot;layerName&quot;]]...">
-    <small>
-      A JSON array of arrays. Each top level array element is a layer path, represented by an array of strings composed of layer print names.
-    </small>
+    <label for="layer">Layer</label>
+    <input name="layer" id="layer">
+    <small>A JSON array with the print names of the layer and its ancestors, e.g. ["layerGroupName","layerName"]</small>
   </div>
 </template>
 
 <template data-action="setLayerVisibility">
   <div>
     <label for="layer">Layer *</label>
-    <input name="layer" id="layer" placeholder="[&quot;layerGroupName&quot;,&quot;layerName&quot;]" required>
-    <small>A layer path represented by a JSON array of strings, each element being a layer print name.</small>
+    <input name="layer" id="layer" required>
+    <small>A JSON array with the print names of the layer and its ancestors, e.g. ["layerGroupName","layerName"]</small>
   </div>
   <div>
     <label>
       <input type="checkbox" name="visibility">
-      Visibile
+      Visible
     </label>
   </div>
 </template>
