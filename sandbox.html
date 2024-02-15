@@ -236,20 +236,26 @@
       <div>
         <label for="action">Action</label>
         <select name="action" id="action">
-          <option value="show">Show</option>
-          <option value="showPage">Show Page</option>
-          <option value="expandNavigator">Expand Navigator</option>
-          <option value="showMap">Show Map</option>
-          <option value="setLayerVisibility">Set Layer Visibility</option>
-          <option value="setFilter">Set Filter</option>
-          <option value="createGeometry">Create Geometry</option>
-          <option value="editGeometry">Edit Geometry</option>
-          <option value="selectObjects">Select Objects</option>
-          <option value="setSelection">Set Selection</option>
-          <option value="addSelection">Add Selection</option>
-          <option value="removeSelection">Remove Selection</option>
-          <option value="downloadData">Download data</option>
-          <option value="fetchData">Fetch data</option>
+          <optgroup label="General">
+            <option value="show">Show</option>
+            <option value="showPage">Show Page</option>
+            <option value="showMap">Show Map</option>
+            <option value="expandNavigator">Expand Navigator</option>
+            <option value="setFilter">Set Filter</option>
+            <option value="setLayerVisibility">Set Layer Visibility</option>
+            <option value="setSelection">Set Selection</option>
+            <option value="addSelection">Add Selection</option>
+            <option value="removeSelection">Remove Selection</option>
+          </optgroup>
+          <optgroup label="Map Dialogs">
+            <option value="createGeometry">Create Geometry</option>
+            <option value="editGeometry">Edit Geometry</option>
+            <option value="selectObjects">Select Objects</option>
+          </optgroup>
+          <optgroup label="Without Iframe">
+            <option value="downloadData">Download data</option>
+            <option value="fetchData">Fetch data</option>
+          </optgroup>
         </select>
       </div>
 
