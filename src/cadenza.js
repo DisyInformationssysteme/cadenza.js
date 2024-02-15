@@ -914,7 +914,7 @@ function createParams({
  * | 'selectObjects:ok'
  * | 'selectObjects:update'
  * | 'selectObjects:cancel'
- * | 'selectObjects:info'
+ * | 'objectInfo'
  * } CadenzaEventType - An event type to subscribe to using {@link CadenzaClient#on}
  */
 
