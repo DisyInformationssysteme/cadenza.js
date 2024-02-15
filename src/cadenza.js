@@ -418,7 +418,7 @@ export class CadenzaClient {
    * - {@link CadenzaSelectObjectsUpdateEvent}
    * - {@link CadenzaSelectObjectsOkEvent}
    * - {@link CadenzaSelectObjectsCancelEvent}
-   * - {@link CadenzaSelectObjectsInfoEvent}
+   * - {@link CadenzaObjectInfoEvent}
    */
   selectObjects(
     backgroundMapView,
@@ -928,7 +928,7 @@ function createParams({
  *  : T extends 'selectObjects:update' ? CadenzaEditGeometryUpdateEvent
  *  : T extends 'selectObjects:ok' ? CadenzaEditGeometryOkEvent
  *  : T extends 'selectObjects:cancel' ? CadenzaEditGeometryCancelEvent
- *  : T extends 'selectObjects:info' ? CadenzaSelectObjectsInfoEvent
+ *  : T extends 'objectInfo' ? CadenzaObjectInfoEvent
  *  : never
  * } CadenzaEventByType
  */
@@ -960,7 +960,7 @@ function createParams({
 /** @typedef {CadenzaEvent<'selectObjects:update', {layer: WorkbookLayerPath, values: unknown[][]}>} CadenzaSelectObjectsUpdateEvent - When the user changed the selection. */
 /** @typedef {CadenzaEvent<'selectObjects:ok', {layer: WorkbookLayerPath, values: unknown[][]}>} CadenzaSelectObjectsOkEvent - When the user submitted the selection. */
 /** @typedef {CadenzaEvent<'selectObjects:cancel'>} CadenzaSelectObjectsCancelEvent - When the user cancelled the selection. */
-/** @typedef {CadenzaEvent<'selectObjects:info', {embeddingTargetId: EmbeddingTargetId, layer: WorkbookLayerPath, objectInfo: {formattedValues: Record<string, string>}[]}>} CadenzaSelectObjectsInfoEvent - When the user opened the object info flyout. */
+/** @typedef {CadenzaEvent<'objectInfo', {layer: WorkbookLayerPath, objectInfos: {selectedIndex: number, formattedValues: Record<string, string>}[]}>} CadenzaObjectInfoEvent - When the user opened the object info flyout. */
 
 export class AbortError extends DOMException {
   constructor() {
