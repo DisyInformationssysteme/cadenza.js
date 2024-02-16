@@ -516,17 +516,21 @@ export class CadenzaClient {
   }
 
   #postRequest(/** @type string */ type, /** @type unknown */ detail) {
-    /** @type {(() => void)[]} */
-    let unsubscribes;
+    const { port1, port2 } = new MessageChannel();
     /** @type {Promise<void>} */
     const promise = new Promise((resolve, reject) => {
-      unsubscribes = [
-        this.#on(`${type}:success`, () => resolve()),
-        this.#on(`${type}:error`, () => reject()),
-      ];
+      port1.onmessage = (
+        /** @type MessageEvent<CadenzaEvent<never, never>> */ event,
+      ) => {
+        const cadenzaEvent = event.data;
+        if (cadenzaEvent.type === `${type}:success`) {
+          resolve();
+        } else if (cadenzaEvent.type === `${type}:error`) {
+          reject();
+        }
+      };
     });
-    promise.finally(() => unsubscribes.forEach((unsubscribe) => unsubscribe()));
-    this.#postEvent(type, detail);
+    this.#postEvent(type, detail, [port2]);
     return promise;
   }
 
@@ -594,13 +598,21 @@ export class CadenzaClient {
     });
   };
 
-  #postEvent(/** @type string */ type, /** @type unknown */ detail) {
+  /**
+   * @param {string} type
+   * @param {unknown} [detail]
+   * @param {Transferable[]} [transfer]
+   */
+  #postEvent(type, detail, transfer) {
     const cadenzaEvent = { type, detail };
     this.#log('postMessage', cadenzaEvent);
     const contentWindow = /** @type {WindowProxy} */ (
       this.#requiredIframe.contentWindow
     );
-    contentWindow.postMessage(cadenzaEvent, { targetOrigin: this.#origin });
+    contentWindow.postMessage(cadenzaEvent, {
+      targetOrigin: this.#origin,
+      transfer,
+    });
   }
 
   /**
