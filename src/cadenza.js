@@ -609,7 +609,7 @@ export class CadenzaClient {
    * @param {EmbeddingTargetId} source - The workbook view to fetch data from.
    *   Currently only table and indicator views are supported.
    * @param {DataType} dataType - The data type you want to get back from the server.
-   *   Currently the `"pdf"` type is not supported.
+   *   Currently, `"csv"`, `"excel"` and `"json"` are supported.
    * @param {object} options - Options
    * @param {TablePart[]} [options.parts] - Table parts to export; If not specified, all parts are exported.
    * @param {AbortSignal} [options.signal] - A signal to abort the data fetching
@@ -618,7 +618,7 @@ export class CadenzaClient {
    */
   fetchData(source, dataType, { parts, signal } = {}) {
     this.#log('CadenzaClient#fetchData', ...arguments);
-    assertSupportedDataType(dataType);
+    assertSupportedDataType(dataType, ['csv', 'excel', 'json']);
     const params = createParams({ dataType, parts });
     return this.#fetch(resolvePath(source), params, signal);
   }
@@ -669,7 +669,7 @@ export class CadenzaClient {
    * @param {EmbeddingTargetId} source - The workbook view to download data from.
    *   Currently only table and indicator views are supported.
    * @param {DataType} dataType - The data type you want to get back from the server.
-   *   Currently the `"pdf"` type is not supported.
+   *   Currently, `"csv"`, `"excel"` and `"json"` are supported.
    * @param {object} options - Options
    * @param {string} [options.fileName] - The file name to use; The file extension is appended by Cadenza.
    * @param {TablePart[]} [options.parts] - Table parts to export; If not specified, all parts are exported.
@@ -677,7 +677,7 @@ export class CadenzaClient {
    */
   downloadData(source, dataType, { fileName, parts }) {
     this.#log('CadenzaClient#downloadData', ...arguments);
-    assertSupportedDataType(dataType);
+    assertSupportedDataType(dataType, ['csv', 'excel', 'json']);
     const params = createParams({ dataType, fileName, parts });
     this.#download(resolvePath(source), params);
   }
@@ -820,13 +820,7 @@ function validUiFeature(/** @type string */ value) {
 
 function assertSupportedDataType(
   /** @type DataType */ type,
-  /** @type DataType[] */ supportedTypes = [
-    'csv',
-    'excel',
-    'json',
-    'pdf',
-    'png',
-  ], // default: All types are supported.
+  /** @type DataType[] */ supportedTypes,
 ) {
   assert(supportedTypes.includes(type), `Invalid data type: ${type}`);
 }
