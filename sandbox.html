@@ -190,7 +190,7 @@
       mapExtent,
       minScale,
       parts,
-      layer,
+      layers,
       simplifiedOperationMode,
       useMapSrs
     }) {
@@ -210,7 +210,7 @@
         minScale: minScale && Number(minScale),
         parts: parts && parts.split(','),
         ...(simplifiedOperationMode === 'on' && { operationMode: 'simplified' }),
-        layers: layer && [ JSON.parse(layer) ],
+        layers: layers ? JSON.parse(layers) : undefined,
         useMapSrs: useMapSrs === 'on'
       };
     }
@@ -474,9 +474,14 @@
     <input name="embeddingTargetId" id="embeddingTargetId" required>
   </div>
   <div>
-    <label for="layer">Layer</label>
-    <input name="layer" id="layer">
-    <small>A JSON array with the print names of the layer and its ancestors, e.g. ["layerGroupName","layerName"]</small>
+    <label for="layers">Layers</label>
+    <input name="layers" id="layers">
+    <small>
+      <p>
+        A JSON value like <code>["layerPrintName",...]</code> or
+        <code>[["layerGroupPrintName","layerPrintName"],...]</code>
+      </p>
+    </small>
   </div>
 </template>
 
@@ -484,7 +489,12 @@
   <div>
     <label for="layer">Layer *</label>
     <input name="layer" id="layer" required>
-    <small>A JSON array with the print names of the layer and its ancestors, e.g. ["layerGroupName","layerName"]</small>
+    <small>
+      <p>
+        A JSON value like <code>"layerPrintName"</code> or
+        <code>["layerGroupPrintName","layerPrintName"]</code>
+      </p>
+    </small>
   </div>
   <div>
     <label>

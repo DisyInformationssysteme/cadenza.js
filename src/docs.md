@@ -235,10 +235,10 @@ cadenzaClient.on('selectObjects:ok', (event) => {
 
 <small>API: [CadenzaClient#setLayerVisibility](./classes/CadenzaClient.html#setLayerVisibility)</small>
 
-To set the visibility of a layer in the currently shown map, pass the layer path and the desired visibility.
+To set the visibility of a layer in the currently shown map, pass the layer path or print name and the desired visibility.
 
 ```javascript
-cadenzaClient.setLayerVisibility([ '{layerGroupPrintName}', '{layerPrintName}' ], false);
+cadenzaClient.setLayerVisibility('{layerPrintName}', false);
 ```
 
 ### Highlight an Item in the Navigator
