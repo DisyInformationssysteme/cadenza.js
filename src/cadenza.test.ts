@@ -29,7 +29,7 @@ describe('Given a Cadenza JS client instance', () => {
   let cad: CadenzaClient;
 
   beforeEach(() => {
-    iframe = document.createElement('iframe');
+    iframe = createIframe();
     cad = cadenza(BASE_URL, { iframe });
   });
 
@@ -132,7 +132,7 @@ describe('Given a Cadenza JS client instance', () => {
     let cad: CadenzaClient;
 
     beforeEach(() => {
-      iframe = document.createElement('iframe');
+      iframe = createIframe();
       cad = cadenza(BASE_URL, { iframe, webApplication: EXTERNAL_LINK_KEY });
     });
 
@@ -226,6 +226,12 @@ function sendEvent(
       data: { type, detail },
     }),
   );
+}
+
+function createIframe() {
+  const iframe = document.createElement('iframe');
+  iframe.getBoundingClientRect = () => ({ width: 100, height: 100 }) as DOMRect;
+  return iframe;
 }
 
 async function expectCadenzaError(promise: Promise<unknown>, type: string) {
