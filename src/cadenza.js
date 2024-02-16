@@ -172,12 +172,14 @@ export class CadenzaClient {
   }
 
   get #requiredIframe() {
-    const iframe = this.iframe;
+    const iframe = /** @type {HTMLIFrameElement} */ (this.iframe);
     assert(
       iframe instanceof HTMLIFrameElement,
       'Required iframe is not present.',
     );
-    return /** @type {HTMLIFrameElement} */ (iframe);
+    const { width, height } = iframe.getBoundingClientRect();
+    assert(width > 0 && height > 0, 'Iframe must be visible.');
+    return iframe;
   }
 
   /**
