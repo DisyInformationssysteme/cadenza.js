@@ -54,7 +54,7 @@ globalThis.cadenza = Object.assign(
  * @property {string} externalLinkId - The ID of the external link
  */
 /**
- * @typedef {string[]} WorkbookLayerPath - Identifies a workbook layer within a view
+ * @typedef {string[]} WorkbookLayerPath - Identifies a layer within a workbook map view
  *   using the print names of the layer and - if the layer is grouped - its ancestors
  */
 
@@ -405,7 +405,8 @@ export class CadenzaClient {
    *
    * @param {EmbeddingTargetId} backgroundMapView - The workbook map view
    * @param {object} [options] - Options
-   * @param {WorkbookLayerPath[]} [options.layers] - Layers to restrict the selection to
+   * @param {(WorkbookLayerPath | string)[]} [options.layers] - Layers to restrict the selection to
+   *  (identified using layer paths or print names)
    * @param {string} [options.locationFinder] - A search query for the location finder
    * @param {Extent} [options.mapExtent] - A map extent to set
    * @param {boolean} [options.useMapSrs] - Whether the geometry is in the map's SRS (otherwise EPSG:4326 is assumed)
@@ -425,7 +426,7 @@ export class CadenzaClient {
     this.#log('CadenzaClient#selectObjects', ...arguments);
     const params = createParams({
       action: 'selectObjects',
-      layers,
+      layers: layers?.map(array),
       locationFinder,
       mapExtent,
       useMapSrs,
@@ -439,13 +440,17 @@ export class CadenzaClient {
    * When making a layer visible, its ancestors will be made visible, too.
    * When hiding a layer, the ancestors are not affected.
    *
-   * @param {WorkbookLayerPath} layer - The layer to show or hide
+   * @param {WorkbookLayerPath | string} layer - The layer to show or hide
+   *   (identified using a layer path or a print name)
    * @param {boolean} visible - The visibility state of the layer
    * @return {Promise<void>} A `Promise` for when the layer visibility is set.
    */
   setLayerVisibility(layer, visible) {
     this.#log('CadenzaClient#setLayerVisibility', ...arguments);
-    return this.#postRequest('setLayerVisibility', { layer, visible });
+    return this.#postRequest('setLayerVisibility', {
+      layer: array(layer),
+      visible,
+    });
   }
 
   #show(
@@ -902,6 +907,10 @@ function createParams({
     ...(parts && { parts: parts.join() }),
     ...(useMapSrs && { useMapSrs: 'true' }),
   });
+}
+
+function array(/** @type unknown */ value) {
+  return Array.isArray(value) ? value : [value];
 }
 
 // Please do not add internal event types like 'ready' here.
