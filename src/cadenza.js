@@ -84,7 +84,7 @@ globalThis.cadenza = Object.assign(
 /** @typedef {[number,number,number,number]} Extent - An array of numbers representing an extent: [minx, miny, maxx, maxy] */
 
 /**
- * @typedef {'csv' | 'excel' | 'json' | 'pdf'} DataType - A data type
+ * @typedef {'csv' | 'excel' | 'json' | 'pdf' | 'png'} DataType - A data type
  *
  * See [JSON Representation of Cadenza Object Data](../index.html#md:json-representation-of-cadenza-object-data) for JSON data.
  */
@@ -317,7 +317,7 @@ export class CadenzaClient {
    * Set filter variables in the currently shown workbook.
    *
    * @param {FilterVariables} filter - The variable values
-   * @return {Promise<void>} A `Promise` for when the filter variables were set.
+   * @return {Promise<unknown>} A `Promise` for when the filter variables were set.
    */
   setFilter(filter) {
     this.#log('CadenzaClient#setFilter', ...arguments);
@@ -443,7 +443,7 @@ export class CadenzaClient {
    * @param {WorkbookLayerPath | string} layer - The layer to show or hide
    *   (identified using a layer path or a print name)
    * @param {boolean} visible - The visibility state of the layer
-   * @return {Promise<void>} A `Promise` for when the layer visibility is set.
+   * @return {Promise<unknown>} A `Promise` for when the layer visibility is set.
    */
   setLayerVisibility(layer, visible) {
     this.#log('CadenzaClient#setLayerVisibility', ...arguments);
@@ -518,10 +518,10 @@ export class CadenzaClient {
   #postRequest(/** @type string */ type, /** @type unknown */ detail) {
     /** @type {(() => void)[]} */
     let unsubscribes;
-    /** @type {Promise<void>} */
+    /** @type {Promise<unknown>} */
     const promise = new Promise((resolve, reject) => {
       unsubscribes = [
-        this.#on(`${type}:success`, () => resolve()),
+        this.#on(`${type}:success`, ({ detail }) => resolve(detail)),
         this.#on(`${type}:error`, () => reject()),
       ];
     });
@@ -641,6 +641,24 @@ export class CadenzaClient {
       throw new CadenzaError(errorType, 'Failed to fetch data');
     }
     return res;
+  }
+
+  /**
+   * Gets data via postMessage.
+   *
+   * @param {DataType} type - The requested data type
+   * @return {Promise<unknown>} A `Promise` with the data of requested type
+   * @description
+   * Supported types:
+   * - png: returns BitmapImage with the currently displayed map
+   *
+   */
+  async getData(type) {
+    this.#log('CadenzaClient#getData', ...arguments);
+    if (type != 'png') {
+      throw Error('The type ' + type + 'is not supported');
+    }
+    return this.#postRequest('getData', { type });
   }
 
   /**
@@ -802,7 +820,13 @@ function validUiFeature(/** @type string */ value) {
 
 function assertSupportedDataType(
   /** @type DataType */ type,
-  /** @type DataType[] */ supportedTypes = ['csv', 'excel', 'json', 'pdf'], // default: All types are supported.
+  /** @type DataType[] */ supportedTypes = [
+    'csv',
+    'excel',
+    'json',
+    'pdf',
+    'png',
+  ], // default: All types are supported.
 ) {
   assert(supportedTypes.includes(type), `Invalid data type: ${type}`);
 }
