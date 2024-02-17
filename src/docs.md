@@ -308,18 +308,18 @@ button.textContent = 'Download Excel';
 button.onclick = () => cadenzaClient.downloadData('{embeddingTargetId}', 'excel');
 ```
 
-### Requests Data From a Workbook View via PostMessage
+### Request Data From a Workbook View via PostMessage
 
 <small>API: [CadenzaClient#getData](./classes/CadenzaClient.html#getData)</small>
 
-Requests data from a workbook view via PostMessage.
+Request data from a workbook view.
 Supported DataTypes:
-- png: returns BitmapImage with the currently displayed map
+- png: return Blob with the image of the currently displayed map
 
 ```javascript
-const button = document.createElement('button');
-button.textContent = 'Get data';
-button.onclick = () => cadenzaClient.getData('png');
+const canvas = document.querySelector('canvas');
+const data = await cadenzaClient.getData('png');
+canvas.drawImage(await createImageBitmap(data), 0, 0);
 ```
 
 ## The Development Sandbox

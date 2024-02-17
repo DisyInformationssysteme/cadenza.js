@@ -515,13 +515,19 @@ export class CadenzaClient {
     return promise;
   }
 
-  #postRequest(/** @type string */ type, /** @type unknown */ detail) {
+
+   /**
+   * @template [T=void]
+   * @param {string} type
+   * @param {unknown} [detail]
+   * @returns {Promise<T>}
+   */
+   #postRequest(type, detail) {
     /** @type {(() => void)[]} */
     let unsubscribes;
-    /** @type {Promise<unknown>} */
     const promise = new Promise((resolve, reject) => {
       unsubscribes = [
-        this.#on(`${type}:success`, ({ detail }) => resolve(detail)),
+        this.#on(`${type}:success`, (event) => resolve(event.detail)),
         this.#on(`${type}:error`, () => reject()),
       ];
     });
@@ -643,21 +649,18 @@ export class CadenzaClient {
     return res;
   }
 
-  /**
-   * Gets data via postMessage.
+   /**
+   * Get data from the currently shown workbook view.
    *
-   * @param {DataType} type - The requested data type
-   * @return {Promise<unknown>} A `Promise` with the data of requested type
-   * @description
-   * Supported types:
-   * - png: returns BitmapImage with the currently displayed map
+   * Currently, only map views are supported.
    *
+   * @template {DataType} T
+   * @param {T} type - The requested data type. Currently, only `"png"` is supported.
+   * @return {Promise<T extends 'png' ? Blob : never>}
    */
   async getData(type) {
     this.#log('CadenzaClient#getData', ...arguments);
-    if (type != 'png') {
-      throw Error('The type ' + type + 'is not supported');
-    }
+    assertSupportedDataType(type, ['png']);
     return this.#postRequest('getData', { type });
   }
 

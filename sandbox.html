@@ -150,10 +150,11 @@
         const result = await cadenzaClient.getData(data.dataType);
         if (data.dataType === 'png') {
           const canvas = document.getElementById('canvas');
-          const ctx = canvas?.getContext('2d');
-          ctx.drawImage(result, 0, 0, 300, 150);
-        }
-      }      
+          const ctx = canvas.getContext('2d');      
+          const imageBitmap = await createImageBitmap(result)
+          ctx.drawImage(imageBitmap, 0, 0, 300, 150);
+        }      
+      }
     };
 
     const form = document.getElementById('form');
@@ -257,6 +258,8 @@
           <optgroup label="Without Iframe">
             <option value="downloadData">Download data</option>
             <option value="fetchData">Fetch data</option>
+          </optgroup>
+          <optgroup label="PostMessage Interactions">          
             <option value="getData">Get data</option>            
           </optgroup>
         </select>
@@ -527,16 +530,11 @@
 
 <template data-action="getData">
   <div>
-    Gets the data of currently displayed view.
-    <span> - png: the image with the map (ImageBitmap)</span>
+    Gets the data of the currently displayed view.
+    Currently, only dataType=png is supported, to get the image of a workbook map view.
+    (An open view with a map is required).
+    <input type="hidden" id="dataType" name="dataType" value="png">
   </div>
-  <div>
-    <label for="dataType">Data type *</label>
-    <select name="dataType" id="dataType" required>
-      <option>png</option>
-    </select>
-  </div>  
-  <!-- to display the returned map image -->
   <canvas id="canvas"></canvas>
 </template>
 
