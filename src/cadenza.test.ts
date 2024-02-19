@@ -226,6 +226,68 @@ describe('Given a Cadenza JS client instance', () => {
         expect(subscriber).not.toHaveBeenCalled());
     });
   });
+
+  describe('When posting a request to set filters', () => {
+    const FILTER = { filter: 'value' };
+    let setFilter: jest.SpyInstance;
+    let postMessage: jest.Mock<typeof window.postMessage>;
+
+    beforeEach(() => {
+      let onmessage: MessagePort['onmessage'];
+      window.MessageChannel = jest.fn().mockImplementation(() => ({
+        port1: {
+          set onmessage(cb: typeof onmessage) {
+            onmessage = cb;
+          },
+        },
+        port2: {
+          postMessage: (
+            data: Parameters<
+              InstanceType<typeof MessagePort>['postMessage']
+            >[0],
+          ) => {
+            // @ts-ignore
+            onmessage(new MessageEvent('message', { data }));
+          },
+        },
+      }));
+
+      document.body.append(iframe);
+      postMessage = cad.iframe!.contentWindow!.postMessage = jest.fn();
+      setFilter = jest.spyOn(cad, 'setFilter');
+      cad.setFilter(FILTER);
+    });
+
+    it('Posts an event with a response port and returns a response Promise', () => {
+      expect(postMessage).toHaveBeenCalledTimes(1);
+      const [event] = postMessage.mock.lastCall;
+      expect(event.type).toBe('setFilter');
+      expect(event.detail.filter).toBe(FILTER);
+      expect(getPort()).toBeDefined();
+      expect(getResponse()).toBeInstanceOf(Promise);
+    });
+
+    describe('When a "success" response event is received', () => {
+      beforeEach(() => getPort().postMessage({ type: 'setFilter:success' }));
+
+      it('Resolves the response Promise', getResponse);
+    });
+
+    describe('When an "error" response event is received', () => {
+      beforeEach(() => getPort().postMessage({ type: 'setFilter:error' }));
+
+      it('Rejects the response Promise', () =>
+        expect(getResponse()).rejects.toBeUndefined());
+    });
+
+    function getPort() {
+      return postMessage.mock.lastCall[1].transfer[0] as MessagePort;
+    }
+
+    function getResponse() {
+      return setFilter.mock.results[0].value as Promise<void>;
+    }
+  });
 });
 
 function sendEvent(
