@@ -308,7 +308,7 @@ button.textContent = 'Download Excel';
 button.onclick = () => cadenzaClient.downloadData('{embeddingTargetId}', 'excel');
 ```
 
-### Request Data From a Workbook View via PostMessage
+### Request Data From a Workbook View
 
 <small>API: [CadenzaClient#getData](./classes/CadenzaClient.html#getData)</small>
 

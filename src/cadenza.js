@@ -524,27 +524,6 @@ export class CadenzaClient {
     return promise;
   }
 
-   /**
-   * @template [T=void]
-   * @param {string} type
-   * @param {unknown} [detail]
-   * @returns {Promise<T>}
-   */
-   #postRequest(type, detail) {
-    /** @type {(() => void)[]} */
-    let unsubscribes;
-    const promise = new Promise((resolve, reject) => {
-      unsubscribes = [
-        this.#on(`${type}:success`, (event) => resolve(event.detail)),
-        this.#on(`${type}:error`, () => reject()),
-      ];
-    });
-    promise.finally(() => unsubscribes.forEach((unsubscribe) => unsubscribe()));
-    this.#postEvent(type, detail);
-    return promise;
-  }
-
-
   /**
    * Subscribe to a `postMessage()` event.
    *
@@ -617,14 +596,14 @@ export class CadenzaClient {
    */
   #postRequest(/** @type string */ type, /** @type unknown */ detail) {
     const { port1, port2 } = new MessageChannel();
-    /** @type {Promise<void>} */
+    /** @type {Promise<never>} */
     const promise = new Promise((resolve, reject) => {
       port1.onmessage = (
         /** @type MessageEvent<CadenzaEvent<never, never>> */ event,
       ) => {
         const cadenzaEvent = event.data;
         if (cadenzaEvent.type === `${type}:success`) {
-          resolve();
+          resolve(cadenzaEvent.detail);
         } else if (cadenzaEvent.type === `${type}:error`) {
           reject();
         }
@@ -691,7 +670,7 @@ export class CadenzaClient {
     return res;
   }
 
-   /**
+  /**
    * Get data from the currently shown workbook view.
    *
    * Currently, only map views are supported.

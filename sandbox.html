@@ -149,10 +149,12 @@
       getData: async data => {
         const result = await cadenzaClient.getData(data.dataType);
         if (data.dataType === 'png') {
-          const canvas = document.getElementById('canvas');
-          const ctx = canvas.getContext('2d');      
-          const imageBitmap = await createImageBitmap(result)
-          ctx.drawImage(imageBitmap, 0, 0, 300, 150);
+          const url = URL.createObjectURL(result);
+          try {
+            iframe.src = url;
+          } finally {
+            URL.revokeObjectURL(url);
+          }
         }      
       }
     };
