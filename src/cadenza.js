@@ -89,7 +89,14 @@ globalThis.cadenza = Object.assign(
  * See [JSON Representation of Cadenza Object Data](../index.html#md:json-representation-of-cadenza-object-data) for JSON data.
  */
 /** @typedef {'columns' | 'values' | 'totals'} TablePart - A part of a table to export */
-/** @typedef {Record<string, string | string[] | number | Date | null>} FilterVariables - Filter variable names and values */
+/**
+ * @typedef {Record<string, string | string[] | number | Date | null>} FilterVariables - Filter variable names and values
+ *
+ * Variables of type String, Integer, Long, Double and Date can be set.
+ *
+ * _Note:_ Since numbers in JavaScript are Double values ([more info on MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number#number_encoding)),
+ * for long variables, the API is currently limited to the Double value range.
+ */
 /**
  * _Notes:_
  * * Most public methods can be aborted using an [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal).
