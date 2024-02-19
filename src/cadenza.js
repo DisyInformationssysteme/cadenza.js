@@ -89,7 +89,14 @@ globalThis.cadenza = Object.assign(
  * See [JSON Representation of Cadenza Object Data](../index.html#md:json-representation-of-cadenza-object-data) for JSON data.
  */
 /** @typedef {'columns' | 'values' | 'totals'} TablePart - A part of a table to export */
-/** @typedef {Record<string, string | string[] | number | Date | null>} FilterVariables - Filter variable names and values */
+/**
+ * @typedef {Record<string, string | string[] | number | Date | null>} FilterVariables - Filter variable names and values
+ *
+ * Variables of type String, Integer, Long, Double and Date can be set.
+ *
+ * _Note:_ Since numbers in JavaScript are Double values ([more info on MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number#number_encoding)),
+ * for Long variables, the API is currently limited to the Double value range.
+ */
 /**
  * _Notes:_
  * * Most public methods can be aborted using an [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal).
@@ -172,12 +179,14 @@ export class CadenzaClient {
   }
 
   get #requiredIframe() {
-    const iframe = this.iframe;
+    const iframe = /** @type {HTMLIFrameElement} */ (this.iframe);
     assert(
       iframe instanceof HTMLIFrameElement,
       'Required iframe is not present.',
     );
-    return /** @type {HTMLIFrameElement} */ (iframe);
+    const { width, height } = iframe.getBoundingClientRect();
+    assert(width > 0 && height > 0, 'Iframe must be visible.');
+    return iframe;
   }
 
   /**
@@ -515,7 +524,6 @@ export class CadenzaClient {
     return promise;
   }
 
-
    /**
    * @template [T=void]
    * @param {string} type
@@ -535,6 +543,7 @@ export class CadenzaClient {
     this.#postEvent(type, detail);
     return promise;
   }
+
 
   /**
    * Subscribe to a `postMessage()` event.
@@ -600,13 +609,46 @@ export class CadenzaClient {
     });
   };
 
-  #postEvent(/** @type string */ type, /** @type unknown */ detail) {
+  /**
+   * Posts an event to Cadenza and returns a `Promise` for the response.
+   *
+   * It is guaranteed that a response refers to a specific request,
+   * even if multiple request are executed in parallel.
+   */
+  #postRequest(/** @type string */ type, /** @type unknown */ detail) {
+    const { port1, port2 } = new MessageChannel();
+    /** @type {Promise<void>} */
+    const promise = new Promise((resolve, reject) => {
+      port1.onmessage = (
+        /** @type MessageEvent<CadenzaEvent<never, never>> */ event,
+      ) => {
+        const cadenzaEvent = event.data;
+        if (cadenzaEvent.type === `${type}:success`) {
+          resolve();
+        } else if (cadenzaEvent.type === `${type}:error`) {
+          reject();
+        }
+      };
+    });
+    this.#postEvent(type, detail, [port2]);
+    return promise;
+  }
+
+  /**
+   * @param {string} type
+   * @param {unknown} [detail]
+   * @param {Transferable[]} [transfer]
+   */
+  #postEvent(type, detail, transfer) {
     const cadenzaEvent = { type, detail };
     this.#log('postMessage', cadenzaEvent);
     const contentWindow = /** @type {WindowProxy} */ (
       this.#requiredIframe.contentWindow
     );
-    contentWindow.postMessage(cadenzaEvent, { targetOrigin: this.#origin });
+    contentWindow.postMessage(cadenzaEvent, {
+      targetOrigin: this.#origin,
+      transfer,
+    });
   }
 
   /**
