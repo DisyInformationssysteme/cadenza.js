@@ -570,25 +570,6 @@ export class CadenzaClient {
     return promise;
   }
 
-  #postRequest(/** @type string */ type, /** @type unknown */ detail) {
-    const { port1, port2 } = new MessageChannel();
-    /** @type {Promise<void>} */
-    const promise = new Promise((resolve, reject) => {
-      port1.onmessage = (
-        /** @type MessageEvent<CadenzaEvent<never, never>> */ event,
-      ) => {
-        const cadenzaEvent = event.data;
-        if (cadenzaEvent.type === `${type}:success`) {
-          resolve();
-        } else if (cadenzaEvent.type === `${type}:error`) {
-          reject();
-        }
-      };
-    });
-    this.#postEvent(type, detail, [port2]);
-    return promise;
-  }
-
   /**
    * Subscribe to a `postMessage()` event.
    *
@@ -652,6 +633,31 @@ export class CadenzaClient {
       }
     });
   };
+
+  /**
+   * Posts an event to Cadenza and returns a `Promise` for the response.
+   * 
+   * It is guaranteed that a response refers to a specific request,
+   * even if multiple request are executed in parallel.
+   */
+  #postRequest(/** @type string */ type, /** @type unknown */ detail) {
+    const { port1, port2 } = new MessageChannel();
+    /** @type {Promise<void>} */
+    const promise = new Promise((resolve, reject) => {
+      port1.onmessage = (
+        /** @type MessageEvent<CadenzaEvent<never, never>> */ event,
+      ) => {
+        const cadenzaEvent = event.data;
+        if (cadenzaEvent.type === `${type}:success`) {
+          resolve();
+        } else if (cadenzaEvent.type === `${type}:error`) {
+          reject();
+        }
+      };
+    });
+    this.#postEvent(type, detail, [port2]);
+    return promise;
+  }
 
   /**
    * @param {string} type
