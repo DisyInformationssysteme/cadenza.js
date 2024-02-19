@@ -56,7 +56,14 @@ describe('Given a Cadenza JS client instance', () => {
   });
 
   it('Throws when attempting to show an embedding target without an iframe', () =>
-    expect(() => cadenza(BASE_URL).show(EMBEDDING_TARGET_ID)).toThrow());
+    expect(() => cadenza(BASE_URL).show(EMBEDDING_TARGET_ID)).toThrow(
+      'present',
+    ));
+
+  it('Throws when attempting to show an embedding target in an invisible iframe', () => {
+    iframe.getBoundingClientRect = () => ({ width: 0, height: 0 }) as DOMRect;
+    expect(() => cad.show(EMBEDDING_TARGET_ID)).toThrow('visible');
+  });
 
   it('Throws when attempting to show an embedding target with an invalid ID', () =>
     expect(() => cad.show('Invalid')).toThrow());
