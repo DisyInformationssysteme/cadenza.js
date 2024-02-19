@@ -95,7 +95,7 @@ globalThis.cadenza = Object.assign(
  * Variables of type String, Integer, Long, Double and Date can be set.
  *
  * _Note:_ Since numbers in JavaScript are Double values ([more info on MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number#number_encoding)),
- * for long variables, the API is currently limited to the Double value range.
+ * for Long variables, the API is currently limited to the Double value range.
  */
 /**
  * _Notes:_
@@ -590,7 +590,7 @@ export class CadenzaClient {
 
   /**
    * Posts an event to Cadenza and returns a `Promise` for the response.
-   * 
+   *
    * It is guaranteed that a response refers to a specific request,
    * even if multiple request are executed in parallel.
    */
