@@ -593,7 +593,6 @@ export class CadenzaClient {
    *
    * It is guaranteed that a response refers to a specific request,
    * even if multiple request are executed in parallel.
-   * 
    * @template [T=void]
    * @param {string} type
    * @param {unknown} [detail]
