@@ -9,6 +9,7 @@
  * @param {ExternalLinkKey} [options.webApplication] - An external link that Cadenza uses to resolve the
  *   [target origin](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage#targetorigin) when posting events.
  *   This is required if Cadenza and your application are not running on the same origin.
+ *   Please ensure that the user has view privilege for that link!
  * @param {boolean} [options.debug] - Whether to enable debug logging
  * @throws For invalid arguments
  */
