@@ -3,11 +3,13 @@ import {
   CadenzaClient,
   CadenzaDrillThroughEvent,
   CadenzaError,
+  EmbeddingTargetId,
+  GlobalId,
   PageSource,
 } from './cadenza.js';
 
 const BASE_URL = 'http://example.com';
-const EMBEDDING_TARGET_ID = 'embedding-target';
+const EMBEDDING_TARGET_ID = 'embedding-target' as EmbeddingTargetId;
 const EXTERNAL_LINK_ID = 'qwertzuioplkjhgfdsay';
 const REPOSITORY_NAME = 'repository';
 
@@ -66,7 +68,7 @@ describe('Given a Cadenza JS client instance', () => {
   });
 
   it('Throws when attempting to show an embedding target with an invalid ID', () =>
-    expect(() => cad.show('Invalid')).toThrow());
+    expect(() => cad.show('Invalid' as EmbeddingTargetId)).toThrow());
 
   describe('When showing an embedding target', () => {
     let abortController: AbortController;
@@ -87,7 +89,7 @@ describe('Given a Cadenza JS client instance', () => {
         expandNavigator: true,
         hideMainHeaderAndFooter: true,
         hideWorkbookToolBar: true,
-        highlightGlobalId: 'ROOT.MyFolder',
+        highlightGlobalId: 'ROOT.MyFolder' as GlobalId,
       });
       expect(cad.iframe!.src).toBe(
         `${BASE_URL}/w/${EMBEDDING_TARGET_ID}?expandNavigator=true&hideMainHeaderAndFooter=true&hideWorkbookToolBar=true&highlightGlobalId=ROOT.MyFolder`,
