@@ -593,10 +593,14 @@ export class CadenzaClient {
    *
    * It is guaranteed that a response refers to a specific request,
    * even if multiple request are executed in parallel.
+   * 
+   * @template [T=void]
+   * @param {string} type
+   * @param {unknown} [detail]
+   * @returns {Promise<T>}
    */
-  #postRequest(/** @type string */ type, /** @type unknown */ detail) {
+  #postRequest(type, detail) {
     const { port1, port2 } = new MessageChannel();
-    /** @type {Promise<never>} */
     const promise = new Promise((resolve, reject) => {
       port1.onmessage = (
         /** @type MessageEvent<CadenzaEvent<never, never>> */ event,
