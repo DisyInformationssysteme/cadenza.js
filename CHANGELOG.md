@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Sandbox footer with link to docs and devtools hint
 
 ### Changed
+- Assert iframe being visible when calling one of the `CadenzaClient#show*` methods.
 - Improved the documentation and types of events.
 - Improved the documentation of the `EmbeddingTargetId` and `ExternalLinkKey` types.
 - Improved logging

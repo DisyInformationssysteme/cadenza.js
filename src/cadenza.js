@@ -9,6 +9,7 @@
  * @param {ExternalLinkKey} [options.webApplication] - An external link that Cadenza uses to resolve the
  *   [target origin](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage#targetorigin) when posting events.
  *   This is required if Cadenza and your application are not running on the same origin.
+ *   Please ensure that the user has view privilege for that link!
  * @param {boolean} [options.debug] - Whether to enable debug logging
  * @throws For invalid arguments
  */
@@ -29,7 +30,17 @@ globalThis.cadenza = Object.assign(
 );
 
 /**
- * @typedef {string} EmbeddingTargetId - The ID of a Cadenza embedding target
+ * @template {string} T
+ * @typedef {string & {__type: T}} OpaqueString - A specific `string` type that is not assignable from another string
+ *
+ * The idea is to have a specific type e.g. for the {@link EmbeddingTargetId} instead of a plain `string`.
+ * You don't need to _actually_ add that `__type` property. In TS code, just use a
+ * [type assertion](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#type-assertions)
+ * (e.g. `cadenzaClient.show('{embeddingTargetId}' as EmbeddingTargetId)`).
+ */
+
+/**
+ * @typedef {OpaqueString<'EmbeddingTargetId'>} EmbeddingTargetId - The ID of a Cadenza embedding target
  *
  * Embedding targets are called 🇩🇪 "Einbettbarer Inhalt" / 🇺🇸 "Embeddable content" throughout the Cadenza UI and help.
  * They're managed within the respective workbook:
@@ -40,7 +51,7 @@ globalThis.cadenza = Object.assign(
  * The name of an embedding target (as entered in the UI) is its ID.
  */
 
-/** @typedef {string} GlobalId - The ID of a navigator item */
+/** @typedef {OpaqueString<'GlobalId'>} GlobalId - The ID of a navigator item */
 
 /**
  * @typedef ExternalLinkKey - A tuple qualifying a Cadenza external link
