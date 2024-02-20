@@ -326,7 +326,7 @@ export class CadenzaClient {
    * Set filter variables in the currently shown workbook.
    *
    * @param {FilterVariables} filter - The variable values
-   * @return {Promise<unknown>} A `Promise` for when the filter variables were set.
+   * @return {Promise<void>} A `Promise` for when the filter variables were set.
    */
   setFilter(filter) {
     this.#log('CadenzaClient#setFilter', ...arguments);
@@ -452,7 +452,7 @@ export class CadenzaClient {
    * @param {WorkbookLayerPath | string} layer - The layer to show or hide
    *   (identified using a layer path or a print name)
    * @param {boolean} visible - The visibility state of the layer
-   * @return {Promise<unknown>} A `Promise` for when the layer visibility is set.
+   * @return {Promise<void>} A `Promise` for when the layer visibility is set.
    */
   setLayerVisibility(layer, visible) {
     this.#log('CadenzaClient#setLayerVisibility', ...arguments);
