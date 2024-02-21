@@ -308,6 +308,20 @@ button.textContent = 'Download Excel';
 button.onclick = () => cadenzaClient.downloadData('{embeddingTargetId}', 'excel');
 ```
 
+### Request Data From a Workbook View
+
+<small>API: [CadenzaClient#getData](./classes/CadenzaClient.html#getData)</small>
+
+Request data from a workbook view.
+Supported DataTypes:
+- png: return Blob with the image of the currently displayed map
+
+```javascript
+const canvas = document.querySelector('canvas');
+const data = await cadenzaClient.getData('png');
+canvas.drawImage(await createImageBitmap(data), 0, 0);
+```
+
 ## The Development Sandbox
 
 The development sandbox is a simple custom application (in fact a single `.html` file) for playing with Cadenza JS.
