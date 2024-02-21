@@ -382,37 +382,40 @@ export class CadenzaClient {
   /**
    * Set the selection in the currently shown workbook map view.
    *
-   * @param {WorkbookLayerPath} layer - The data view layer to set the selection in
+   * @param {WorkbookLayerPath | string} layer - The data view layer to set the selection in
    * @param {string[]} values - The IDs of the objects to select
    * @return {Promise<void>} A `Promise` for when the selection was set.
    */
   setSelection(layer, values) {
     this.#log('CadenzaClient#setSelection', ...arguments);
-    return this.#postRequest('setSelection', { layer, values });
+    return this.#postRequest('setSelection', { layer: array(layer), values });
   }
 
   /**
    * Add to the selection in the currently shown workbook map view.
    *
-   * @param {WorkbookLayerPath} layer - The data view layer to change the selection in
+   * @param {WorkbookLayerPath | string} layer - The data view layer to change the selection in
    * @param {string[]} values - The IDs of the objects to select
    * @return {Promise<void>} A `Promise` for when the selection was changed.
    */
   addSelection(layer, values) {
     this.#log('CadenzaClient#addSelection', ...arguments);
-    return this.#postRequest('addSelection', { layer, values });
+    return this.#postRequest('addSelection', { layer: array(layer), values });
   }
 
   /**
    * Remove from the selection in the currently shown workbook map view.
    *
-   * @param {WorkbookLayerPath} layer - The data view layer to change the selection in
+   * @param {WorkbookLayerPath | string} layer - The data view layer to change the selection in
    * @param {string[]} values - The IDs of the objects to unselect
    * @return {Promise<void>} A `Promise` for when the selection was changed.
    */
   removeSelection(layer, values) {
     this.#log('CadenzaClient#removeSelection', ...arguments);
-    return this.#postRequest('removeSelection', { layer, values });
+    return this.#postRequest('removeSelection', {
+      layer: array(layer),
+      values,
+    });
   }
 
   /**
