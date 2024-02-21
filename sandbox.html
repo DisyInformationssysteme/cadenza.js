@@ -134,10 +134,19 @@
     const actionHandlers = {
       show: data => cadenzaClient.show(data.embeddingTargetId, getOptions(data)),
       showPage: data => cadenzaClient.show({ page: data.page }, getOptions(data)),
-      expandNavigator: data => cadenzaClient.expandNavigator(data.expandNavigator === 'on'),
       showMap: data => cadenzaClient.showMap(data.embeddingTargetId, getOptions(data)),
-      setLayerVisibility: data => cadenzaClient.setLayerVisibility(JSON.parse(data.layer), data.visibility === 'on'),
+      expandNavigator: data => cadenzaClient.expandNavigator(data.expandNavigator === 'on'),
+      getData: async data => {
+        const dataType = data.dataType;
+        const result = await cadenzaClient.getData(dataType);
+        if (dataType === 'png') {
+          const url = URL.createObjectURL(result);
+          iframe.src = url;
+          URL.revokeObjectURL(url);
+        }
+      },
       setFilter: data => cadenzaClient.setFilter(parseFilterVariables(data.filter)),
+      setLayerVisibility: data => cadenzaClient.setLayerVisibility(JSON.parse(data.layer), data.visibility === 'on'),
       createGeometry: data => cadenzaClient.createGeometry(data.embeddingTargetId, data.geometryType, getOptions(data)),
       editGeometry: ({ geometry, ...data }) => cadenzaClient.editGeometry(data.embeddingTargetId, JSON.parse(geometry), getOptions(data)),
       selectObjects: data => cadenzaClient.selectObjects(data.embeddingTargetId, getOptions(data)),
@@ -148,18 +157,7 @@
         console.log('Inspect the fetchData() request in the devtools.');
         cadenzaClient.fetchData(data.embeddingTargetId, data.dataType, getOptions(data));
       },
-      downloadData: data => cadenzaClient.downloadData(data.embeddingTargetId, data.dataType, getOptions(data)),
-      getData: async data => {
-        const result = await cadenzaClient.getData(data.dataType);
-        if (data.dataType === 'png') {
-          const url = URL.createObjectURL(result);
-          try {
-            iframe.src = url;
-          } finally {
-            URL.revokeObjectURL(url);
-          }
-        }      
-      }
+      downloadData: data => cadenzaClient.downloadData(data.embeddingTargetId, data.dataType, getOptions(data))
     };
 
     const form = document.getElementById('form');
@@ -247,11 +245,14 @@
       <div>
         <label for="action">Action</label>
         <select name="action" id="action">
-          <optgroup label="General">
+          <optgroup label="Show">
             <option value="show">Show</option>
             <option value="showPage">Show Page</option>
             <option value="showMap">Show Map</option>
+          </optgroup>
+          <optgroup label="Interact With Shown Content">
             <option value="expandNavigator">Expand Navigator</option>
+            <option value="getData">Get Data (Get Map Image)</option>
             <option value="setFilter">Set Filter</option>
             <option value="setLayerVisibility">Set Layer Visibility</option>
             <option value="setSelection">Set Selection</option>
@@ -266,9 +267,6 @@
           <optgroup label="Without Iframe">
             <option value="downloadData">Download data</option>
             <option value="fetchData">Fetch data</option>
-          </optgroup>
-          <optgroup label="PostMessage Interactions">          
-            <option value="getData">Get data</option>            
           </optgroup>
         </select>
       </div>
@@ -368,7 +366,6 @@
       <option>csv</option>
       <option>excel</option>
       <option>json</option>
-      <option>pdf</option>
     </select>
   </div>
   <div>
@@ -571,10 +568,14 @@
 
 <template data-action="getData">
   <div>
-    Gets the data of the currently displayed view.
-    Currently, only dataType=png is supported, to get the image of a workbook map view.
-    (An open view with a map is required).
-    <input type="hidden" id="dataType" name="dataType" value="png">
+    <label for="dataType">Data type</label>
+    <select name="dataType" id="dataType" disabled>
+      <option>png</option>
+    </select>
+    <input type="hidden" name="dataType" value="png">
+    <small>
+      <p>Currently, only <code>dataType=png</code> is supported to get the image of the currently shown workbook map view.</p>
+    </small>
   </div>
 </template>
 
