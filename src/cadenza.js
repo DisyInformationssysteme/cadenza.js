@@ -315,9 +315,9 @@ export class CadenzaClient {
       locationFinder,
       mapExtent,
       operationMode,
+      targetType: 'MAP',
       useMapSrs,
     });
-    params.append('targetType', 'MAP');
     await this.#show(resolvePath(mapView), params, signal);
     if (geometry) {
       this.#postEvent('setGeometry', { geometry });
@@ -928,6 +928,7 @@ function assertSupportedDataType(
  * @param {number} [params.minScale]
  * @param {OperationMode} [params.operationMode]
  * @param {TablePart[]} [params.parts]
+ * @param {'MAP'} [params.targetType]
  * @param {boolean} [params.useMapSrs]
  * @return {URLSearchParams}
  */
@@ -949,6 +950,7 @@ function createParams({
   minScale,
   operationMode,
   parts,
+  targetType,
   useMapSrs,
 }) {
   if (disabledUiFeatures) {
@@ -1007,6 +1009,7 @@ function createParams({
     ...(minScale && { minScale: String(minScale) }),
     ...(operationMode && operationMode !== 'normal' && { operationMode }),
     ...(parts && { parts: parts.join() }),
+    ...(targetType && { targetType }),
     ...(useMapSrs && { useMapSrs: 'true' }),
   });
 }
