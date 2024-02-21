@@ -9,14 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `CadenzaClient#getData`
 - `CadenzaClient#setFilter`
-- `CadenzaClient#setLayerVisibility` 
+- `CadenzaClient#setLayerVisibility`
+- `CadenzaClient#setSelection`
+- `CadenzaClient#addSelection`
+- `CadenzaClient#removeSelection`
 - `CadenzaClient#selectObjects`
 - `CadenzaChangeExtentEvent`
 - Documentation for the "JSON Representation of Cadenza Object Data"
 - Sandbox footer with link to docs and devtools hint
+- Assertion for iframe being visible when calling one of the `CadenzaClient#show*` methods.
 
 ### Changed
-- Assert iframe being visible when calling one of the `CadenzaClient#show*` methods.
 - Improved the documentation and types of events.
 - Improved the documentation of the `EmbeddingTargetId` and `ExternalLinkKey` types.
 - Improved logging
