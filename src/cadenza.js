@@ -95,7 +95,7 @@ globalThis.cadenza = Object.assign(
 /** @typedef {[number,number,number,number]} Extent - An array of numbers representing an extent: [minx, miny, maxx, maxy] */
 
 /**
- * @typedef {'csv' | 'excel' | 'json' | 'pdf'} DataType - A data type
+ * @typedef {'csv' | 'excel' | 'json' | 'pdf' | 'png'} DataType - A data type
  *
  * See [JSON Representation of Cadenza Object Data](../index.html#md:json-representation-of-cadenza-object-data) for JSON data.
  */
@@ -650,17 +650,20 @@ export class CadenzaClient {
    *
    * It is guaranteed that a response refers to a specific request,
    * even if multiple request are executed in parallel.
+   * @template [T=void]
+   * @param {string} type
+   * @param {unknown} [detail]
+   * @returns {Promise<T>}
    */
-  #postRequest(/** @type string */ type, /** @type unknown */ detail) {
+  #postRequest(type, detail) {
     const { port1, port2 } = new MessageChannel();
-    /** @type {Promise<void>} */
     const promise = new Promise((resolve, reject) => {
       port1.onmessage = (
         /** @type MessageEvent<CadenzaEvent<never, never>> */ event,
       ) => {
         const cadenzaEvent = event.data;
         if (cadenzaEvent.type === `${type}:success`) {
-          resolve();
+          resolve(cadenzaEvent.detail);
         } else if (cadenzaEvent.type === `${type}:error`) {
           reject();
         }
@@ -725,6 +728,21 @@ export class CadenzaClient {
       throw new CadenzaError(errorType, 'Failed to fetch data');
     }
     return res;
+  }
+
+  /**
+   * Get data from the currently shown workbook view.
+   *
+   * Currently, only map views are supported.
+   *
+   * @template {DataType} T
+   * @param {T} type - The requested data type. Currently, only `"png"` is supported.
+   * @return {Promise<T extends 'png' ? Blob : never>}
+   */
+  async getData(type) {
+    this.#log('CadenzaClient#getData', ...arguments);
+    assertSupportedDataType(type, ['png']);
+    return this.#postRequest('getData', { type });
   }
 
   /**

@@ -148,7 +148,18 @@
         console.log('Inspect the fetchData() request in the devtools.');
         cadenzaClient.fetchData(data.embeddingTargetId, data.dataType, getOptions(data));
       },
-      downloadData: data => cadenzaClient.downloadData(data.embeddingTargetId, data.dataType, getOptions(data))
+      downloadData: data => cadenzaClient.downloadData(data.embeddingTargetId, data.dataType, getOptions(data)),
+      getData: async data => {
+        const result = await cadenzaClient.getData(data.dataType);
+        if (data.dataType === 'png') {
+          const url = URL.createObjectURL(result);
+          try {
+            iframe.src = url;
+          } finally {
+            URL.revokeObjectURL(url);
+          }
+        }      
+      }
     };
 
     const form = document.getElementById('form');
@@ -255,6 +266,9 @@
           <optgroup label="Without Iframe">
             <option value="downloadData">Download data</option>
             <option value="fetchData">Fetch data</option>
+          </optgroup>
+          <optgroup label="PostMessage Interactions">          
+            <option value="getData">Get data</option>            
           </optgroup>
         </select>
       </div>
@@ -552,6 +566,15 @@
   <div>
     <label for="embeddingTargetId">Embedding target ID *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
+  </div>
+</template>
+
+<template data-action="getData">
+  <div>
+    Gets the data of the currently displayed view.
+    Currently, only dataType=png is supported, to get the image of a workbook map view.
+    (An open view with a map is required).
+    <input type="hidden" id="dataType" name="dataType" value="png">
   </div>
 </template>
 
