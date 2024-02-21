@@ -156,6 +156,28 @@ cadenzaClient.showMap('{embeddingTargetId}', {
 });
 ```
 
+### Set the Visibility of a Layer in the Currently Shown Workbook Map View
+
+<small>API: [CadenzaClient#setLayerVisibility](./classes/CadenzaClient.html#setLayerVisibility)</small>
+
+To set the visibility of a layer in the currently shown map, pass the layer path or print name and the desired visibility.
+
+```javascript
+cadenzaClient.setLayerVisibility('{layerPrintName}', false);
+```
+
+### Get the Image of the Currently Shown Workbook Map View
+
+<small>API: [CadenzaClient#getData](./classes/CadenzaClient.html#getData)</small>
+
+The method may support multiple data types in the future. Currently, only `"png"` is supported to get the image of a workbook map view.
+
+```javascript
+const canvas = document.querySelector('canvas');
+const data = await cadenzaClient.getData('png');
+canvas.drawImage(await createImageBitmap(data), 0, 0);
+```
+
 ### Edit an Existing Geometry
 
 <small>API: [CadenzaClient#editGeometry](./classes/CadenzaClient.html#editGeometry), [CadenzaClient#on](./classes/CadenzaClient.html#on)</small>
@@ -230,16 +252,6 @@ cadenzaClient.on('selectObjects:ok', (event) => {
 });
 ```
 
-### Set the Visibility of a Workbook Map View Layer
-
-<small>API: [CadenzaClient#setLayerVisibility](./classes/CadenzaClient.html#setLayerVisibility)</small>
-
-To set the visibility of a layer in the currently shown map, pass the layer path or print name and the desired visibility.
-
-```javascript
-cadenzaClient.setLayerVisibility('{layerPrintName}', false);
-```
-
 ### Highlight an Item in the Navigator
 
 <small>API: [CadenzaClient#show](./classes/CadenzaClient.html#show)</small>
@@ -306,20 +318,6 @@ Download data from a workbook view in Excel format. This triggers the browser's 
 const button = document.createElement('button');
 button.textContent = 'Download Excel';
 button.onclick = () => cadenzaClient.downloadData('{embeddingTargetId}', 'excel');
-```
-
-### Request Data From a Workbook View
-
-<small>API: [CadenzaClient#getData](./classes/CadenzaClient.html#getData)</small>
-
-Request data from a workbook view.
-Supported DataTypes:
-- png: return Blob with the image of the currently displayed map
-
-```javascript
-const canvas = document.querySelector('canvas');
-const data = await cadenzaClient.getData('png');
-canvas.drawImage(await createImageBitmap(data), 0, 0);
 ```
 
 ## The Development Sandbox

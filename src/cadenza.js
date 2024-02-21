@@ -334,6 +334,21 @@ export class CadenzaClient {
   }
 
   /**
+   * Get data from the currently shown workbook view.
+   *
+   * Currently, only map views are supported.
+   *
+   * @template {DataType} T
+   * @param {T} dataType - The requested data type. Currently, only `"png"` is supported.
+   * @return {Promise<T extends 'png' ? Blob : never>}
+   */
+  async getData(dataType) {
+    this.#log('CadenzaClient#getData', ...arguments);
+    assertSupportedDataType(dataType, ['png']);
+    return this.#postRequest('getData', { dataType });
+  }
+
+  /**
    * Set filter variables in the currently shown workbook.
    *
    * @param {FilterVariables} filter - The variable values
@@ -342,6 +357,25 @@ export class CadenzaClient {
   setFilter(filter) {
     this.#log('CadenzaClient#setFilter', ...arguments);
     return this.#postRequest('setFilter', { filter });
+  }
+
+  /**
+   * Set the visibility of a layer in the currently shown workbook map view.
+   *
+   * When making a layer visible, its ancestors will be made visible, too.
+   * When hiding a layer, the ancestors are not affected.
+   *
+   * @param {WorkbookLayerPath | string} layer - The layer to show or hide
+   *   (identified using a layer path or a print name)
+   * @param {boolean} visible - The visibility state of the layer
+   * @return {Promise<void>} A `Promise` for when the layer visibility is set.
+   */
+  setLayerVisibility(layer, visible) {
+    this.#log('CadenzaClient#setLayerVisibility', ...arguments);
+    return this.#postRequest('setLayerVisibility', {
+      layer: array(layer),
+      visible,
+    });
   }
 
   /**
@@ -452,25 +486,6 @@ export class CadenzaClient {
       useMapSrs,
     });
     return this.#show(resolvePath(backgroundMapView), params, signal);
-  }
-
-  /**
-   * Set the visibility of a layer in the currently shown workbook map view.
-   *
-   * When making a layer visible, its ancestors will be made visible, too.
-   * When hiding a layer, the ancestors are not affected.
-   *
-   * @param {WorkbookLayerPath | string} layer - The layer to show or hide
-   *   (identified using a layer path or a print name)
-   * @param {boolean} visible - The visibility state of the layer
-   * @return {Promise<void>} A `Promise` for when the layer visibility is set.
-   */
-  setLayerVisibility(layer, visible) {
-    this.#log('CadenzaClient#setLayerVisibility', ...arguments);
-    return this.#postRequest('setLayerVisibility', {
-      layer: array(layer),
-      visible,
-    });
   }
 
   #show(
@@ -682,21 +697,6 @@ export class CadenzaClient {
       throw new CadenzaError(errorType, 'Failed to fetch data');
     }
     return res;
-  }
-
-  /**
-   * Get data from the currently shown workbook view.
-   *
-   * Currently, only map views are supported.
-   *
-   * @template {DataType} T
-   * @param {T} type - The requested data type. Currently, only `"png"` is supported.
-   * @return {Promise<T extends 'png' ? Blob : never>}
-   */
-  async getData(type) {
-    this.#log('CadenzaClient#getData', ...arguments);
-    assertSupportedDataType(type, ['png']);
-    return this.#postRequest('getData', { type });
   }
 
   /**
