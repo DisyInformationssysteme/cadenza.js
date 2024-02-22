@@ -238,7 +238,7 @@ That's why the events use the `editGeometry` prefix.
 
 <small>API: [CadenzaClient#selectObjects](./classes/CadenzaClient.html#selectObjects)</small>
 
-Select objects in a workbook map view dialog, via user interaction. In the example the selection is restricted to specific layers. For layers in groups, pass the layer path.
+Ask the user to select objects in a workbook map view. In the example the selection is restricted to specific layers. For layers in groups, pass the layer path.
 
 ```javascript
 cadenzaClient.selectObjects('{embeddingTargetId}', {
@@ -252,38 +252,23 @@ cadenzaClient.on('selectObjects:ok', (event) => {
   console.log('Object selection was completed', event.detail.selection);
 });
 ```
-Set select objects in an open workbook map view, via object identifier value. A empty object identifier list deselect all objects.
+
+#### _Programmatically_ Set the Selection in the Currently Shown Workbook Map View
 
 <small>API: [CadenzaClient#setSelection](./classes/CadenzaClient.html#setSelection)</small>
 
+Set the selection in the currently shown workbook map view using a list of object IDs to select. An empty list clears the selection.
+
 ```javascript
 cadenzaClient.setSelection(
-  layer: [ '{layerGroupPrintName}', '{layerPrintName}' ],
-  values: [ {objectId}, ... ]
-);
-```
-Add objects to select objects, in an open workbook map view, via object identifier value.
-
-<small>API: [CadenzaClient#addSelection](./classes/CadenzaClient.html#addSelection)</small>
-
-```javascript
-cadenzaClient.addSelection(
-  layer: [ '{layerGroupPrintName}', '{layerPrintName}' ],
-  values: [ {objectId}, ... ]
+  layer: '{layerPrintName}',
+  values: [ 'objectId', ... ]
 );
 ```
 
-Remove objects from selected objects, in an open workbook map view, via object identifier value.
-
-<small>API: [CadenzaClient#removeSelection](./classes/CadenzaClient.html#removeSelection)</small>
-
-```javascript
-cadenzaClient.removeSelection(
-  layer: [ '{layerGroupPrintName}', '{layerPrintName}' ],
-  values: [ {objectId}, ... ]
-);
-```
-
+You can also add to or remove from the current selection:
+* <small>API: [CadenzaClient#addSelection](./classes/CadenzaClient.html#addSelection)</small>
+* <small>API: [CadenzaClient#removeSelection](./classes/CadenzaClient.html#removeSelection)</small>
 
 ### Highlight an Item in the Navigator
 
@@ -400,7 +385,7 @@ By default, the sandbox expects Cadenza to run on http://localhost:8080/cadenza.
 |-------------------------------------|-----------|--------------------------|-------|
 | Text (String)                       | string    | `"Text"`                 | |
 | Number (Integer)                    | number    | `1`                      | |
-| Number (Long)                       | string    | `"1"`                    | The long value range exceeds the range of the JSON number type. So it's represented as a string.
+| Number (Long)                       | string    | `"1"`                    | The long value range exceeds the range of the JSON number type. So it's represented as a string. |
 | Floating point number (Double)      | number    | `1.23`                   |
 | Floating point number (Big decimal) | string    | `"1.23"`                 | The big decimal value range exceeds the range of the JSON number type. So it's represented as a string. |
 | Date                                | string    | `"1999-12-31T23:00:00Z"` | A date is represented as an [ISO string in universal time](https://en.wikipedia.org/wiki/ISO_8601#Coordinated_Universal_Time_(UTC)) (UTC). |

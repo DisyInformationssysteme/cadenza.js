@@ -81,6 +81,9 @@
     label {
       font-weight: 600;
     }
+    hr:first-child {
+        display: none;
+    }
     select, input:is(:not([type]), [type=text], [type=number]), textarea, hr {
       display: block;
       width: 100%
@@ -147,12 +150,12 @@
       },
       setFilter: data => cadenzaClient.setFilter(parseFilterVariables(data.filter)),
       setLayerVisibility: data => cadenzaClient.setLayerVisibility(JSON.parse(data.layer), data.visibility === 'on'),
-      createGeometry: data => cadenzaClient.createGeometry(data.embeddingTargetId, data.geometryType, getOptions(data)),
-      editGeometry: ({ geometry, ...data }) => cadenzaClient.editGeometry(data.embeddingTargetId, JSON.parse(geometry), getOptions(data)),
-      selectObjects: data => cadenzaClient.selectObjects(data.embeddingTargetId, getOptions(data)),
       setSelection: data => cadenzaClient.setSelection(JSON.parse(data.layer), JSON.parse(data.values)),
       addSelection: data => cadenzaClient.addSelection(JSON.parse(data.layer), JSON.parse(data.values)),
       removeSelection: data => cadenzaClient.removeSelection(JSON.parse(data.layer), JSON.parse(data.values)),
+      createGeometry: data => cadenzaClient.createGeometry(data.embeddingTargetId, data.geometryType, getOptions(data)),
+      editGeometry: ({ geometry, ...data }) => cadenzaClient.editGeometry(data.embeddingTargetId, JSON.parse(geometry), getOptions(data)),
+      selectObjects: data => cadenzaClient.selectObjects(data.embeddingTargetId, getOptions(data)),
       fetchData: data => {
         console.log('Inspect the fetchData() request in the devtools.');
         cadenzaClient.fetchData(data.embeddingTargetId, data.dataType, getOptions(data));
@@ -489,24 +492,14 @@
     <input name="layers" id="layers">
     <small>
       <p>
-        A JSON value like <code>["layerPrintName",...]</code> or
-        <code>[["layerGroupPrintName","layerPrintName"],...]</code>
+        A JSON value like <code>["{layerPrintName}",...]</code> or
+        <code>[["{layerGroupPrintName}","{layerPrintName}"],...]</code>
       </p>
     </small>
   </div>
 </template>
 
-<template data-action="setLayerVisibility">
-  <div>
-    <label for="layer">Layer *</label>
-    <input name="layer" id="layer" required>
-    <small>
-      <p>
-        A JSON value like <code>"layerPrintName"</code> or
-        <code>["layerGroupPrintName","layerPrintName"]</code>
-      </p>
-    </small>
-  </div>
+<template data-action="setLayerVisibility" data-common="layer">
   <div>
     <label>
       <input type="checkbox" name="visibility">
@@ -515,18 +508,30 @@
   </div>
 </template>
 
-<template data-action="setSelection" data-common="layer-selection"></template>
-<template data-action="addSelection" data-common="layer-selection"></template>
-<template data-action="removeSelection" data-common="layer-selection"></template>
+<template data-action="setSelection" data-common="layer,layer-selection"></template>
+<template data-action="addSelection" data-common="layer,layer-selection"></template>
+<template data-action="removeSelection" data-common="layer,layer-selection"></template>
 
 <template id="common-layer-selection">
   <div>
-    <label for="layerPath">Path to the dataview layer * (JSON Array)</label>
-    <textarea name="layer" id="layer" rows="5" required></textarea>
-  </div>
-  <div>
-    <label for="values">List of Object identifiers * (JSON Array)</label>
+    <label for="values">List of Object IDs *</label>
     <textarea name="values" id="values" rows="5" required></textarea>
+    <small>
+      <p>A JSON value like <code>["object1","object2"]</code></p>
+    </small>
+  </div>
+</template>
+
+<template id="common-layer">
+  <div>
+    <label for="layer">Layer *</label>
+    <input name="layer" id="layer" required>
+    <small>
+      <p>
+        A JSON value like <code>"{layerPrintName}"</code> or
+        <code>["{layerGroupPrintName}","{layerPrintName}"]</code>
+      </p>
+    </small>
   </div>
 </template>
 

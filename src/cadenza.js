@@ -306,7 +306,6 @@ export class CadenzaClient {
       assertValidGeometryType(geometry.type);
     }
     const params = createParams({
-      targetType: 'MAP',
       disabledUiFeatures,
       expandNavigator,
       filter,
@@ -316,57 +315,13 @@ export class CadenzaClient {
       locationFinder,
       mapExtent,
       operationMode,
+      targetType: 'MAP',
       useMapSrs,
     });
     await this.#show(resolvePath(mapView), params, signal);
     if (geometry) {
       this.#postEvent('setGeometry', { geometry });
     }
-  }
-
-  /**
-   * Set Selection in the currently shown map view.
-   *
-   * @param {WorkbookLayerPath} layer - The data view layer to set the selection in
-   * @param {object[]} values - The variable values
-   * @return {Promise<void>} A 'Promise' for when the selection was set.
-   */
-  setSelection(
-    /** @type WorkbookLayerPath */ layer,
-    /** @type object[] */ values,
-  ) {
-    this.#log('CadenzaClient#setSelection', layer, values);
-    return this.#postRequest('setSelection', { layer, values });
-  }
-
-  /**
-   * Add Selection in the currently shown map view.
-   *
-   * @param {WorkbookLayerPath} layer - The data view layer to add the selection in
-   * @param {object[]} values - The variable values
-   * @return {Promise<void>} A 'Promise' for when the selection was added.
-   */
-  addSelection(
-    /** @type WorkbookLayerPath */ layer,
-    /** @type object[] */ values,
-  ) {
-    this.#log('CadenzaClient#addSelection', layer, values);
-    return this.#postRequest('addSelection', { layer, values });
-  }
-
-  /**
-   * Remove Selection in the currently shown map view.
-   *
-   * @param {WorkbookLayerPath} layer - The data view layer to remove the selection from
-   * @param {object[]} values - The variable values
-   * @return {Promise<void>} A 'Promise' for when the selection was removed.
-   */
-  removeSelection(
-    /** @type WorkbookLayerPath */ layer,
-    /** @type object[] */ values,
-  ) {
-    this.#log('CadenzaClient#removeSelection', layer, values);
-    return this.#postRequest('removeSelection', { layer, values });
   }
 
   /**
@@ -414,13 +369,52 @@ export class CadenzaClient {
    * @param {WorkbookLayerPath | string} layer - The layer to show or hide
    *   (identified using a layer path or a print name)
    * @param {boolean} visible - The visibility state of the layer
-   * @return {Promise<void>} A `Promise` for when the layer visibility is set.
+   * @return {Promise<void>} A `Promise` for when the layer visibility was set.
    */
   setLayerVisibility(layer, visible) {
     this.#log('CadenzaClient#setLayerVisibility', ...arguments);
     return this.#postRequest('setLayerVisibility', {
       layer: array(layer),
       visible,
+    });
+  }
+
+  /**
+   * Set the selection in the currently shown workbook map view.
+   *
+   * @param {WorkbookLayerPath | string} layer - The data view layer to set the selection in
+   * @param {unknown[]} values - The IDs of the objects to select
+   * @return {Promise<void>} A `Promise` for when the selection was set.
+   */
+  setSelection(layer, values) {
+    this.#log('CadenzaClient#setSelection', ...arguments);
+    return this.#postRequest('setSelection', { layer: array(layer), values });
+  }
+
+  /**
+   * Add to the selection in the currently shown workbook map view.
+   *
+   * @param {WorkbookLayerPath | string} layer - The data view layer to change the selection in
+   * @param {unknown[]} values - The IDs of the objects to select
+   * @return {Promise<void>} A `Promise` for when the selection was changed.
+   */
+  addSelection(layer, values) {
+    this.#log('CadenzaClient#addSelection', ...arguments);
+    return this.#postRequest('addSelection', { layer: array(layer), values });
+  }
+
+  /**
+   * Remove from the selection in the currently shown workbook map view.
+   *
+   * @param {WorkbookLayerPath | string} layer - The data view layer to change the selection in
+   * @param {unknown[]} values - The IDs of the objects to unselect
+   * @return {Promise<void>} A `Promise` for when the selection was changed.
+   */
+  removeSelection(layer, values) {
+    this.#log('CadenzaClient#removeSelection', ...arguments);
+    return this.#postRequest('removeSelection', {
+      layer: array(layer),
+      values,
     });
   }
 
@@ -911,7 +905,6 @@ function assertSupportedDataType(
 
 /**
  * @param {object} params
- * @param {string} [params.targetType]
  * @param {string} [params.action]
  * @param {DataType} [params.dataType]
  * @param {UiFeature[]} [params.disabledUiFeatures]
@@ -929,11 +922,11 @@ function assertSupportedDataType(
  * @param {number} [params.minScale]
  * @param {OperationMode} [params.operationMode]
  * @param {TablePart[]} [params.parts]
+ * @param {'MAP'} [params.targetType]
  * @param {boolean} [params.useMapSrs]
  * @return {URLSearchParams}
  */
 function createParams({
-  targetType,
   action,
   dataType,
   disabledUiFeatures,
@@ -951,6 +944,7 @@ function createParams({
   minScale,
   operationMode,
   parts,
+  targetType,
   useMapSrs,
 }) {
   if (disabledUiFeatures) {
@@ -986,7 +980,6 @@ function createParams({
     ...(disabledUiFeatures && {
       disabledUiFeatures: disabledUiFeatures.join(),
     }),
-    ...(targetType && { targetType }),
     ...(expandNavigator && { expandNavigator: 'true' }),
     ...(fileName && { fileName }),
     ...(filter &&
@@ -1010,6 +1003,7 @@ function createParams({
     ...(minScale && { minScale: String(minScale) }),
     ...(operationMode && operationMode !== 'normal' && { operationMode }),
     ...(parts && { parts: parts.join() }),
+    ...(targetType && { targetType }),
     ...(useMapSrs && { useMapSrs: 'true' }),
   });
 }
