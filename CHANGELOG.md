@@ -7,14 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
-- `CadenzaClient#getData`
-- `CadenzaClient#setFilter`
-- `CadenzaClient#setLayerVisibility`
-- `CadenzaClient#setSelection`
-- `CadenzaClient#addSelection`
-- `CadenzaClient#removeSelection`
 - `CadenzaClient#selectObjects`
-- `CadenzaChangeExtentEvent`
+- `CadenzaChangeSelectionEvent`
 - `CadenzaObjectInfoEvent`
 - Documentation for the "JSON Representation of Cadenza Object Data"
 - Sandbox footer with link to docs and devtools hint

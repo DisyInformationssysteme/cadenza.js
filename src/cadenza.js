@@ -280,9 +280,7 @@ export class CadenzaClient {
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
-   * @fires
-   * - {@link CadenzaChangeExtentEvent}
-   * - {@link CadenzaDrillThroughEvent}
+   * @fires {@link CadenzaDrillThroughEvent}
    */
   async showMap(
     mapView,
@@ -339,6 +337,7 @@ export class CadenzaClient {
    *
    * Currently, only map views are supported.
    *
+   * @hidden
    * @template {DataType} T
    * @param {T} dataType - The requested data type. Currently, only `"png"` is supported.
    * @return {Promise<T extends 'png' ? Blob : never>}
@@ -352,6 +351,7 @@ export class CadenzaClient {
   /**
    * Set filter variables in the currently shown workbook.
    *
+   * @hidden
    * @param {FilterVariables} filter - The variable values
    * @return {Promise<void>} A `Promise` for when the filter variables were set.
    */
@@ -366,6 +366,7 @@ export class CadenzaClient {
    * When making a layer visible, its ancestors will be made visible, too.
    * When hiding a layer, the ancestors are not affected.
    *
+   * @hidden
    * @param {WorkbookLayerPath | string} layer - The layer to show or hide
    *   (identified using a layer path or a print name)
    * @param {boolean} visible - The visibility state of the layer
@@ -382,6 +383,7 @@ export class CadenzaClient {
   /**
    * Set the selection in the currently shown workbook map view.
    *
+   * @hidden
    * @param {WorkbookLayerPath | string} layer - The data view layer to set the selection in
    * @param {unknown[]} values - The IDs of the objects to select
    * @return {Promise<void>} A `Promise` for when the selection was set.
@@ -394,6 +396,7 @@ export class CadenzaClient {
   /**
    * Add to the selection in the currently shown workbook map view.
    *
+   * @hidden
    * @param {WorkbookLayerPath | string} layer - The data view layer to change the selection in
    * @param {unknown[]} values - The IDs of the objects to select
    * @return {Promise<void>} A `Promise` for when the selection was changed.
@@ -406,6 +409,7 @@ export class CadenzaClient {
   /**
    * Remove from the selection in the currently shown workbook map view.
    *
+   * @hidden
    * @param {WorkbookLayerPath | string} layer - The data view layer to change the selection in
    * @param {unknown[]} values - The IDs of the objects to unselect
    * @return {Promise<void>} A `Promise` for when the selection was changed.
@@ -508,8 +512,8 @@ export class CadenzaClient {
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires
+   * - {@link CadenzaChangeSelectionEvent}
    * - {@link CadenzaObjectInfoEvent}
-   * - {@link CadenzaSelectObjectsUpdateEvent}
    * - {@link CadenzaSelectObjectsOkEvent}
    * - {@link CadenzaSelectObjectsCancelEvent}
    */
@@ -1014,29 +1018,27 @@ function array(/** @type unknown */ value) {
 
 // Please do not add internal event types like 'ready' here.
 /**
- * @typedef {'change:extent'
+ * @typedef {'change:selection'
  * | 'drillThrough'
  * | 'editGeometry:ok'
  * | 'editGeometry:update'
  * | 'editGeometry:cancel'
  * | 'objectInfo'
  * | 'selectObjects:ok'
- * | 'selectObjects:update'
  * | 'selectObjects:cancel'
  * } CadenzaEventType - An event type to subscribe to using {@link CadenzaClient#on}
  */
 
 /**
  * @template {CadenzaEventType} T
- * @typedef { T extends 'change:extent' ? CadenzaChangeExtentEvent
+ * @typedef {T extends 'change:selection' ? CadenzaChangeSelectionEvent
  *  : T extends 'drillThrough' ? CadenzaDrillThroughEvent
  *  : T extends 'editGeometry:update' ? CadenzaEditGeometryUpdateEvent
  *  : T extends 'editGeometry:ok' ? CadenzaEditGeometryOkEvent
  *  : T extends 'editGeometry:cancel' ? CadenzaEditGeometryCancelEvent
  *  : T extends 'objectInfo' ? CadenzaObjectInfoEvent
- *  : T extends 'selectObjects:update' ? CadenzaEditGeometryUpdateEvent
- *  : T extends 'selectObjects:ok' ? CadenzaEditGeometryOkEvent
- *  : T extends 'selectObjects:cancel' ? CadenzaEditGeometryCancelEvent
+ *  : T extends 'selectObjects:ok' ? CadenzaSelectObjectsOkEvent
+ *  : T extends 'selectObjects:cancel' ? CadenzaSelectObjectsCancelEvent
  *  : never
  * } CadenzaEventByType
  */
@@ -1048,10 +1050,12 @@ function array(/** @type unknown */ value) {
  * @property {TYPE} type - The event type
  * @property {DETAIL} detail - Optional event details (depending on the event type)
  */
-/**
+/*
+ * @hidden
  * @typedef {CadenzaEvent<'change:extent', {extent: Extent}>} CadenzaChangeExtentEvent - When the user moved the map.
  *   The extent is transformed according to the `useMapSrs` option.
  */
+/** @typedef {CadenzaEvent<'change:selection', undefined | {layer: WorkbookLayerPath, values: unknown[][]}>} CadenzaChangeSelectionEvent - When the user changed the selection. */
 /**
  * @typedef {CadenzaEvent<'drillThrough', {values: unknown[][]}>} CadenzaDrillThroughEvent - When the user executed a POST message drill-through.
  * <p>
@@ -1066,7 +1070,6 @@ function array(/** @type unknown */ value) {
 /** @typedef {CadenzaEvent<'editGeometry:cancel'>} CadenzaEditGeometryCancelEvent - When the user cancelled the geometry editing. */
 /** @typedef {CadenzaEvent<'error', {type: string, message?: string}>} CadenzaErrorEvent - An error event that is mapped to a {@link CadenzaError} */
 /** @typedef {CadenzaEvent<'objectInfo', {layer: WorkbookLayerPath, objectInfos: {selectionIndex: number, formattedValues: Record<string, string>}[]}>} CadenzaObjectInfoEvent - When the user opened the object info flyout. */
-/** @typedef {CadenzaEvent<'selectObjects:update', {layer: WorkbookLayerPath, values: unknown[][]}>} CadenzaSelectObjectsUpdateEvent - When the user changed the selection. */
 /** @typedef {CadenzaEvent<'selectObjects:ok', {layer: WorkbookLayerPath, values: unknown[][]}>} CadenzaSelectObjectsOkEvent - When the user submitted the selection. */
 /** @typedef {CadenzaEvent<'selectObjects:cancel'>} CadenzaSelectObjectsCancelEvent - When the user cancelled the selection. */
 
