@@ -238,7 +238,7 @@ That's why the events use the `editGeometry` prefix.
 
 <small>API: [CadenzaClient#selectObjects](./classes/CadenzaClient.html#selectObjects)</small>
 
-Select objects in a workbook map view. In the example the selection is restricted to specific layers. For layers in groups, pass the layer path.
+Select objects in a workbook map view dialog, via user interaction. In the example the selection is restricted to specific layers. For layers in groups, pass the layer path.
 
 ```javascript
 cadenzaClient.selectObjects('{embeddingTargetId}', {
@@ -252,6 +252,38 @@ cadenzaClient.on('selectObjects:ok', (event) => {
   console.log('Object selection was completed', event.detail.selection);
 });
 ```
+Set select objects in an open workbook map view, via object identifier value. A empty object identifier list deselect all objects.
+
+<small>API: [CadenzaClient#setSelection](./classes/CadenzaClient.html#setSelection)</small>
+
+```javascript
+cadenzaClient.setSelection(
+  layer: [ '{layerGroupPrintName}', '{layerPrintName}' ],
+  values: [ {objectId}, ... ]
+);
+```
+Add objects to select objects, in an open workbook map view, via object identifier value.
+
+<small>API: [CadenzaClient#addSelection](./classes/CadenzaClient.html#addSelection)</small>
+
+```javascript
+cadenzaClient.addSelection(
+  layer: [ '{layerGroupPrintName}', '{layerPrintName}' ],
+  values: [ {objectId}, ... ]
+);
+```
+
+Remove objects from selected objects, in an open workbook map view, via object identifier value.
+
+<small>API: [CadenzaClient#removeSelection](./classes/CadenzaClient.html#removeSelection)</small>
+
+```javascript
+cadenzaClient.removeSelection(
+  layer: [ '{layerGroupPrintName}', '{layerPrintName}' ],
+  values: [ {objectId}, ... ]
+);
+```
+
 
 ### Highlight an Item in the Navigator
 
