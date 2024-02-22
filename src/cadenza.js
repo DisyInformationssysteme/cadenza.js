@@ -306,6 +306,7 @@ export class CadenzaClient {
       assertValidGeometryType(geometry.type);
     }
     const params = createParams({
+      targetType: 'MAP',
       disabledUiFeatures,
       expandNavigator,
       filter,
@@ -317,11 +318,55 @@ export class CadenzaClient {
       operationMode,
       useMapSrs,
     });
-    params.append('targetType', 'MAP');
     await this.#show(resolvePath(mapView), params, signal);
     if (geometry) {
       this.#postEvent('setGeometry', { geometry });
     }
+  }
+
+  /**
+   * Set Selection in the currently shown map view.
+   *
+   * @param {WorkbookLayerPath} layer - The data view layer to set the selection in
+   * @param {object[]} values - The variable values
+   * @return {Promise<void>} A 'Promise' for when the selection was set.
+   */
+  setSelection(
+    /** @type WorkbookLayerPath */ layer,
+    /** @type object[] */ values,
+  ) {
+    this.#log('CadenzaClient#setSelection', layer, values);
+    return this.#postRequest('setSelection', { layer, values });
+  }
+
+  /**
+   * Add Selection in the currently shown map view.
+   *
+   * @param {WorkbookLayerPath} layer - The data view layer to add the selection in
+   * @param {object[]} values - The variable values
+   * @return {Promise<void>} A 'Promise' for when the selection was added.
+   */
+  addSelection(
+    /** @type WorkbookLayerPath */ layer,
+    /** @type object[] */ values,
+  ) {
+    this.#log('CadenzaClient#addSelection', layer, values);
+    return this.#postRequest('addSelection', { layer, values });
+  }
+
+  /**
+   * Remove Selection in the currently shown map view.
+   *
+   * @param {WorkbookLayerPath} layer - The data view layer to remove the selection from
+   * @param {object[]} values - The variable values
+   * @return {Promise<void>} A 'Promise' for when the selection was removed.
+   */
+  removeSelection(
+    /** @type WorkbookLayerPath */ layer,
+    /** @type object[] */ values,
+  ) {
+    this.#log('CadenzaClient#removeSelection', layer, values);
+    return this.#postRequest('removeSelection', { layer, values });
   }
 
   /**
@@ -866,6 +911,7 @@ function assertSupportedDataType(
 
 /**
  * @param {object} params
+ * @param {string} [params.targetType]
  * @param {string} [params.action]
  * @param {DataType} [params.dataType]
  * @param {UiFeature[]} [params.disabledUiFeatures]
@@ -887,6 +933,7 @@ function assertSupportedDataType(
  * @return {URLSearchParams}
  */
 function createParams({
+  targetType,
   action,
   dataType,
   disabledUiFeatures,
@@ -939,6 +986,7 @@ function createParams({
     ...(disabledUiFeatures && {
       disabledUiFeatures: disabledUiFeatures.join(),
     }),
+    ...(targetType && { targetType }),
     ...(expandNavigator && { expandNavigator: 'true' }),
     ...(fileName && { fileName }),
     ...(filter &&
