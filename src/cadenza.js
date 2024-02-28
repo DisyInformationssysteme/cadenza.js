@@ -108,6 +108,12 @@ globalThis.cadenza = Object.assign(
  * _Note:_ Since numbers in JavaScript are Double values ([more info on MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number#number_encoding)),
  * for Long variables, the API is currently limited to the Double value range.
  */
+
+let hasCadenzaSession = false;
+
+/** @type {Promise<void> | undefined} */
+let firstEmbeddingTargetShown;
+
 /**
  * _Notes:_
  * * Most public methods can be aborted using an [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal).
@@ -532,11 +538,28 @@ export class CadenzaClient {
     return this.#show(resolvePath(backgroundMapView), params, signal);
   }
 
-  #show(
-    /** @type string */ path,
-    /** @type URLSearchParams */ params,
-    /** @type AbortSignal | undefined */ signal,
-  ) {
+  /**
+   * @param {string} path
+   * @param {URLSearchParams} params
+   * @param {AbortSignal} [signal]
+   * @return {Promise<void>}
+   */
+  #show(path, params, signal) {
+    const waitForFirstEmbeddingTargetShown = !(hasCadenzaSession || isTest());
+
+    /*
+     * If we show multiple embedding targets at the same time,
+     * there's a race condition in the session creation for guest users.
+     * To work around that, we wait for the first embedding target to be shown
+     * (which implicitly creates the session for all embedding targets).
+     * Note: We do not wait in tests to keep them simple.
+     */
+    if (waitForFirstEmbeddingTargetShown && firstEmbeddingTargetShown != null) {
+      return firstEmbeddingTargetShown.finally(() =>
+        this.#show(path, params, signal),
+      );
+    }
+
     const webApplication = this.#webApplication;
     if (webApplication) {
       params.set('webApplicationLink', webApplication.externalLinkId);
@@ -546,7 +569,19 @@ export class CadenzaClient {
     const url = this.#createUrl(path, params);
     this.#log('Load iframe', url.toString());
     this.#requiredIframe.src = url.toString();
-    return this.#getIframePromise(signal);
+    const promise = this.#getIframePromise(signal);
+
+    if (waitForFirstEmbeddingTargetShown) {
+      // Use Promise.allSettled() to handle Promise rejections.
+      firstEmbeddingTargetShown ??= Promise.allSettled([promise]).then(
+        ([{ status }]) => {
+          firstEmbeddingTargetShown = undefined;
+          hasCadenzaSession = status === 'fulfilled';
+        },
+      );
+    }
+
+    return promise;
   }
 
   #getIframePromise(/** @type AbortSignal | undefined */ signal) {
@@ -1099,4 +1134,8 @@ export class CadenzaError extends Error {
   get type() {
     return this.#type;
   }
+}
+
+function isTest() {
+  return location.href === 'test';
 }

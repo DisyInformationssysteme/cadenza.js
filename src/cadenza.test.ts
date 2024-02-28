@@ -39,6 +39,11 @@ describe('Given a Cadenza JS client instance', () => {
   beforeEach(() => {
     iframe = createIframe();
     cad = cadenza(BASE_URL, { iframe });
+
+    // In tests, do not wait for the first embedding target to be shown.
+    Object.defineProperty(window, 'location', {
+      value: { href: 'test' },
+    });
   });
 
   it('Exposes the base URL as a property', () =>
