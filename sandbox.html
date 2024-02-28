@@ -293,16 +293,17 @@
 <template id="common-show">
   <div>
     <label>
-      <input type="checkbox" name="expandNavigator">
-      Expand navigator tree
-    </label>
-  </div>
-  <div>
-    <label>
       <input type="checkbox" name="hideMainHeaderAndFooter">
       Hide main header and footer
     </label>
   </div>
+  <div>
+    <label for="highlightGlobalId">Highlighted Global ID</label>
+    <input name="highlightGlobalId" id="highlightGlobalId">
+  </div>
+</template>
+
+<template id="common-showWorkbook">
   <div>
     <label>
       <input type="checkbox" name="hideWorkbookToolBar">
@@ -314,10 +315,6 @@
       <input type="checkbox" name="simplifiedOperationMode">
       Simplified operation mode
     </label>
-  </div>
-  <div>
-    <label for="highlightGlobalId">Highlighted Global ID</label>
-    <input name="highlightGlobalId" id="highlightGlobalId">
   </div>
   <div>
     <label for="disabledUiFeatures">Disabled UI features</label>
@@ -342,6 +339,12 @@
       <p>Pass multiple values for an <code>IN</code> expression as <code>["a", "b", ...]</code></p>
       <p>Pass <code>null</code> to unset a variable.</p>
     </small>
+  </div>
+  <div>
+    <label>
+      <input type="checkbox" name="expandNavigator">
+      Expand navigator tree
+    </label>
   </div>
 </template>
 
@@ -385,7 +388,7 @@
   </div>
 </template>
 
-<template data-action="show" data-common="show">
+<template data-action="show" data-common="showWorkbook,show">
   <div>
     <label for="embeddingTargetId">Embedding target ID *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
@@ -421,7 +424,7 @@
   </div>
 </template>
 
-<template data-action="showMap" data-common="map,show">
+<template data-action="showMap" data-common="map,showWorkbook,show">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
