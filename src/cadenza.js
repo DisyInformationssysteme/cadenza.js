@@ -745,7 +745,7 @@ export class CadenzaClient {
    *   Currently only table and indicator views are supported.
    * @param {DataType} dataType - The data type you want to get back from the server.
    *   Currently, `"csv"`, `"excel"` and `"json"` are supported.
-   * @param {object} options - Options
+   * @param {object} [options] - Options
    * @param {TablePart[]} [options.parts] - Table parts to export; If not specified, all parts are exported.
    * @param {AbortSignal} [options.signal] - A signal to abort the data fetching
    * @return {Promise<Response>} A `Promise` for the fetch response
@@ -787,12 +787,12 @@ export class CadenzaClient {
    *   Currently only table and indicator views are supported.
    * @param {DataType} dataType - The data type you want to get back from the server.
    *   Currently, `"csv"`, `"excel"` and `"json"` are supported.
-   * @param {object} options - Options
+   * @param {object} [options] - Options
    * @param {string} [options.fileName] - The file name to use; The file extension is appended by Cadenza.
    * @param {TablePart[]} [options.parts] - Table parts to export; If not specified, all parts are exported.
    * @throws For invalid arguments
    */
-  downloadData(source, dataType, { fileName, parts }) {
+  downloadData(source, dataType, { fileName, parts } = {}) {
     this.#log('CadenzaClient#downloadData', ...arguments);
     assertSupportedDataType(dataType, ['csv', 'excel', 'json']);
     const params = createParams({ dataType, fileName, parts });
