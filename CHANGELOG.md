@@ -5,10 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-
-## 2.3.2 - 2024-03-05
 ### Fixed
-- Conflict when multiple attributes in objectInfo event details have the same printNames.
+- Conflict when multiple attributes in objectInfo event details have the same printnames.
 
 ## 2.3.1 - 2024-02-28
 ### Fixed
