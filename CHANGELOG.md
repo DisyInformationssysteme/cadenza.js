@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 2.3.2 - 2024-03-05
+### Fixed
+- Conflict when multiple attributes in objectInfo event details have the same printNames.
+
 ## 2.3.1 - 2024-02-28
 ### Fixed
 - Race condition when showing multiple embedding targets at the same time
