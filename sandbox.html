@@ -331,6 +331,15 @@
     </small>
   </div>
   <div>
+    <label>
+      <input type="checkbox" name="expandNavigator">
+      Expand navigator tree
+    </label>
+  </div>
+</template>
+
+<template id="common-filter">
+  <div>
     <label for="filter">Filter</label>
     <textarea name="filter" id="filter" rows="3"></textarea>
     <small>
@@ -339,12 +348,6 @@
       <p>Pass multiple values for an <code>IN</code> expression as <code>["a", "b", ...]</code></p>
       <p>Pass <code>null</code> to unset a variable.</p>
     </small>
-  </div>
-  <div>
-    <label>
-      <input type="checkbox" name="expandNavigator">
-      Expand navigator tree
-    </label>
   </div>
 </template>
 
@@ -388,7 +391,7 @@
   </div>
 </template>
 
-<template data-action="show" data-common="showWorkbook,show">
+<template data-action="show" data-common="showWorkbook,filter,show">
   <div>
     <label for="embeddingTargetId">Embedding target ID *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
@@ -424,7 +427,7 @@
   </div>
 </template>
 
-<template data-action="showMap" data-common="map,showWorkbook,show">
+<template data-action="showMap" data-common="map,showWorkbook,filter,show">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
@@ -435,18 +438,7 @@
   </div>
 </template>
 
-<template data-action="setFilter">
-  <div>
-    <label for="filter">Filter *</label>
-    <textarea name="filter" id="filter" rows="3" required></textarea>
-    <small>
-      <p>A JSON object with filter variable names and values</p>
-      <p>Dates need to be ISO strings<br>(e.g. <code>"2023-11-17T17:12:06.175Z"</code>).<br>Use <code>"{{currentDate}}"</code> for the current date.</p>
-      <p>Pass multiple values for an <code>IN</code> expression as <code>["a", "b", ...]</code></p>
-      <p>Pass <code>null</code> to unset a variable.</p>
-    </small>
-  </div>
-</template>
+<template data-action="setFilter" data-common="filter"></template>
 
 <template data-action="createGeometry" data-common="map">
   <div>
@@ -538,7 +530,7 @@
   </div>
 </template>
 
-<template data-action="downloadData" data-common="data">
+<template data-action="downloadData" data-common="data,filter">
   <div>
     <label for="embeddingTargetId">Embedding target ID *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
@@ -549,7 +541,7 @@
   </div>
 </template>
 
-<template data-action="fetchData" data-common="data">
+<template data-action="fetchData" data-common="data,filter">
   <div>
     <label for="embeddingTargetId">Embedding target ID *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
