@@ -1094,7 +1094,7 @@ function array(/** @type unknown */ value) {
  */
 /** @typedef {CadenzaEvent<'change:selection', undefined | {layer: WorkbookLayerPath, values: unknown[][]}>} CadenzaChangeSelectionEvent - When the user changed the selection. */
 /**
- * @typedef {CadenzaEvent<'drillThrough', {values: unknown[][]}>} CadenzaDrillThroughEvent - When the user executed a POST message drill-through.
+ * @typedef {CadenzaEvent<'drillThrough', {context?: string, values: unknown[][]}>} CadenzaDrillThroughEvent - When the user executed a POST message drill-through.
  * <p>
  * The event includes a data row for every item in the workbook selection, each row consisting of the values of
  * the attributes that were selected for the POST message content. If the drill-through was executed from a map
