@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- 'context' property in `CadenzaDrillThroughEvent`
+
 ## 2.4.0 - 2024-03-12
 ### Added
 - `filter` option for `CadenzaClient#downloadData` and `CadenzaClient#fetchData`
