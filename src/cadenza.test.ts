@@ -67,6 +67,9 @@ describe('Given a Cadenza JS client instance', () => {
       'present',
     ));
 
+  it('Throws when attempting reload without an iframe', () =>
+    expect(() => cadenza(BASE_URL).reload()).toThrow('present'));
+
   it('Throws when attempting to show an embedding target in an invisible iframe', () => {
     iframe.getBoundingClientRect = () => ({ width: 0, height: 0 }) as DOMRect;
     expect(() => cad.show(EMBEDDING_TARGET_ID)).toThrow('visible');

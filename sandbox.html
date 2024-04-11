@@ -139,6 +139,7 @@
       showPage: data => cadenzaClient.show({ page: data.page }, getOptions(data)),
       showMap: data => cadenzaClient.showMap(data.embeddingTargetId, getOptions(data)),
       expandNavigator: data => cadenzaClient.expandNavigator(data.expandNavigator === 'on'),
+      reload: () => cadenzaClient.reload(),
       getData: async data => {
         const dataType = data.dataType;
         const result = await cadenzaClient.getData(dataType);
@@ -261,6 +262,7 @@
             <!--option value="setSelection">Set Selection</option-->
             <!--option value="addSelection">Add Selection</option-->
             <!--option value="removeSelection">Remove Selection</option-->
+            <option value="reload">Reload IFrame</option>
           </optgroup>
           <optgroup label="Map Dialogs">
             <option value="createGeometry">Create Geometry</option>
@@ -506,6 +508,7 @@
 <template data-action="setSelection" data-common="layer,layer-selection"></template>
 <template data-action="addSelection" data-common="layer,layer-selection"></template>
 <template data-action="removeSelection" data-common="layer,layer-selection"></template>
+<template data-action="reload"><div>No Paramters needed.</div></template>
 
 <template id="common-layer-selection">
   <div>

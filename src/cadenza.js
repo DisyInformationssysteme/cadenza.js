@@ -801,6 +801,22 @@ export class CadenzaClient {
     this.#download(resolvePath(source), params);
   }
 
+  /**
+   * Reload the iframe that is used for embedding Cadenza.
+   *
+   * @param {AbortSignal} [signal] - A signal to abort the iframe loading
+   * @return {Promise<void>} A `Promise` for when the iframe is loaded
+   */
+  reload(/** @type AbortSignal | undefined */ signal) {
+    if (this.#requiredIframe.contentWindow) {
+      this.#requiredIframe.contentWindow.location.reload();
+      return this.#getIframePromise(signal);
+    }
+    return Promise.reject(
+      new CadenzaError('loading-error', 'Reloading failed'),
+    );
+  }
+
   #download(/** @type string */ path, /** @type URLSearchParams */ params) {
     const url = this.#createUrl(path, params);
     const a = document.createElement('a');
