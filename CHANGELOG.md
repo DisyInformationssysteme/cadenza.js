@@ -6,9 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 2.6.0 - 2024-04-12
+### Added
+- `filter` option for `CadenzaClient#createGeometry`, `CadenzaClient#editGeometry` and `CadenzaClient#selectObjects`
+
 ## 2.5.0 - 2024-03-26
 ### Added
-- 'context' property in `CadenzaDrillThroughEvent`
+- `context` property in `CadenzaDrillThroughEvent`
 
 ## 2.4.0 - 2024-03-12
 ### Added

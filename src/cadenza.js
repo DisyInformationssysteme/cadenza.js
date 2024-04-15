@@ -437,6 +437,7 @@ export class CadenzaClient {
    * @param {EmbeddingTargetId} backgroundMapView - The workbook map view in the background
    * @param {GeometryType} geometryType - The geometry type
    * @param {object} [options] - Options
+   * @param {FilterVariables} [options.filter] - Filter variables
    * @param {string} [options.locationFinder] - A search query for the location finder
    * @param {Extent} [options.mapExtent] - A map extent to set
    * @param {number} [options.minScale] - The minimum scale where the user should work on. A warning is shown when the map is zoomed out above the threshold.
@@ -452,11 +453,12 @@ export class CadenzaClient {
   createGeometry(
     backgroundMapView,
     geometryType,
-    { locationFinder, mapExtent, minScale, useMapSrs, signal } = {},
+    { filter, locationFinder, mapExtent, minScale, useMapSrs, signal } = {},
   ) {
     this.#log('CadenzaClient#createGeometry', ...arguments);
     const params = createParams({
       action: 'editGeometry',
+      filter,
       geometryType,
       locationFinder,
       mapExtent,
@@ -472,6 +474,7 @@ export class CadenzaClient {
    * @param {EmbeddingTargetId} backgroundMapView - The workbook map view in the background
    * @param {Geometry} geometry - The geometry
    * @param {object} [options] - Options
+   * @param {FilterVariables} [options.filter] - Filter variables
    * @param {string} [options.locationFinder] - A search query for the location finder
    * @param {Extent} [options.mapExtent] - A map extent to set
    * @param {number} [options.minScale] - The minimum scale where the user should work on. A warning is shown when the map is zoomed out above the threshold.
@@ -487,12 +490,13 @@ export class CadenzaClient {
   async editGeometry(
     backgroundMapView,
     geometry,
-    { locationFinder, mapExtent, minScale, useMapSrs, signal } = {},
+    { filter, locationFinder, mapExtent, minScale, useMapSrs, signal } = {},
   ) {
     this.#log('CadenzaClient#editGeometry', ...arguments);
     assertValidGeometryType(geometry.type);
     const params = createParams({
       action: 'editGeometry',
+      filter,
       locationFinder,
       mapExtent,
       minScale,
@@ -509,6 +513,7 @@ export class CadenzaClient {
    *
    * @param {EmbeddingTargetId} backgroundMapView - The workbook map view
    * @param {object} [options] - Options
+   * @param {FilterVariables} [options.filter] - Filter variables
    * @param {(WorkbookLayerPath | string)[]} [options.layers] - Layers to restrict the selection to
    *  (identified using layer paths or print names)
    * @param {string} [options.locationFinder] - A search query for the location finder
@@ -525,11 +530,12 @@ export class CadenzaClient {
    */
   selectObjects(
     backgroundMapView,
-    { layers, locationFinder, mapExtent, useMapSrs, signal } = {},
+    { filter, layers, locationFinder, mapExtent, useMapSrs, signal } = {},
   ) {
     this.#log('CadenzaClient#selectObjects', ...arguments);
     const params = createParams({
       action: 'selectObjects',
+      filter,
       layers: layers?.map(array),
       locationFinder,
       mapExtent,
