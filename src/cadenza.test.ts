@@ -67,7 +67,7 @@ describe('Given a Cadenza JS client instance', () => {
       'present',
     ));
 
-  it('Throws when attempting reload without an iframe', () =>
+  it('Throws when attempting to reload the worksheet views without an iframe', () =>
     expect(() => cadenza(BASE_URL).reload()).toThrow('present'));
 
   it('Throws when attempting to show an embedding target in an invisible iframe', () => {

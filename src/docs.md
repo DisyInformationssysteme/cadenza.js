@@ -355,11 +355,9 @@ button.textContent = 'Download Excel';
 button.onclick = () => cadenzaClient.downloadData('{embeddingTargetId}', 'excel');
 ```
 
-### Reload the iframe that is used to show Cadenza
+### Reload the views of a worksheet
 
 <small>API: [CadenzaClient#reload](./classes/CadenzaClient.html#reload)</small>
-
-Reload the iframe that is used to show Cadenza. This can be used to reload the worksheet and it's views.
 
 ```javascript
 cadenzaClient.reload();
