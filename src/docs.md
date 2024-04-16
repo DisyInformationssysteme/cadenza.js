@@ -355,6 +355,14 @@ button.textContent = 'Download Excel';
 button.onclick = () => cadenzaClient.downloadData('{embeddingTargetId}', 'excel');
 ```
 
+### Reload the views of a worksheet
+
+<small>API: [CadenzaClient#reload](./classes/CadenzaClient.html#reload)</small>
+
+```javascript
+cadenzaClient.reload();
+```
+
 ## The Development Sandbox
 
 The development sandbox is a simple custom application (in fact a single `.html` file) for playing with Cadenza JS.

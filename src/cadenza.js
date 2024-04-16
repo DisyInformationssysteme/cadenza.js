@@ -807,6 +807,14 @@ export class CadenzaClient {
     this.#download(resolvePath(source), params);
   }
 
+  /**
+   * Reload the views of a worksheet.
+   */
+  reload() {
+    this.#log('CadenzaClient#reload');
+    this.#postEvent('reload');
+  }
+
   #download(/** @type string */ path, /** @type URLSearchParams */ params) {
     const url = this.#createUrl(path, params);
     const a = document.createElement('a');
