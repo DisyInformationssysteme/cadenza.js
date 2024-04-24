@@ -1109,7 +1109,7 @@ function array(/** @type unknown */ value) {
 /**
  * @typedef {CadenzaEvent<'change:selection', undefined | {layer: WorkbookLayerPath, values: unknown[][]}>} CadenzaChangeSelectionEvent - When the user changed the selection.
  *
- * For a selection in a workbook map view with activated feature info, the values also include the geometries of the selected objects.
+ * For a selection in a workbook map view with activated feature info, the values also include the simplified geometries of the selected objects.
  */
 /**
  * @typedef {CadenzaEvent<'drillThrough', {context?: string, values: unknown[][]}>} CadenzaDrillThroughEvent - When the user executed a POST message drill-through.
@@ -1128,7 +1128,7 @@ function array(/** @type unknown */ value) {
 /**
  * @typedef {CadenzaEvent<'selectObjects:ok', {layer: WorkbookLayerPath, values: unknown[][]}>} CadenzaSelectObjectsOkEvent - When the user submitted the selection.
  *
- * For a selection in a workbook map view with activated feature info, the values also include the geometries of the selected objects.
+ * For a selection in a workbook map view with activated feature info, the values also include the simplified geometries of the selected objects.
  */
 /** @typedef {CadenzaEvent<'selectObjects:cancel'>} CadenzaSelectObjectsCancelEvent - When the user cancelled the selection. */
 
