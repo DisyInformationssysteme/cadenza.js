@@ -359,8 +359,14 @@ button.onclick = () => cadenzaClient.downloadData('{embeddingTargetId}', 'excel'
 
 <small>API: [CadenzaClient#reload](./classes/CadenzaClient.html#reload)</small>
 
+To reload a worksheet:
 ```javascript
 cadenzaClient.reload();
+```
+
+To invalidate caches and reload:
+```javascript
+cadenzaClient.reload({ invalidateCaches: true });
 ```
 
 ## The Development Sandbox

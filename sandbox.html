@@ -139,7 +139,7 @@
       showPage: data => cadenzaClient.show({ page: data.page }, getOptions(data)),
       showMap: data => cadenzaClient.showMap(data.embeddingTargetId, getOptions(data)),
       expandNavigator: data => cadenzaClient.expandNavigator(data.expandNavigator === 'on'),
-      reload: () => cadenzaClient.reload(),
+      reload: data => cadenzaClient.reload({ invalidateCaches: data.invalidateCaches === 'on'}),
       getData: async data => {
         const dataType = data.dataType;
         const result = await cadenzaClient.getData(dataType);
@@ -508,7 +508,15 @@
 <template data-action="setSelection" data-common="layer,layer-selection"></template>
 <template data-action="addSelection" data-common="layer,layer-selection"></template>
 <template data-action="removeSelection" data-common="layer,layer-selection"></template>
-<template data-action="reload">No Paramters needed.</template>
+
+<template data-action="reload">
+  <div>
+    <label>
+      <input type="checkbox" name="invalidateCaches">
+      Invalidate caches
+    </label>
+  </div>
+</template>
 
 <template id="common-layer-selection">
   <div>
