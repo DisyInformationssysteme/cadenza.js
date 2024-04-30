@@ -809,10 +809,13 @@ export class CadenzaClient {
 
   /**
    * Reload the views of a worksheet.
+   * @param {object} [options] - Options
+   * @param {boolean} [options.invalidateCaches] - When true, caches will be invalidated for objecttypes used
+   *   in the worksheet
    */
-  reload() {
-    this.#log('CadenzaClient#reload');
-    this.#postEvent('reload');
+  reload({ invalidateCaches = false } = {}) {
+    this.#log('CadenzaClient#reload', ...arguments);
+    this.#postEvent('reload', { invalidateCaches });
   }
 
   #download(/** @type string */ path, /** @type URLSearchParams */ params) {
