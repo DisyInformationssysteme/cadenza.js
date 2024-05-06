@@ -154,7 +154,6 @@ export class CadenzaClient {
    * @param {boolean} [options.debug]
    */
   constructor(baseUrl, { debug = false, iframe, webApplication } = {}) {
-    assert(validUrl(baseUrl), `Invalid baseUrl: ${baseUrl}`);
     if (webApplication) {
       assert(
         validExternalLinkKey(webApplication),
@@ -162,18 +161,22 @@ export class CadenzaClient {
       );
     }
 
-    // Remove trailing /
-    if (baseUrl.at(-1) === '/') {
-      baseUrl = baseUrl.substring(0, baseUrl.length - 1);
+    if (baseUrl !== undefined) {
+      assert(validUrl(baseUrl), `Invalid baseUrl: ${baseUrl}`);
+      // Remove trailing /
+      if (baseUrl.at(-1) === '/') {
+        baseUrl = baseUrl.substring(0, baseUrl.length - 1);
+      }
+      this.#baseUrl = baseUrl;
+      this.#origin = new URL(baseUrl).origin;
+      this.#iframe = iframe;
+      this.#log('Create Cadenza client', baseUrl, iframe);
+    } else {
+      this.#origin = '*';
+      this.#log('Create Cadenza client for parent Cadenza');
     }
-
-    this.#baseUrl = baseUrl;
-    this.#origin = new URL(baseUrl).origin;
-    this.#iframe = iframe;
     this.#debug = debug;
     this.#webApplication = webApplication;
-
-    this.#log('Create Cadenza client', baseUrl, iframe);
   }
 
   /** The base URL of the Cadenza server this client is requesting */
@@ -193,6 +196,22 @@ export class CadenzaClient {
           : iframe;
     }
     return this.#iframeElement;
+  }
+
+  get #isEmbeddedInCadenza() {
+    return this.#baseUrl === undefined;
+  }
+
+  get #targetWindow() {
+    if (this.#isEmbeddedInCadenza) {
+      assert(
+        !(window.parent === window && window.opener === null),
+        'Cannot find parent Cadenza window',
+      );
+      return window.parent;
+    } else {
+      return /** @type {WindowProxy} */ (this.#requiredIframe.contentWindow);
+    }
   }
 
   get #requiredIframe() {
@@ -683,10 +702,7 @@ export class CadenzaClient {
   #onMessage = (
     /** @type MessageEvent<CadenzaEvent<never, never>> */ event,
   ) => {
-    if (
-      event.origin !== this.#origin ||
-      event.source !== this.#requiredIframe.contentWindow
-    ) {
+    if (event.origin !== this.#origin || event.source !== this.#targetWindow) {
       return;
     }
 
@@ -735,10 +751,7 @@ export class CadenzaClient {
   #postEvent(type, detail, transfer) {
     const cadenzaEvent = { type, detail };
     this.#log('postMessage', cadenzaEvent);
-    const contentWindow = /** @type {WindowProxy} */ (
-      this.#requiredIframe.contentWindow
-    );
-    contentWindow.postMessage(cadenzaEvent, {
+    this.#targetWindow.postMessage(cadenzaEvent, {
       targetOrigin: this.#origin,
       transfer,
     });
@@ -831,6 +844,10 @@ export class CadenzaClient {
   }
 
   #createUrl(/** @type string */ path, /** @type URLSearchParams */ params) {
+    assert(
+      !this.#isEmbeddedInCadenza,
+      'Operation not supported when communicating with parent cadenza window',
+    );
     const url = new URL(this.baseUrl + path);
     if (params) {
       for (const [param, value] of params) {

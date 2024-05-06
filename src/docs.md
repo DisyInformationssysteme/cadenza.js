@@ -69,6 +69,15 @@ If for some reason you don't like the global `cadenza` field, you can remove it 
 const cadenza = window.cadenza.noConflict();
 ```
 
+### Communication with parent Cadenza
+If your application is opened from inside Cadenza (e.g. in a popup), you can send commands to parent Cadenza window.
+To do that, create CadenzaClient with no arguments:
+```javascript
+const parentClient = window.cadenza();
+```
+_Warning:_ Not every operation can be done when dealing with parent Cadenza. For example `reload` and `expandNavigator` 
+work, but `show`, `showMap` etc. require an iframe. Using these functions in this mode will result in errors.
+
 ### Show an Embedding Target in an Iframe
 
 <small>API: [CadenzaClient#show](./classes/CadenzaClient.html#show)</small>
