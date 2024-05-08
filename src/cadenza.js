@@ -35,9 +35,10 @@
  * @param {CadenzaClientOptions} [options]
  */
 export function cadenza(baseUrlOrOptions, options) {
-  if (typeof baseUrlOrOptions === 'string') {
-    options = { baseUrl: baseUrlOrOptions, ...options };
-  }
+  options =
+    typeof baseUrlOrOptions === 'string'
+      ? { baseUrl: baseUrlOrOptions, ...options }
+      : baseUrlOrOptions;
   return new CadenzaClient(options);
 }
 
@@ -843,6 +844,15 @@ export class CadenzaClient {
   reload({ invalidateCaches = false } = {}) {
     this.#log('CadenzaClient#reload', ...arguments);
     this.#postEvent('reload', { invalidateCaches });
+  }
+
+  /**
+   * Sends a message to parent Cadenza window to close the window containing this application
+   */
+  closeMe() {
+    this.#log('CadenzaClient#closeMe');
+    assert(this.#iframe == null, 'Cannot send closeMe to iframe');
+    this.#postEvent('closeMe');
   }
 
   #download(/** @type string */ path, /** @type URLSearchParams */ params) {

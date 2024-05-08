@@ -73,6 +73,11 @@ describe('Given a Cadenza JS client instance', () => {
   it('Throws when attempting to reload the worksheet views in parent mode without parent window', () =>
     expect(() => cadenza().reload()).toThrow('target window'));
 
+  it('Throws when attempting to send closeMe to iframe', () =>
+    expect(() => cadenza({ baseUrl: BASE_URL, iframe }).closeMe()).toThrow(
+      'iframe',
+    ));
+
   it('Throws when attempting to show an embedding target in an invisible iframe', () => {
     iframe.getBoundingClientRect = () => ({ width: 0, height: 0 }) as DOMRect;
     expect(() => cad.show(EMBEDDING_TARGET_ID)).toThrow('visible');

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `invalidateCaches` option for `CadenzaClient#reload`
 - Allow communication with parent Cadenza window (Previously, communication was possible only with an embedded Cadenza iframe.)
 - `cadenza()` overload with a single options parameter
+- `CadenzaClient#closeMe` function
 
 ### Deprecated
 - `cadenza()` overload with the `baseUrl` and `options` parameters

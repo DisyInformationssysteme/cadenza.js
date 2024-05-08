@@ -140,6 +140,7 @@
       showMap: data => cadenzaClient.showMap(data.embeddingTargetId, getOptions(data)),
       expandNavigator: data => cadenzaClient.expandNavigator(data.expandNavigator === 'on'),
       reload: data => cadenzaClient.reload({ invalidateCaches: data.invalidateCaches === 'on'}),
+      closeMe: () => cadenzaClient.closeMe(),
       getData: async data => {
         const dataType = data.dataType;
         const result = await cadenzaClient.getData(dataType);
@@ -263,6 +264,7 @@
             <!--option value="addSelection">Add Selection</option-->
             <!--option value="removeSelection">Remove Selection</option-->
             <option value="reload">Reload worksheet views</option>
+            <option value="closeMe">Close me</option>
           </optgroup>
           <optgroup label="Map Dialogs">
             <option value="createGeometry">Create Geometry</option>
@@ -517,6 +519,7 @@
     </label>
   </div>
 </template>
+<template data-action="closeMe">No Parameters needed.</template>
 
 <template id="common-layer-selection">
   <div>
