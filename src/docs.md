@@ -378,6 +378,15 @@ To invalidate caches and reload:
 cadenzaClient.reload({ invalidateCaches: true });
 ```
 
+### Close the Cadenza Dialog or Window That Embeds the Custom Application
+
+<small>API: [CadenzaClient#closeMe](./classes/CadenzaClient.html#closeMe)</small>
+
+Sends a message to parent Cadenza window to close the window containing this application.
+```javascript
+cadenzaClient.closeMe();
+```
+
 ## The Development Sandbox
 
 The development sandbox is a simple custom application (in fact a single `.html` file) for playing with Cadenza JS.
