@@ -131,9 +131,15 @@
       history.replaceState(null, '', url);
     };
 
-    const contextPath = new URLSearchParams(location.search).get('contextPath')
+    const urlParams = new URLSearchParams(location.search);
+    const parentMode = Boolean(urlParams.get('parentMode'));
+    const contextPath = urlParams.get('contextPath')
       ?? location.pathname.slice(0, location.pathname.indexOf('/sandbox'));
-    const cadenzaClient = cadenza(location.origin + contextPath, { iframe: 'iframe', debug: true });
+    const cadenzaClient = cadenza({
+      baseUrl: parentMode ? undefined : location.origin + contextPath,
+      iframe: parentMode ? undefined : 'iframe',
+      debug: true
+    });
     const actionHandlers = {
       show: data => cadenzaClient.show(data.embeddingTargetId, getOptions(data)),
       showPage: data => cadenzaClient.show({ page: data.page }, getOptions(data)),
