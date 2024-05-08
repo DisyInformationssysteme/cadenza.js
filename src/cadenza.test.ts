@@ -68,7 +68,10 @@ describe('Given a Cadenza JS client instance', () => {
     ));
 
   it('Throws when attempting to reload the worksheet views without an iframe', () =>
-    expect(() => cadenza(BASE_URL).reload()).toThrow('present'));
+    expect(() => cadenza(BASE_URL).reload()).toThrow('target window'));
+
+  it('Throws when attempting to reload the worksheet views in parent mode without parent window', () =>
+    expect(() => cadenza().reload()).toThrow('target window'));
 
   it('Throws when attempting to show an embedding target in an invisible iframe', () => {
     iframe.getBoundingClientRect = () => ({ width: 0, height: 0 }) as DOMRect;

@@ -1,7 +1,10 @@
 /**
  * Creates an instance of the Cadenza JS client.
  *
- * @param {string} baseUrl - The base URL of the Cadenza server
+ * @param {string} [baseUrl] - The base URL of the Cadenza server. If not provided, then the client will communicate
+ *   with window.opener or window.parent instead of the iframe. Not every operation can be done in this case.
+ *   For example `reload` and `expandNavigator` will work, but `show`, `showMap` etc. require an iframe.
+ *   Using these functions in this mode will result in errors.
  * @param {object} [options] - Options
  * @param {HTMLIFrameElement | string} [options.iframe] - An iframe for embedding Cadenza or the iframe's ID.
  *   The iframe is required only for methods that embed Cadenza in an iframe, so e.g. not for {@link CadenzaClient#fetchData}.
@@ -146,8 +149,9 @@ export class CadenzaClient {
   #subscriptions = [];
 
   /**
+   *
    * @hidden
-   * @param {string} baseUrl
+   * @param {string} [baseUrl]
    * @param {object} [options]
    * @param {HTMLIFrameElement | string} [options.iframe]
    * @param {ExternalLinkKey} [options.webApplication]
@@ -161,7 +165,7 @@ export class CadenzaClient {
       );
     }
 
-    if (baseUrl !== undefined) {
+    if (baseUrl != null) {
       assert(validUrl(baseUrl), `Invalid baseUrl: ${baseUrl}`);
       // Remove trailing /
       if (baseUrl.at(-1) === '/') {
@@ -198,20 +202,13 @@ export class CadenzaClient {
     return this.#iframeElement;
   }
 
-  get #isEmbeddedInCadenza() {
-    return this.#baseUrl === undefined;
-  }
-
   get #targetWindow() {
-    if (this.#isEmbeddedInCadenza) {
-      assert(
-        !(window.parent === window && window.opener === null),
-        'Cannot find parent Cadenza window',
-      );
-      return window.parent;
-    } else {
+    if (this.#iframe) {
       return /** @type {WindowProxy} */ (this.#requiredIframe.contentWindow);
     }
+    const targetWindow = window.opener ?? window.parent;
+    assert(targetWindow !== window, 'Cannot find target window');
+    return /** @type {WindowProxy} */ targetWindow;
   }
 
   get #requiredIframe() {
@@ -844,10 +841,7 @@ export class CadenzaClient {
   }
 
   #createUrl(/** @type string */ path, /** @type URLSearchParams */ params) {
-    assert(
-      !this.#isEmbeddedInCadenza,
-      'Operation not supported when communicating with parent cadenza window',
-    );
+    assert(this.#baseUrl != null);
     const url = new URL(this.baseUrl + path);
     if (params) {
       for (const [param, value] of params) {
