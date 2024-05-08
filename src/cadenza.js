@@ -1,23 +1,44 @@
 /**
- * Creates an instance of the Cadenza JS client.
- *
- * @param {string} [baseUrl] - The base URL of the Cadenza server. If not provided, then the client will communicate
- *   with window.opener or window.parent instead of the iframe. Not every operation can be done in this case.
- *   For example `reload` and `expandNavigator` will work, but `show`, `showMap` etc. require an iframe.
- *   Using these functions in this mode will result in errors.
- * @param {object} [options] - Options
- * @param {HTMLIFrameElement | string} [options.iframe] - An iframe for embedding Cadenza or the iframe's ID.
+ * @typedef CadenzaClientOptions
+ * @property {string} [baseUrl] - The base URL of the Cadenza server
+ * @property {HTMLIFrameElement | string} [options.iframe] - An iframe for embedding Cadenza or the iframe's ID.
  *   The iframe is required only for methods that embed Cadenza in an iframe, so e.g. not for {@link CadenzaClient#fetchData}.
  *   If you want to embed Cadenza in multiple iframes, you need to create an instance of the `CadenzaClient` per iframe.
- * @param {ExternalLinkKey} [options.webApplication] - An external link that Cadenza uses to resolve the
+ * @property {ExternalLinkKey} [options.webApplication] - An external link that Cadenza uses to resolve the
  *   [target origin](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage#targetorigin) when posting events.
  *   This is required if Cadenza and your application are not running on the same origin.
  *   Please ensure that the user has view privilege for that link!
- * @param {boolean} [options.debug] - Whether to enable debug logging
+ * @property {boolean} [options.debug] - Whether to enable debug logging
+ */
+
+/**
+ * Creates an instance of the Cadenza JS client.
+ *
+ * @overload
+ * @param {CadenzaClientOptions} [options] - Options
+ * @return {CadenzaClient}
  * @throws For invalid arguments
  */
-export function cadenza(baseUrl, options) {
-  return new CadenzaClient(baseUrl, options);
+/**
+ * Creates an instance of the Cadenza JS client.
+ *
+ * @deprecated This overload is deprecated since <time>2024-05-08</time> and will eventually be removed.
+ *   Please use the other overload.
+ * @overload
+ * @param {string} baseUrl - The base URL of the Cadenza server
+ * @param {Exclude<CadenzaClientOptions, 'baseUrl'>} [options] - Options
+ * @return {CadenzaClient}
+ * @throws For invalid arguments
+ */
+/**
+ * @param {string | CadenzaClientOptions} [baseUrlOrOptions]
+ * @param {CadenzaClientOptions} [options]
+ */
+export function cadenza(baseUrlOrOptions, options) {
+  if (typeof baseUrlOrOptions === 'string') {
+    options = { baseUrl: baseUrlOrOptions, ...options };
+  }
+  return new CadenzaClient(options);
 }
 
 /* @ts-ignore */
@@ -151,13 +172,9 @@ export class CadenzaClient {
   /**
    *
    * @hidden
-   * @param {string} [baseUrl]
-   * @param {object} [options]
-   * @param {HTMLIFrameElement | string} [options.iframe]
-   * @param {ExternalLinkKey} [options.webApplication]
-   * @param {boolean} [options.debug]
+   * @param {CadenzaClientOptions} [options]
    */
-  constructor(baseUrl, { debug = false, iframe, webApplication } = {}) {
+  constructor({ baseUrl, debug = false, iframe, webApplication } = {}) {
     if (webApplication) {
       assert(
         validExternalLinkKey(webApplication),
