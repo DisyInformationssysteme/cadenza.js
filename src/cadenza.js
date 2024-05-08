@@ -858,7 +858,7 @@ export class CadenzaClient {
   }
 
   #createUrl(/** @type string */ path, /** @type URLSearchParams */ params) {
-    assert(this.#baseUrl != null);
+    assert(this.#baseUrl != null, 'Required base URL is not present');
     const url = new URL(this.baseUrl + path);
     if (params) {
       for (const [param, value] of params) {
