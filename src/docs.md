@@ -387,6 +387,17 @@ Sends a message to parent Cadenza window to close the window containing this app
 cadenzaClient.closeMe();
 ```
 
+### Listen on Cadenza closing Custom Application
+When closing custom application Cadenza doesn't send any event to it.
+To listen for event when window with custom application is closed, two standard events can be used:
+* `unload` - Fired when custom application is closed.
+* `visibilitychange` - Fired when custom application is closed or hidden (for example by switching to another tab in the browser).
+
+See official documentation links:
+* [developer.mozilla.org/unload](https://developer.mozilla.org/en-US/docs/Web/API/Window/unload_event)
+* [developer.mozilla.org/visibilitychange](https://developer.mozilla.org/en-US/docs/Web/API/Document/visibilitychange_event)
+* [developer.mozilla.org/sendBeacon](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/sendBeacon) (can be used reliably to send a POST request even when the browser tab is closed)
+
 ## The Development Sandbox
 
 The development sandbox is a simple custom application (in fact a single `.html` file) for playing with Cadenza JS.
