@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Allow communication with parent Cadenza window (Previously, communication was possible only with an embedded Cadenza iframe.)
 - `cadenza()` overload with a single options parameter
 - `CadenzaClient#closeMe` function
+- Documentation on listening when a custom application is closed (unload and visibilitychange events)
 
 ### Deprecated
 - `cadenza()` overload with the `baseUrl` and `options` parameters
