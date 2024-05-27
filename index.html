@@ -178,14 +178,14 @@ You can also add to or remove from the current selection:
 <a id="md:listen-on-cadenza-closing-custom-application" class="tsd-anchor"></a><h3><a href="#md:listen-on-cadenza-closing-custom-application">Listen on Cadenza closing Custom Application</a></h3><p>When closing custom application Cadenza doesn&#39;t send any event to it.
 To listen for event when window with custom application is closed, two standard events can be used:</p>
 <ul>
-<li><code>unload</code> - Fired when custom application is closed. Deprecated in documentation.</li>
+<li><code>unload</code> - Fired when custom application is closed.</li>
 <li><code>visibilitychange</code> - Fired when custom application is closed or hidden (for example by switching to another tab in the browser).</li>
 </ul>
 <p>See official documentation links:</p>
 <ul>
 <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/unload_event">developer.mozilla.org/unload</a></li>
 <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/visibilitychange_event">developer.mozilla.org/visibilitychange</a></li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/sendBeacon">developer.mozilla.org/sendBeacon</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/sendBeacon">developer.mozilla.org/sendBeacon</a> (can be used reliably to send a POST request even when the browser tab is closed)</li>
 </ul>
 <a id="md:the-development-sandbox" class="tsd-anchor"></a><h2><a href="#md:the-development-sandbox">The Development Sandbox</a></h2><p>The development sandbox is a simple custom application (in fact a single <code>.html</code> file) for playing with Cadenza JS.</p>
 <p>To run it ...</p>
