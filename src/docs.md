@@ -364,7 +364,7 @@ button.textContent = 'Download Excel';
 button.onclick = () => cadenzaClient.downloadData('{embeddingTargetId}', 'excel');
 ```
 
-### Reload the views of a worksheet
+### Reload the Views of a Worksheet
 
 <small>API: [CadenzaClient#reload](./classes/CadenzaClient.html#reload)</small>
 
@@ -387,16 +387,13 @@ Sends a message to parent Cadenza window to close the window containing this app
 cadenzaClient.closeMe();
 ```
 
-### Listen on Cadenza closing Custom Application
-When closing custom application Cadenza doesn't send any event to it.
-To listen for event when window with custom application is closed, two standard events can be used:
-* `unload` - Fired when custom application is closed.
-* `visibilitychange` - Fired when custom application is closed or hidden (for example by switching to another tab in the browser).
+#### Listen for Cadenza Closing the Custom Application
 
-See official documentation links:
-* [developer.mozilla.org/unload](https://developer.mozilla.org/en-US/docs/Web/API/Window/unload_event)
-* [developer.mozilla.org/visibilitychange](https://developer.mozilla.org/en-US/docs/Web/API/Document/visibilitychange_event)
-* [developer.mozilla.org/sendBeacon](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/sendBeacon) (can be used reliably to send a POST request even when the browser tab is closed)
+Cadenza does not send an event when the dialog or window is closed that embeds the custom application. Depending on your use case you might listen to these browser events instead:
+* The [Window: `unload` event](https://developer.mozilla.org/docs/Web/API/Window/unload_event) is dispatched when the window/dialog is closed.
+* The [Document: `visibilitychange` event](https://developer.mozilla.org/docs/Web/API/Document/visibilitychange_event) is dispatched when the window/dialog is closed _or hidden_ (for example when the user switches to another browser tab).
+
+_Note:_ If you need to send a request to your server when the window/dialog is closed, you should use the [Navigator: `sendBeacon()` method](https://developer.mozilla.org/docs/Web/API/Navigator/sendBeacon). It's limited to POST requests, but in contrast to the "normal" XHR or `fetch()` APIs, it works reliably when the dialog/window is closed.
 
 ## The Development Sandbox
 
