@@ -69,6 +69,9 @@
         flex: 1;
       }
     }
+    #action:not(.show-unpublished) option.unpublished {
+      display: none;
+    }
     main {
       grid-area: main;
       padding: var(--padding);
@@ -132,7 +135,7 @@
     };
 
     const urlParams = new URLSearchParams(location.search);
-    const parentMode = Boolean(urlParams.get('parentMode'));
+    const parentMode = urlParams.has('parentMode');
     const contextPath = urlParams.get('contextPath')
       ?? location.pathname.slice(0, location.pathname.indexOf('/sandbox'));
     const cadenzaClient = cadenza({
@@ -179,7 +182,8 @@
       localStorage.setItem(`cadenzajs-sandbox-${action}`, JSON.stringify(data));
     };
 
-    actionSelect.value = new URLSearchParams(location.search).get('action') || 'show';
+    actionSelect.classList.toggle('show-unpublished', urlParams.has('showUnpublished'))
+    actionSelect.value = urlParams.get('action') || 'show';
     actionSelect.onchange();
 
     function applyData (data) {
@@ -263,12 +267,12 @@
           </optgroup>
           <optgroup label="Interact With Shown Content">
             <option value="expandNavigator">Expand Navigator</option>
-            <!--option value="getData">Get Data (Get Map Image)</option-->
-            <!--option value="setFilter">Set Filter</option-->
-            <!--option value="setLayerVisibility">Set Layer Visibility</option-->
-            <!--option value="setSelection">Set Selection</option-->
-            <!--option value="addSelection">Add Selection</option-->
-            <!--option value="removeSelection">Remove Selection</option-->
+            <option value="getData" class="unpublished">Get Data (Get Map Image)</option>
+            <option value="setFilter" class="unpublished">Set Filter</option>
+            <option value="setLayerVisibility" class="unpublished">Set Layer Visibility</option>
+            <option value="setSelection" class="unpublished">Set Selection</option>
+            <option value="addSelection" class="unpublished">Add Selection</option>
+            <option value="removeSelection" class="unpublished">Remove Selection</option>
             <option value="reload">Reload worksheet views</option>
             <option value="closeMe">Close me</option>
           </optgroup>
