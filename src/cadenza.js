@@ -748,7 +748,7 @@ export class CadenzaClient {
     this.#log('postMessage', cadenzaEvent);
     const targetWindow = this.#targetWindow;
     assert(targetWindow != null, 'Cannot find target window');
-    (/** @type {WindowProxy} */ (targetWindow)).postMessage(cadenzaEvent, {
+    /** @type {WindowProxy} */ (targetWindow).postMessage(cadenzaEvent, {
       targetOrigin: this.#origin,
       transfer,
     });
