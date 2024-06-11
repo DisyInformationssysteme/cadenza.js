@@ -64,7 +64,7 @@ describe('Given a Cadenza JS client instance', () => {
 
   it('Throws when attempting to show an embedding target without an iframe', () =>
     expect(() => cadenza(BASE_URL).show(EMBEDDING_TARGET_ID)).toThrow(
-      'present',
+      'Required iframe',
     ));
 
   it('Throws when attempting to reload the worksheet views without an iframe', () =>
@@ -223,6 +223,16 @@ describe('Given a Cadenza JS client instance', () => {
     describe('When the event is sent again after unsubscribing', () => {
       beforeEach(() => {
         unsubscribe();
+        sendEvent(EVENT.type, EVENT.detail);
+      });
+
+      it('Subscribers are not called anymore', () =>
+        expect(subscriber).not.toHaveBeenCalled());
+    });
+
+    describe('When the event is sent again after the instance has been destroyed', () => {
+      beforeEach(() => {
+        cad.destroy();
         sendEvent(EVENT.type, EVENT.detail);
       });
 
