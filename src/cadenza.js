@@ -195,6 +195,10 @@ export class CadenzaClient {
     return this.#iframeElement;
   }
 
+  get #targetWindow() {
+    return /** @type {WindowProxy | null} */ this.iframe?.contentWindow;
+  }
+
   get #requiredIframe() {
     const iframe = /** @type {HTMLIFrameElement} */ (this.iframe);
     assert(
@@ -683,10 +687,7 @@ export class CadenzaClient {
   #onMessage = (
     /** @type MessageEvent<CadenzaEvent<never, never>> */ event,
   ) => {
-    if (
-      event.origin !== this.#origin ||
-      event.source !== this.#requiredIframe.contentWindow
-    ) {
+    if (event.origin !== this.#origin || event.source !== this.#targetWindow) {
       return;
     }
 
@@ -698,6 +699,16 @@ export class CadenzaClient {
       }
     });
   };
+
+  /**
+   * Remove all subscriptions.
+   *
+   * @see {@link CadenzaClient#on}
+   */
+  destroy() {
+    this.#subscriptions = [];
+    window.removeEventListener('message', this.#onMessage);
+  }
 
   /**
    * Posts an event to Cadenza and returns a `Promise` for the response.
@@ -735,10 +746,9 @@ export class CadenzaClient {
   #postEvent(type, detail, transfer) {
     const cadenzaEvent = { type, detail };
     this.#log('postMessage', cadenzaEvent);
-    const contentWindow = /** @type {WindowProxy} */ (
-      this.#requiredIframe.contentWindow
-    );
-    contentWindow.postMessage(cadenzaEvent, {
+    const targetWindow = this.#targetWindow;
+    assert(targetWindow != null, 'Cannot find target window');
+    (/** @type {WindowProxy} */ (targetWindow)).postMessage(cadenzaEvent, {
       targetOrigin: this.#origin,
       transfer,
     });

@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- `CadenzaClient#destroy`
+
+### Fixed
+- To avoid errors with active subscriptions when the iframe is not visible, a target window (for postMessage communication) is now required only for _sending_ a message (and not for receiving messages).
 
 ## 2.6.0 - 2024-04-12
 ### Added
