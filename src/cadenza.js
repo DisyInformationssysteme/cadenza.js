@@ -221,12 +221,11 @@ export class CadenzaClient {
   }
 
   get #targetWindow() {
-    if (this.#iframe) {
-      return /** @type {WindowProxy} */ (this.#requiredIframe.contentWindow);
-    }
-    const targetWindow = window.opener ?? window.parent;
-    assert(targetWindow !== window, 'Cannot find target window');
-    return /** @type {WindowProxy} */ targetWindow;
+    const targetWindow = this.#iframe
+      ? this.iframe?.contentWindow
+      : // If a window does not have a parent, its parent property is a reference to itself.
+        window.opener ?? (window.parent !== window ? window.parent : null);
+    return /** @type {WindowProxy | null} */ targetWindow;
   }
 
   get #requiredIframe() {
@@ -731,6 +730,16 @@ export class CadenzaClient {
   };
 
   /**
+   * Remove all subscriptions.
+   *
+   * @see {@link CadenzaClient#on}
+   */
+  destroy() {
+    this.#subscriptions = [];
+    window.removeEventListener('message', this.#onMessage);
+  }
+
+  /**
    * Posts an event to Cadenza and returns a `Promise` for the response.
    *
    * It is guaranteed that a response refers to a specific request,
@@ -766,7 +775,9 @@ export class CadenzaClient {
   #postEvent(type, detail, transfer) {
     const cadenzaEvent = { type, detail };
     this.#log('postMessage', cadenzaEvent);
-    this.#targetWindow.postMessage(cadenzaEvent, {
+    const targetWindow = this.#targetWindow;
+    assert(targetWindow != null, 'Cannot find target window');
+    targetWindow.postMessage(cadenzaEvent, {
       targetOrigin: this.#origin,
       transfer,
     });
