@@ -141,6 +141,11 @@ let firstEmbeddingTargetShown;
 
 /**
  * _Notes:_
+ * * Most public methods are tagged with one of these modifiers:
+ *   * `Embed`: The method embeds Cadenza in the given iframe.
+ *   * `Post Message`: The method communicates with an embedded or parent/opener Cadenza via postMessage.
+ *   * `Post Message Parent`: The method communicates with a parent/opener Cadenza via postMessage.
+ *   * `Server`: The method communicates with the Cadenza server via HTTP.
  * * Most public methods can be aborted using an [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal).
  *   When aborted, the result Promise is rejected with an {@link AbortError}.
  * * If there's another error, the result Promise is rejected with a {@link CadenzaError}.
@@ -258,6 +263,7 @@ export class CadenzaClient {
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires {@link CadenzaDrillThroughEvent}
+   * @embed
    */
   show(
     source,
@@ -301,6 +307,28 @@ export class CadenzaClient {
   }
 
   /**
+   * Reload the views of a worksheet.
+   * @param {object} [options] - Options
+   * @param {boolean} [options.invalidateCaches] - When true, caches will be invalidated for objecttypes used
+   *   in the worksheet
+   * @postMessage
+   */
+  reload({ invalidateCaches = false } = {}) {
+    this.#log('CadenzaClient#reload', ...arguments);
+    this.#postEvent('reload', { invalidateCaches });
+  }
+
+  /**
+   * Sends a message to parent Cadenza window to close the window containing this application
+   * @postMessageParent
+   */
+  closeMe() {
+    this.#log('CadenzaClient#closeMe');
+    assert(this.#iframe == null, 'Cannot send closeMe to iframe');
+    this.#postEvent('closeMe');
+  }
+
+  /**
    * Show a workbook map view in an iframe.
    *
    * @param {EmbeddingTargetId} mapView - The workbook map view to show
@@ -320,6 +348,7 @@ export class CadenzaClient {
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires {@link CadenzaDrillThroughEvent}
+   * @embed
    */
   async showMap(
     mapView,
@@ -365,6 +394,7 @@ export class CadenzaClient {
    * Expand/collapse the navigator.
    *
    * @param {boolean} expanded - The expansion state of the navigator
+   * @postMessage
    */
   expandNavigator(expanded = true) {
     this.#log('CadenzaClient#expandNavigator', ...arguments);
@@ -380,6 +410,7 @@ export class CadenzaClient {
    * @template {DataType} T
    * @param {T} dataType - The requested data type. Currently, only `"png"` is supported.
    * @return {Promise<T extends 'png' ? Blob : never>}
+   * @postMessage
    */
   async getData(dataType) {
     this.#log('CadenzaClient#getData', ...arguments);
@@ -393,6 +424,7 @@ export class CadenzaClient {
    * @hidden
    * @param {FilterVariables} filter - The variable values
    * @return {Promise<void>} A `Promise` for when the filter variables were set.
+   * @postMessage
    */
   setFilter(filter) {
     this.#log('CadenzaClient#setFilter', ...arguments);
@@ -410,6 +442,7 @@ export class CadenzaClient {
    *   (identified using a layer path or a print name)
    * @param {boolean} visible - The visibility state of the layer
    * @return {Promise<void>} A `Promise` for when the layer visibility was set.
+   * @postMessage
    */
   setLayerVisibility(layer, visible) {
     this.#log('CadenzaClient#setLayerVisibility', ...arguments);
@@ -426,6 +459,7 @@ export class CadenzaClient {
    * @param {WorkbookLayerPath | string} layer - The data view layer to set the selection in
    * @param {unknown[]} values - The IDs of the objects to select
    * @return {Promise<void>} A `Promise` for when the selection was set.
+   * @postMessage
    */
   setSelection(layer, values) {
     this.#log('CadenzaClient#setSelection', ...arguments);
@@ -439,6 +473,7 @@ export class CadenzaClient {
    * @param {WorkbookLayerPath | string} layer - The data view layer to change the selection in
    * @param {unknown[]} values - The IDs of the objects to select
    * @return {Promise<void>} A `Promise` for when the selection was changed.
+   * @postMessage
    */
   addSelection(layer, values) {
     this.#log('CadenzaClient#addSelection', ...arguments);
@@ -452,6 +487,7 @@ export class CadenzaClient {
    * @param {WorkbookLayerPath | string} layer - The data view layer to change the selection in
    * @param {unknown[]} values - The IDs of the objects to unselect
    * @return {Promise<void>} A `Promise` for when the selection was changed.
+   * @postMessage
    */
   removeSelection(layer, values) {
     this.#log('CadenzaClient#removeSelection', ...arguments);
@@ -482,6 +518,7 @@ export class CadenzaClient {
    * - {@link CadenzaEditGeometryUpdateEvent}
    * - {@link CadenzaEditGeometryOkEvent}
    * - {@link CadenzaEditGeometryCancelEvent}
+   * @embed
    */
   createGeometry(
     backgroundMapView,
@@ -519,6 +556,7 @@ export class CadenzaClient {
    * - {@link CadenzaEditGeometryUpdateEvent}
    * - {@link CadenzaEditGeometryOkEvent}
    * - {@link CadenzaEditGeometryCancelEvent}
+   * @embed
    */
   async editGeometry(
     backgroundMapView,
@@ -560,6 +598,7 @@ export class CadenzaClient {
    * - {@link CadenzaObjectInfoEvent}
    * - {@link CadenzaSelectObjectsOkEvent}
    * - {@link CadenzaSelectObjectsCancelEvent}
+   * @embed
    */
   selectObjects(
     backgroundMapView,
@@ -796,6 +835,7 @@ export class CadenzaClient {
    * @param {AbortSignal} [options.signal] - A signal to abort the data fetching
    * @return {Promise<Response>} A `Promise` for the fetch response
    * @throws For invalid arguments
+   * @server
    */
   fetchData(source, dataType, { filter, parts, signal } = {}) {
     this.#log('CadenzaClient#fetchData', ...arguments);
@@ -838,32 +878,13 @@ export class CadenzaClient {
    * @param {FilterVariables} [options.filter] - Filter variables
    * @param {TablePart[]} [options.parts] - Table parts to export; If not specified, all parts are exported.
    * @throws For invalid arguments
+   * @server
    */
   downloadData(source, dataType, { fileName, filter, parts } = {}) {
     this.#log('CadenzaClient#downloadData', ...arguments);
     assertSupportedDataType(dataType, ['csv', 'excel', 'json']);
     const params = createParams({ dataType, fileName, filter, parts });
     this.#download(resolvePath(source), params);
-  }
-
-  /**
-   * Reload the views of a worksheet.
-   * @param {object} [options] - Options
-   * @param {boolean} [options.invalidateCaches] - When true, caches will be invalidated for objecttypes used
-   *   in the worksheet
-   */
-  reload({ invalidateCaches = false } = {}) {
-    this.#log('CadenzaClient#reload', ...arguments);
-    this.#postEvent('reload', { invalidateCaches });
-  }
-
-  /**
-   * Sends a message to parent Cadenza window to close the window containing this application
-   */
-  closeMe() {
-    this.#log('CadenzaClient#closeMe');
-    assert(this.#iframe == null, 'Cannot send closeMe to iframe');
-    this.#postEvent('closeMe');
   }
 
   #download(/** @type string */ path, /** @type URLSearchParams */ params) {

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/tsdoc/v0/tsdoc.schema.json",
+  "extends": ["typedoc/tsdoc.json"],
+  "tagDefinitions": [
+    {
+      "tagName": "@embed",
+      "syntaxKind": "modifier"
+    },
+    {
+      "tagName": "@postMessage",
+      "syntaxKind": "modifier"
+    },
+    {
+      "tagName": "@postMessageParent",
+      "syntaxKind": "modifier"
+    },
+    {
+      "tagName": "@server",
+      "syntaxKind": "modifier"
+    }
+  ]
+}
