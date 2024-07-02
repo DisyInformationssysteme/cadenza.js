@@ -457,7 +457,7 @@ export class CadenzaClient {
    *
    * @hidden
    * @param {WorkbookLayerPath | string} layer - The data view layer to set the selection in
-   * @param {unknown[]} values - The IDs of the objects to select
+   * @param {unknown[][]} values - The IDs of the objects to select
    * @return {Promise<void>} A `Promise` for when the selection was set.
    * @postMessage
    */
@@ -471,7 +471,7 @@ export class CadenzaClient {
    *
    * @hidden
    * @param {WorkbookLayerPath | string} layer - The data view layer to change the selection in
-   * @param {unknown[]} values - The IDs of the objects to select
+   * @param {unknown[][]} values - The IDs of the objects to select
    * @return {Promise<void>} A `Promise` for when the selection was changed.
    * @postMessage
    */
@@ -485,7 +485,7 @@ export class CadenzaClient {
    *
    * @hidden
    * @param {WorkbookLayerPath | string} layer - The data view layer to change the selection in
-   * @param {unknown[]} values - The IDs of the objects to unselect
+   * @param {unknown[][]} values - The IDs of the objects to unselect
    * @return {Promise<void>} A `Promise` for when the selection was changed.
    * @postMessage
    */
@@ -844,14 +844,46 @@ export class CadenzaClient {
     return this.#fetch(resolvePath(source), params, signal);
   }
 
+  /**
+   * Fetch object info from a workbook view.
+   *
+   * @param {EmbeddingTargetId} source - The workbook view to fetch object info from.
+   *   Currently only map views are supported.
+   * @param {(WorkbookLayerPath | string)[]} [layerPath] - Layer path to identify the layer
+   *  (identified using layer paths or print names)
+   * @param {unknown[][]} objectIds - The IDs of the objects to select
+   * @param {object} [options] - Options
+   * @param {FilterVariables} [options.filter] - Filter variables
+   * @param {AbortSignal} [options.signal] - A signal to abort the data fetching
+   * @param {Boolean} [options.useMapSrs] - Use the map SRS instead of WGS84
+   * @param {Boolean} [options.fullGeometries] - Return non-simplified geometries
+   * @return {Promise<Response>} A `Promise` for the fetch response
+   * @throws For invalid arguments
+   */
+  fetchObjectInfo(source, layerPath, objectIds, { filter, signal, useMapSrs, fullGeometries } = {}) {
+    this.#log('CadenzaClient#fetchObjectInfo', ...arguments);
+    const params = createParams({
+      filter});
+    return this.#fetch(
+      resolvePath(source) + "/objectinfo" ,
+      params,
+      signal,
+      JSON.stringify({ objectIds, layerPath: array(layerPath), useMapSrs, fullGeometries}),
+      "application/json");
+  }
+
   async #fetch(
     /** @type string */ path,
     /** @type URLSearchParams */ params,
     /** @type AbortSignal | undefined */ signal,
+    /** @type String | undefined If body is set, the fetch will be a post.*/ body,
+    /** @type String | undefined Has to be set if body is set.*/ bodyContentType,
   ) {
     const url = this.#createUrl(path, params);
     this.#log('Fetch', url.toString());
-    const res = await fetch(url, { signal });
+    const method = body ? "POST" : undefined;
+    const headers = bodyContentType ? {"Content-Type": bodyContentType } : undefined;
+    const res = await fetch(url, { signal, method, headers, body });
     if (!res.ok) {
       const errorType =
         {
@@ -1052,6 +1084,7 @@ function assertSupportedDataType(
  * @param {TablePart[]} [params.parts]
  * @param {'MAP'} [params.targetType]
  * @param {boolean} [params.useMapSrs]
+ * @param {unknown[][]} [params.objectIds]
  * @return {URLSearchParams}
  */
 function createParams({
@@ -1074,6 +1107,7 @@ function createParams({
   parts,
   targetType,
   useMapSrs,
+  objectIds,
 }) {
   if (disabledUiFeatures) {
     disabledUiFeatures.forEach((feature) =>
@@ -1125,6 +1159,10 @@ function createParams({
     ...(layers &&
       layers.length && {
         layers: JSON.stringify(layers),
+      }),
+    ...(objectIds &&
+      objectIds.length && {
+        objectids: JSON.stringify(objectIds),
       }),
     ...(locationFinder && { locationFinder }),
     ...(mapExtent && { mapExtent: mapExtent.join() }),
