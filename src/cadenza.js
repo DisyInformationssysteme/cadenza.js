@@ -344,6 +344,7 @@ export class CadenzaClient {
    * @param {Extent} [options.mapExtent] - A map extent to set
    * @param {OperationMode} [options.operationMode] - The mode in which a workbook should be operated
    * @param {boolean} [options.useMapSrs] -  Whether the geometry and the extent are in the map's SRS (otherwise EPSG:4326 is assumed)
+   * @param {boolean} [options.zoomToExtend] - Whether cadenza will zoom to the geometry's extend
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
@@ -364,6 +365,7 @@ export class CadenzaClient {
       mapExtent,
       operationMode,
       useMapSrs,
+      zoomToExtend,
       signal,
     } = {},
   ) {
@@ -386,7 +388,7 @@ export class CadenzaClient {
     });
     await this.#show(resolvePath(mapView), params, signal);
     if (geometry) {
-      this.#postEvent('setGeometry', { geometry });
+      this.#postEvent('setGeometry', { geometry, zoomToExtend: zoomToExtend });
     }
   }
 
@@ -549,6 +551,7 @@ export class CadenzaClient {
    * @param {Extent} [options.mapExtent] - A map extent to set
    * @param {number} [options.minScale] - The minimum scale where the user should work on. A warning is shown when the map is zoomed out above the threshold.
    * @param {boolean} [options.useMapSrs] - Whether the geometry is in the map's SRS (otherwise EPSG:4326 is assumed)
+   * @param {boolean} [options.zoomToExtend] - Whether cadenza will zoom to the geometry's extend
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
@@ -561,7 +564,15 @@ export class CadenzaClient {
   async editGeometry(
     backgroundMapView,
     geometry,
-    { filter, locationFinder, mapExtent, minScale, useMapSrs, signal } = {},
+    {
+      filter,
+      locationFinder,
+      mapExtent,
+      minScale,
+      useMapSrs,
+      zoomToExtend,
+      signal,
+    } = {},
   ) {
     this.#log('CadenzaClient#editGeometry', ...arguments);
     assertValidGeometryType(geometry.type);
@@ -575,7 +586,7 @@ export class CadenzaClient {
     });
     await this.#show(resolvePath(backgroundMapView), params, signal);
     if (geometry) {
-      this.#postEvent('setGeometry', { geometry });
+      this.#postEvent('setGeometry', { geometry, zoomToExtend: zoomToExtend });
     }
   }
 

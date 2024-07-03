@@ -216,7 +216,8 @@
       parts,
       layers,
       simplifiedOperationMode,
-      useMapSrs
+      useMapSrs,
+      zoomToExtend
     }) {
       return {
         disabledUiFeatures: disabledUiFeatures && disabledUiFeatures.split(','),
@@ -235,7 +236,8 @@
         parts: parts && parts.split(','),
         ...(simplifiedOperationMode === 'on' && { operationMode: 'simplified' }),
         layers: layers ? JSON.parse(layers) : undefined,
-        useMapSrs: useMapSrs === 'on'
+        useMapSrs: useMapSrs === 'on',
+        zoomToExtend: zoomToExtend === 'on'
       };
     }
 
@@ -450,6 +452,12 @@
     <label for="geometry">Geometry (GeoJSON)</label>
     <textarea name="geometry" id="geometry" rows="5"></textarea>
   </div>
+  <div>
+    <label>
+      <input type="checkbox" name="zoomToExtend">
+      Zoom to geometry's extend
+    </label>
+  </div>
 </template>
 
 <template data-action="setFilter" data-common="filter"></template>
@@ -485,6 +493,10 @@
     <label for="geometry">Geometry (GeoJSON) *</label>
     <textarea name="geometry" id="geometry" rows="5" required></textarea>
   </div>
+  <label>
+    <input type="checkbox" name="zoomToExtend">
+    Zoom to geometry's extend
+  </label>
   <div>
     <label for="minScale">Minimum Scale</label>
     <input type="number" name="minScale" id="minScale">
