@@ -855,8 +855,8 @@ export class CadenzaClient {
       signal,
       headers: {
         // Make Cadenza return an error instead of showing an error page.
-        'X-Requested-With': 'XMLHttpRequest'
-      }
+        'X-Requested-With': 'XMLHttpRequest',
+      },
     });
     if (!res.ok) {
       const errorType =
