@@ -851,7 +851,13 @@ export class CadenzaClient {
   ) {
     const url = this.#createUrl(path, params);
     this.#log('Fetch', url.toString());
-    const res = await fetch(url, { signal });
+    const res = await fetch(url, {
+      signal,
+      headers: {
+        // Make Cadenza return an error instead of showing an error page.
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    });
     if (!res.ok) {
       const errorType =
         {
