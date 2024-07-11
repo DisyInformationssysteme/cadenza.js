@@ -352,6 +352,21 @@ const tableData = await response.json();
 ...
 ```
 
+### Download the Object Info from a Workbook Map View
+
+<small>API: [CadenzaClient#fetchObjectInfo(./classes/CadenzaClient.html#fetchObjectInfo)</small>
+
+Download the object info from a workbook map view in JSON format. The result contains all information, that is shown in the object info within cadenza.
+
+```javascript
+const response = await cadenzaClient.fetchObjectInfo('embeddingTargetId', 'layerPrintName', [['objectId']], {
+  useMapSrs: false,
+  fullGeometries: true
+});
+
+const objectInfo = await response.json();
+```
+
 ### Download Data From a Workbook View
 
 <small>API: [CadenzaClient#downloadData](./classes/CadenzaClient.html#downloadData)</small>
