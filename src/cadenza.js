@@ -826,9 +826,9 @@ export class CadenzaClient {
    * Fetch data from a workbook view.
    *
    * @param {EmbeddingTargetId} source - The workbook view to fetch data from.
-   *   Currently only table and indicator views are supported.
    * @param {DataType} dataType - The data type you want to get back from the server.
-   *   Currently, `"csv"`, `"excel"` and `"json"` are supported.
+   *   Currently, `"csv"`, `"excel"` and `"json"` are supported for table and indicator views
+   *   and `"pdf"` for views of type "JasperReports report".
    * @param {object} [options] - Options
    * @param {FilterVariables} [options.filter] - Filter variables
    * @param {TablePart[]} [options.parts] - Table parts to export; If not specified, all parts are exported.
@@ -839,7 +839,7 @@ export class CadenzaClient {
    */
   fetchData(source, dataType, { filter, parts, signal } = {}) {
     this.#log('CadenzaClient#fetchData', ...arguments);
-    assertSupportedDataType(dataType, ['csv', 'excel', 'json']);
+    assertSupportedDataType(dataType, ['csv', 'excel', 'json', 'pdf']);
     const params = createParams({ dataType, filter, parts });
     return this.#fetch(resolvePath(source), params, signal);
   }
@@ -910,10 +910,10 @@ export class CadenzaClient {
    *
    * _Note:_ The file name, if not provided, is generated from the name of the workbook view and the current date.
    *
-   * @param {EmbeddingTargetId} source - The workbook view to download data from.
-   *   Currently only table and indicator views are supported.
+   * @param {EmbeddingTargetId} source - The workbook view to fetch data from.
    * @param {DataType} dataType - The data type you want to get back from the server.
-   *   Currently, `"csv"`, `"excel"` and `"json"` are supported.
+   *   Currently, `"csv"`, `"excel"` and `"json"` are supported for table and indicator views
+   *   and `"pdf"` for views of type "JasperReports report".
    * @param {object} [options] - Options
    * @param {string} [options.fileName] - The file name to use; The file extension is appended by Cadenza.
    * @param {FilterVariables} [options.filter] - Filter variables
@@ -923,7 +923,7 @@ export class CadenzaClient {
    */
   downloadData(source, dataType, { fileName, filter, parts } = {}) {
     this.#log('CadenzaClient#downloadData', ...arguments);
-    assertSupportedDataType(dataType, ['csv', 'excel', 'json']);
+    assertSupportedDataType(dataType, ['csv', 'excel', 'json', 'pdf']);
     const params = createParams({ dataType, fileName, filter, parts });
     this.#download(resolvePath(source), params);
   }
