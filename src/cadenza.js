@@ -61,7 +61,7 @@ globalThis.cadenza = Object.assign(
  * The idea is to have a specific type e.g. for the {@link EmbeddingTargetId} instead of a plain `string`.
  * You don't need to _actually_ add that `__type` property. In TS code, just use a
  * [type assertion](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#type-assertions)
- * (e.g. `cadenzaClient.show('{embeddingTargetId}' as EmbeddingTargetId)`).
+ * (e.g. `cadenzaClient.show('<embeddingTargetId>' as EmbeddingTargetId)`).
  */
 
 /**
@@ -83,7 +83,7 @@ globalThis.cadenza = Object.assign(
  *
  * You get the `repositoryName` and `externalLinkId` from the URL of the external link's page in the Cadenza management center:
  * ```
- * {baseUrl}/admin/repositories/{repositoryName}/external-links/{externalLinkId}?...
+ * <baseUrl>/admin/repositories/<repositoryName>/external-links/<externalLinkId>?...
  * ```
  *
  * @property {string} repositoryName - The name of the link's repository
