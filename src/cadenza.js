@@ -882,8 +882,18 @@ export class CadenzaClient {
     const url = this.#createUrl(path, params);
     this.#log('Fetch', url.toString());
     const method = body ? "POST" : undefined;
-    const headers = bodyContentType ? {"Content-Type": bodyContentType } : undefined;
-    const res = await fetch(url, { signal, method, headers, body });
+    const headers = {
+      // Make Cadenza return an error instead of showing an error page.
+      'X-Requested-With': 'XMLHttpRequest',
+    };
+    if (bodyContentType) {
+      headers.Content-Type = bodyContentType;
+    }          
+    const res = await fetch(url, {
+      signal,
+      headers,
+      body,
+    });
     if (!res.ok) {
       const errorType =
         {
