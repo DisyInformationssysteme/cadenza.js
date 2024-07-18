@@ -352,7 +352,7 @@ const tableData = await response.json();
 ...
 ```
 
-### Download the Object Info from a Workbook Map View
+### Fetch the Object Info from a Workbook Map View
 
 <small>API: [CadenzaClient#fetchObjectInfo(./classes/CadenzaClient.html#fetchObjectInfo)</small>
 
@@ -364,7 +364,7 @@ const response = await cadenzaClient.fetchObjectInfo('embeddingTargetId', 'layer
   fullGeometries: true
 });
 
-const objectInfo = await response.json();
+const objectInfo = await response;
 ```
 
 ### Download Data From a Workbook View

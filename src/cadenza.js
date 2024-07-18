@@ -133,6 +133,18 @@ globalThis.cadenza = Object.assign(
  * _Note:_ Since numbers in JavaScript are Double values ([more info on MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number#number_encoding)),
  * for Long variables, the API is currently limited to the Double value range.
  */
+/**
+ * @typedef Feature - A [GeoJSON](https://geojson.org/) feature object
+ * @property {any[]} id - The id of the feature
+ * @property {Geometry} geometry - The geometry
+ * @property {Record<string, string>} properties - The properties
+ * @property {Number | undefined} area - The area of the polygon
+ * @property {Number | undefined} length - The length of the line
+ */
+/**
+ * @typedef FeatureCollection - A [GeoJSON](https://geojson.org/) feature collection object
+ * @property {Feature[]} features - The type of the geometry
+ */
 
 let hasCadenzaSession = false;
 
@@ -845,10 +857,9 @@ export class CadenzaClient {
   }
 
   /**
-   * Fetch object info from a workbook view.
+   * Fetch object info from a workbook map view.
    *
    * @param {EmbeddingTargetId} source - The workbook view to fetch object info from.
-   *   Currently only map views are supported.
    * @param {(WorkbookLayerPath | string)[]} [layerPath] - Layer path to identify the layer
    *  (identified using layer paths or print names)
    * @param {unknown[][]} objectIds - The IDs of the objects to select
@@ -857,7 +868,7 @@ export class CadenzaClient {
    * @param {AbortSignal} [options.signal] - A signal to abort the data fetching
    * @param {Boolean} [options.useMapSrs] - Use the map SRS instead of WGS84
    * @param {Boolean} [options.fullGeometries] - Return non-simplified geometries
-   * @return {Promise<Response>} A `Promise` for the fetch response
+   * @return {Promise<FeatureCollection>} A `Promise` for the fetch response
    * @throws For invalid arguments
    */
   fetchObjectInfo(source, layerPath, objectIds, { filter, signal, useMapSrs, fullGeometries } = {}) {
@@ -868,8 +879,8 @@ export class CadenzaClient {
       resolvePath(source) + "/objectinfo" ,
       params,
       signal,
-      JSON.stringify({ objectIds, layerPath: array(layerPath), useMapSrs, fullGeometries}),
-      "application/json");
+      JSON.stringify({ objectIds, layerPath: array(layerPath), useMapSrs, fullGeometries}))
+      .then(response => response.json());
   }
 
   async #fetch(
@@ -877,15 +888,14 @@ export class CadenzaClient {
     /** @type URLSearchParams */ params,
     /** @type AbortSignal | undefined */ signal,
     /** @type String | undefined If body is set, the fetch will be a post.*/ body,
-    /** @type String | undefined Has to be set if body is set.*/ bodyContentType,
   ) {
     const url = this.#createUrl(path, params);
     this.#log('Fetch', url.toString());
     const method = body ? "POST" : undefined;
     const headers = new Headers();
     headers.set('X-Requested-With', 'XMLHttpRequest');
-    if (bodyContentType) {
-      headers.set('Content-Type', bodyContentType);
+    if (body) {
+      headers.set('Content-Type', "application/json");
     }
     const res = await fetch(url, {
       signal,
@@ -1093,7 +1103,6 @@ function assertSupportedDataType(
  * @param {TablePart[]} [params.parts]
  * @param {'MAP'} [params.targetType]
  * @param {boolean} [params.useMapSrs]
- * @param {unknown[][]} [params.objectIds]
  * @return {URLSearchParams}
  */
 function createParams({
@@ -1116,7 +1125,6 @@ function createParams({
   parts,
   targetType,
   useMapSrs,
-  objectIds,
 }) {
   if (disabledUiFeatures) {
     disabledUiFeatures.forEach((feature) =>
@@ -1168,10 +1176,6 @@ function createParams({
     ...(layers &&
       layers.length && {
         layers: JSON.stringify(layers),
-      }),
-    ...(objectIds &&
-      objectIds.length && {
-        objectids: JSON.stringify(objectIds),
       }),
     ...(locationFinder && { locationFinder }),
     ...(mapExtent && { mapExtent: mapExtent.join() }),

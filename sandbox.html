@@ -173,8 +173,8 @@
       },
       fetchObjectInfo: data => {
         console.log('Inspect the fetchObjectInfo() request in the devtools.');
-        cadenzaClient.fetchObjectInfo(data.embeddingTargetId, JSON.parse(data.layer), JSON.parse(data.objectIds), getOptions(data));
-
+        cadenzaClient.fetchObjectInfo(data.embeddingTargetId, JSON.parse(data.layer), JSON.parse(data.objectIds), getOptions(data))
+          .then(oi => console.log(oi));
       },
       downloadData: data => cadenzaClient.downloadData(data.embeddingTargetId, data.dataType, getOptions(data))
     };
@@ -542,7 +542,7 @@
 
 <template id="common-object-ids">
   <div>
-    <label for="objectids">List of List of Object IDs *</label>
+    <label for="objectids">List of object ID value lists *</label>
     <textarea name="objectIds" id="objectids" rows="5" required></textarea>
     <small>
       <p>A JSON value like <code>[["&lt;object1-id&gt;"],["&lt;object2-id&gt;"]]</code></p>
@@ -589,13 +589,13 @@
   <div>
     <label>
       <input type="checkbox" name="useMapSrs">
-      Use the map SRS instead of WGS84
+      Use map SRS
     </label>
   </div>
   <div>
     <label>
       <input type="checkbox" name="fullGeometries">
-      Return the non-simplified geometry
+      Return the non-simplified geometries
     </label>
   </div>
 </template>
