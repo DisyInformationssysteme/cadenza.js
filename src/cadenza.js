@@ -134,15 +134,15 @@ globalThis.cadenza = Object.assign(
  * for Long variables, the API is currently limited to the Double value range.
  */
 /**
- * @typedef Feature - A [GeoJSON](https://geojson.org/) feature object
- * @property {any[]} cadenzaObjectId - The id of the feature
+ * @typedef Feature - A adapted [GeoJSON](https://geojson.org/) feature object.
+ * @property {any[]} objectId - The id of the feature
  * @property {Geometry} geometry - The geometry
  * @property {Record<string, string>} properties - The formated properties
  * @property {number} [area] - The area of a `Polygon` feature
  * @property {number} [length] - The area of a `LineString` feature
  */
 /**
- * @typedef FeatureCollection - A [GeoJSON](https://geojson.org/) feature collection object
+ * @typedef FeatureCollection - A adapted [GeoJSON](https://geojson.org/) feature collection object
  * @property {Feature[]} features - The features within this collection
  */
 
