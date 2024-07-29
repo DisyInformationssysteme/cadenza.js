@@ -11,7 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## 2.11.0 - 2024-07-12
 ### Added
 - Support for `dataType=pdf` in `CadenzaClient#downloadData` and `CadenzaClient#fetchData`
-- `CadenzaClient#fetchObjectInfo`
 
 ### Fixed
 - Make Cadenza return an error instead of showing an error page.

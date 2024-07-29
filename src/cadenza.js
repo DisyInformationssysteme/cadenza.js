@@ -135,15 +135,15 @@ globalThis.cadenza = Object.assign(
  */
 /**
  * @typedef Feature - A [GeoJSON](https://geojson.org/) feature object
- * @property {any[]} id - The id of the feature
+ * @property {any[]} cadenzaObjectId - The id of the feature
  * @property {Geometry} geometry - The geometry
- * @property {Record<string, string>} properties - The properties
- * @property {Number | undefined} area - The area of the polygon
- * @property {Number | undefined} length - The length of the line
+ * @property {Record<string, string>} properties - The formated properties
+ * @property {number} [area] - The area of a `Polygon` feature
+ * @property {number} [length] - The area of a `LineString` feature
  */
 /**
  * @typedef FeatureCollection - A [GeoJSON](https://geojson.org/) feature collection object
- * @property {Feature[]} features - The type of the geometry
+ * @property {Feature[]} features - The features within this collection
  */
 
 let hasCadenzaSession = false;
@@ -876,7 +876,7 @@ export class CadenzaClient {
     const params = createParams({
       filter});
     return this.#fetch(
-      resolvePath(source) + "/objectinfo" ,
+      resolvePath(source) + '/objectinfo',
       params,
       signal,
       JSON.stringify({ objectIds, layerPath: array(layerPath), useMapSrs, fullGeometries}))
@@ -895,7 +895,7 @@ export class CadenzaClient {
     const headers = new Headers();
     headers.set('X-Requested-With', 'XMLHttpRequest');
     if (body) {
-      headers.set('Content-Type', "application/json");
+      headers.set('Content-Type', 'application/json');
     }
     const res = await fetch(url, {
       signal,
