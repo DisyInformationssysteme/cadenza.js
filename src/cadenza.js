@@ -871,16 +871,27 @@ export class CadenzaClient {
    * @return {Promise<FeatureCollection>} A `Promise` for the fetch response
    * @throws For invalid arguments
    */
-  fetchObjectInfo(source, layerPath, objectIds, { filter, signal, useMapSrs, fullGeometries } = {}) {
+  fetchObjectInfo(
+    source,
+    layerPath,
+    objectIds,
+    { filter, signal, useMapSrs, fullGeometries } = {},
+  ) {
     this.#log('CadenzaClient#fetchObjectInfo', ...arguments);
     const params = createParams({
-      filter});
+      filter,
+    });
     return this.#fetch(
       resolvePath(source) + '/objectinfo',
       params,
       signal,
-      JSON.stringify({ objectIds, layerPath: array(layerPath), useMapSrs, fullGeometries}))
-      .then(response => response.json());
+      JSON.stringify({
+        objectIds,
+        layerPath: array(layerPath),
+        useMapSrs,
+        fullGeometries,
+      }),
+    ).then((response) => response.json());
   }
 
   async #fetch(
@@ -891,7 +902,7 @@ export class CadenzaClient {
   ) {
     const url = this.#createUrl(path, params);
     this.#log('Fetch', url.toString());
-    const method = body ? "POST" : undefined;
+    const method = body ? 'POST' : undefined;
     const headers = new Headers();
     headers.set('X-Requested-With', 'XMLHttpRequest');
     if (body) {
