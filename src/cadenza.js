@@ -860,7 +860,7 @@ export class CadenzaClient {
    * Fetch object info from a workbook map view.
    *
    * @param {EmbeddingTargetId} source - The workbook view to fetch object info from.
-   * @param {(WorkbookLayerPath | string)[]} [layerPath] - Layer path to identify the layer
+   * @param {(WorkbookLayerPath | string)[]} layerPath - Layer path to identify the layer
    *  (identified using layer paths or print names)
    * @param {unknown[][]} objectIds - The IDs of the objects to select
    * @param {object} [options] - Options
