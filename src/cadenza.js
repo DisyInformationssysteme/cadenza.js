@@ -120,6 +120,14 @@ globalThis.cadenza = Object.assign(
 /** @typedef {[number,number,number,number]} Extent - An array of numbers representing an extent: [minx, miny, maxx, maxy] */
 
 /**
+ * @typedef {GeometryZoomTarget} ZoomTarget - An object describing a target to zoom to
+ */
+/**
+ * @typedef GeometryZoomTarget - Instructs Cadenza to zoom to a provided {@Link Geometry}
+ * @property {'geometry'} type The type of the zoom target
+ */
+
+/**
  * @typedef {'csv' | 'excel' | 'json' | 'pdf' | 'png'} DataType - A data type
  *
  * See [JSON Representation of Cadenza Object Data](../index.html#md:json-representation-of-cadenza-object-data) for JSON data.
@@ -344,7 +352,7 @@ export class CadenzaClient {
    * @param {Extent} [options.mapExtent] - A map extent to set
    * @param {OperationMode} [options.operationMode] - The mode in which a workbook should be operated
    * @param {boolean} [options.useMapSrs] -  Whether the geometry and the extent are in the map's SRS (otherwise EPSG:4326 is assumed)
-   * @param {boolean} [options.zoomToExtend] - Whether cadenza will zoom to the geometry's extend
+   * @param {ZoomTarget} [options.zoomTarget] - A target Cadenza will zoom to
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
@@ -365,7 +373,7 @@ export class CadenzaClient {
       mapExtent,
       operationMode,
       useMapSrs,
-      zoomToExtend,
+      zoomTarget,
       signal,
     } = {},
   ) {
@@ -388,7 +396,10 @@ export class CadenzaClient {
     });
     await this.#show(resolvePath(mapView), params, signal);
     if (geometry) {
-      this.#postEvent('setGeometry', { geometry, zoomToExtend: zoomToExtend });
+      this.#postEvent('setGeometry', {
+        geometry,
+        zoomToGeometry: zoomTarget?.type === 'geometry',
+      });
     }
   }
 
@@ -551,7 +562,7 @@ export class CadenzaClient {
    * @param {Extent} [options.mapExtent] - A map extent to set
    * @param {number} [options.minScale] - The minimum scale where the user should work on. A warning is shown when the map is zoomed out above the threshold.
    * @param {boolean} [options.useMapSrs] - Whether the geometry is in the map's SRS (otherwise EPSG:4326 is assumed)
-   * @param {boolean} [options.zoomToExtend] - Whether cadenza will zoom to the geometry's extend
+   * @param {ZoomTarget} [options.zoomTarget] - A target Cadenza will zoom to
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
@@ -570,7 +581,7 @@ export class CadenzaClient {
       mapExtent,
       minScale,
       useMapSrs,
-      zoomToExtend,
+      zoomTarget,
       signal,
     } = {},
   ) {
@@ -586,7 +597,10 @@ export class CadenzaClient {
     });
     await this.#show(resolvePath(backgroundMapView), params, signal);
     if (geometry) {
-      this.#postEvent('setGeometry', { geometry, zoomToExtend: zoomToExtend });
+      this.#postEvent('setGeometry', {
+        geometry,
+        zoomToGeometry: zoomTarget?.type === 'geometry',
+      });
     }
   }
 

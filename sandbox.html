@@ -217,7 +217,7 @@
       layers,
       simplifiedOperationMode,
       useMapSrs,
-      zoomToExtend
+      zoomToGeometry
     }) {
       return {
         disabledUiFeatures: disabledUiFeatures && disabledUiFeatures.split(','),
@@ -237,7 +237,7 @@
         ...(simplifiedOperationMode === 'on' && { operationMode: 'simplified' }),
         layers: layers ? JSON.parse(layers) : undefined,
         useMapSrs: useMapSrs === 'on',
-        zoomToExtend: zoomToExtend === 'on'
+        zoomTarget: zoomToGeometry === 'on' ? { type: 'geometry' } : undefined
       };
     }
 
@@ -443,7 +443,7 @@
   </div>
 </template>
 
-<template data-action="showMap" data-common="map,showWorkbook,filter,show">
+<template data-action="showMap" data-common="zoomTo,map,showWorkbook,filter,show">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
@@ -451,12 +451,6 @@
   <div>
     <label for="geometry">Geometry (GeoJSON)</label>
     <textarea name="geometry" id="geometry" rows="5"></textarea>
-  </div>
-  <div>
-    <label>
-      <input type="checkbox" name="zoomToExtend">
-      Zoom to geometry's extend
-    </label>
   </div>
 </template>
 
@@ -484,7 +478,7 @@
   </div>
 </template>
 
-<template data-action="editGeometry" data-common="map,filter">
+<template data-action="editGeometry" data-common="zoomTo,map,filter">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
@@ -493,10 +487,6 @@
     <label for="geometry">Geometry (GeoJSON) *</label>
     <textarea name="geometry" id="geometry" rows="5" required></textarea>
   </div>
-  <label>
-    <input type="checkbox" name="zoomToExtend">
-    Zoom to geometry's extend
-  </label>
   <div>
     <label for="minScale">Minimum Scale</label>
     <input type="number" name="minScale" id="minScale">
@@ -563,6 +553,15 @@
         <code>["{layerGroupPrintName}","{layerPrintName}"]</code>
       </p>
     </small>
+  </div>
+</template>
+
+<template id="common-zoomTo">
+  <div>
+    <label>
+      <input type="checkbox" name="zoomToGeometry">
+      Zoom to geometry
+    </label>
   </div>
 </template>
 
