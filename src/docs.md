@@ -37,7 +37,7 @@ Create an instance of the Cadenza client by calling `cadenza()` with the base UR
 ```javascript
 import { cadenza } from '@disy/cadenza.js';
 
-const cadenzaClient = cadenza('{baseUrl}', {
+const cadenzaClient = cadenza('<baseUrl>', {
   iframe: 'cadenza-iframe',
 });
 ```
@@ -51,7 +51,7 @@ _Tip:_ If you develop your application in TypeScript - Cadenza JS is typed using
 ```
 
 ```javascript
-const cadenzaClient = window.cadenza('{baseUrl}', ...);
+const cadenzaClient = window.cadenza('<baseUrl>', ...);
 ```
 
 The `type="module"` has the effect that script execution is [deferred](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script#defer). You might need to wait for the `DOMContentLoaded` event in order to use Cadenza JS.
@@ -90,7 +90,7 @@ Show an embedding target in an iframe and ...
 - Set the filter variable "var1" to "foo".
 
 ```javascript
-cadenzaClient.show('{embeddingTargetId}', {
+cadenzaClient.show('<embeddingTargetId>', {
   hideMainHeaderAndFooter: true,
   hideWorkbookToolBar: true,
   operationMode: 'simplified',
@@ -109,7 +109,7 @@ cadenzaClient.show('{embeddingTargetId}', {
 Views of type "JasperReports report" can be shown in an iframe like any other view. Additionally, there is an option to show only the generated PDF without any Cadenza footers or headers. This is done by setting the "dataType" option to "pdf".
 
 ```javascript
-cadenzaClient.show('{embeddingTargetId}', {
+cadenzaClient.show('<embeddingTargetId>', {
   dataType: 'pdf'
 });
 ```
@@ -121,7 +121,7 @@ Cadenza JS uses the [AbortController Web API](https://developer.mozilla.org/en-U
 ```javascript
 const abortController = new AbortController();
 try {
-  await cadenzaClient.show('{embeddingTargetId}', { signal: abortController.signal });
+  await cadenzaClient.show('<embeddingTargetId>', { signal: abortController.signal });
 } catch (error) {
   if (error.name === 'AbortError') {
     console.log('Iframe loading was aborted');
@@ -141,7 +141,7 @@ _Tip:_ You can use the same `AbortController` to abort multiple requests, e.g. w
 Set filter variables using a mapping of variable names to values.
 
 ```javascript
-cadenzaClient.setFilter({ 'my-variable': 'value' });
+cadenzaClient.setFilter({ '<variableName>': 'value' });
 ```
 -->
 
@@ -157,7 +157,7 @@ Show the embedding target of a workbook map view in an iframe and ...
 The coordinates of extent and geometry are in the map's SRS (`useMapSrs: true`).
 
 ```javascript
-cadenzaClient.showMap('{embeddingTargetId}', {
+cadenzaClient.showMap('<embeddingTargetId>', {
   useMapSrs: true,
   mapExtent: [
     -572_513.341856, 5_211_017.966314, 916_327.095083, 6_636_950.728974,
@@ -172,7 +172,7 @@ cadenzaClient.showMap('{embeddingTargetId}', {
 #### Initialize the Map Extent by Setting the Location Finder
 
 ```javascript
-cadenzaClient.showMap('{embeddingTargetId}', {
+cadenzaClient.showMap('<embeddingTargetId>', {
   locationFinder: 'Karlsruhe',
 });
 ```
@@ -185,7 +185,7 @@ cadenzaClient.showMap('{embeddingTargetId}', {
 To set the visibility of a layer in the currently shown map, pass the layer path or print name and the desired visibility.
 
 ```javascript
-cadenzaClient.setLayerVisibility('{layerPrintName}', false);
+cadenzaClient.setLayerVisibility('<layerPrintName>', false);
 ```
 -->
 
@@ -214,7 +214,7 @@ const geometry = {
   type: 'Point',
   coordinates: [328_627.563458, 5_921_296.662223],
 };
-cadenzaClient.editGeometry('{embeddingTargetId}', geometry, {
+cadenzaClient.editGeometry('<embeddingTargetId>', geometry, {
   useMapSrs: true,
 });
 
@@ -246,7 +246,7 @@ unsubscribe();
 Edit a GeoJSON point geometry with a workbook map view in the background. The geometry coordinates are in the map's SRS (`useMapSrs: true`).
 
 ```javascript
-cadenzaClient.createGeometry('{embeddingTargetId}', 'Point', {
+cadenzaClient.createGeometry('<embeddingTargetId>', 'Point', {
   useMapSrs: true,
 });
 
@@ -265,10 +265,10 @@ That's why the events use the `editGeometry` prefix.
 Ask the user to select objects in a workbook map view. In the example the selection is restricted to specific layers. For layers in groups, pass the layer path.
 
 ```javascript
-cadenzaClient.selectObjects('{embeddingTargetId}', {
+cadenzaClient.selectObjects('<embeddingTargetId>', {
   layers: [
-    [ '{layerGroupPrintName}', '{layerPrintName}' ],
-    [ '{layerPrintName}' ]
+    [ '<layerGroupPrintName>', '<layerPrintName>' ],
+    [ '<layerPrintName>' ]
   ]
 });
 
@@ -286,7 +286,7 @@ Set the selection in the currently shown workbook map view using a list of objec
 
 ```javascript
 cadenzaClient.setSelection(
-  layer: '{layerPrintName}',
+  layer: '<layerPrintName>',
   values: [ 'objectId', ... ]
 );
 ```
@@ -303,7 +303,7 @@ You can also add to or remove from the current selection:
 Show an embedding target in an iframe and highlight an item in the navigator. Additionally, expand the navigator tree.
 
 ```javascript
-cadenzaClient.show('{embeddingTargetId}', {expandNavigator: true, highlightGlobalId: 'ROOT.MyFolder'});
+cadenzaClient.show('<embeddingTargetId>', {expandNavigator: true, highlightGlobalId: 'ROOT.MyFolder'});
 ```
 
 #### Highlight an Item in the Navigator on the Welcome Page
@@ -333,7 +333,7 @@ cadenzaClient.expandNavigator();
 Fetch data from a workbook view in CSV format.
 
 ```javascript
-const response = await cadenzaClient.fetchData('{embeddingTargetId}', 'csv');
+const response = await cadenzaClient.fetchData('<embeddingTargetId>', 'csv');
 
 const text = await response.text();
 ...
@@ -344,7 +344,7 @@ const text = await response.text();
 Fetch data from a workbook view in JSON format and include only the data values and the aggregation totals. (Do not include the column names.)
 
 ```javascript
-const response = await cadenzaClient.fetchData('{embeddingTargetId}', 'json', {
+const response = await cadenzaClient.fetchData('<embeddingTargetId>', 'json', {
   parts: ['values', 'totals']
 });
 
@@ -361,7 +361,7 @@ Download data from a workbook view in Excel format. This triggers the browser's 
 ```javascript
 const button = document.createElement('button');
 button.textContent = 'Download Excel';
-button.onclick = () => cadenzaClient.downloadData('{embeddingTargetId}', 'excel');
+button.onclick = () => cadenzaClient.downloadData('<embeddingTargetId>', 'excel');
 ```
 
 ### Reload the Views of a Worksheet

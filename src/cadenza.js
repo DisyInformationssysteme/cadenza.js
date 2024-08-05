@@ -61,7 +61,7 @@ globalThis.cadenza = Object.assign(
  * The idea is to have a specific type e.g. for the {@link EmbeddingTargetId} instead of a plain `string`.
  * You don't need to _actually_ add that `__type` property. In TS code, just use a
  * [type assertion](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#type-assertions)
- * (e.g. `cadenzaClient.show('{embeddingTargetId}' as EmbeddingTargetId)`).
+ * (e.g. `cadenzaClient.show('<embeddingTargetId>' as EmbeddingTargetId)`).
  */
 
 /**
@@ -83,7 +83,7 @@ globalThis.cadenza = Object.assign(
  *
  * You get the `repositoryName` and `externalLinkId` from the URL of the external link's page in the Cadenza management center:
  * ```
- * {baseUrl}/admin/repositories/{repositoryName}/external-links/{externalLinkId}?...
+ * <baseUrl>/admin/repositories/<repositoryName>/external-links/<externalLinkId>?...
  * ```
  *
  * @property {string} repositoryName - The name of the link's repository
@@ -851,9 +851,9 @@ export class CadenzaClient {
    * Fetch data from a workbook view.
    *
    * @param {EmbeddingTargetId} source - The workbook view to fetch data from.
-   *   Currently only table and indicator views are supported.
    * @param {DataType} dataType - The data type you want to get back from the server.
-   *   Currently, `"csv"`, `"excel"` and `"json"` are supported.
+   *   Currently, `"csv"`, `"excel"` and `"json"` are supported for table and indicator views
+   *   and `"pdf"` for views of type "JasperReports report".
    * @param {object} [options] - Options
    * @param {FilterVariables} [options.filter] - Filter variables
    * @param {TablePart[]} [options.parts] - Table parts to export; If not specified, all parts are exported.
@@ -864,7 +864,7 @@ export class CadenzaClient {
    */
   fetchData(source, dataType, { filter, parts, signal } = {}) {
     this.#log('CadenzaClient#fetchData', ...arguments);
-    assertSupportedDataType(dataType, ['csv', 'excel', 'json']);
+    assertSupportedDataType(dataType, ['csv', 'excel', 'json', 'pdf']);
     const params = createParams({ dataType, filter, parts });
     return this.#fetch(resolvePath(source), params, signal);
   }
@@ -876,7 +876,13 @@ export class CadenzaClient {
   ) {
     const url = this.#createUrl(path, params);
     this.#log('Fetch', url.toString());
-    const res = await fetch(url, { signal });
+    const res = await fetch(url, {
+      signal,
+      headers: {
+        // Make Cadenza return an error instead of showing an error page.
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+    });
     if (!res.ok) {
       const errorType =
         {
@@ -894,10 +900,10 @@ export class CadenzaClient {
    *
    * _Note:_ The file name, if not provided, is generated from the name of the workbook view and the current date.
    *
-   * @param {EmbeddingTargetId} source - The workbook view to download data from.
-   *   Currently only table and indicator views are supported.
+   * @param {EmbeddingTargetId} source - The workbook view to fetch data from.
    * @param {DataType} dataType - The data type you want to get back from the server.
-   *   Currently, `"csv"`, `"excel"` and `"json"` are supported.
+   *   Currently, `"csv"`, `"excel"` and `"json"` are supported for table and indicator views
+   *   and `"pdf"` for views of type "JasperReports report".
    * @param {object} [options] - Options
    * @param {string} [options.fileName] - The file name to use; The file extension is appended by Cadenza.
    * @param {FilterVariables} [options.filter] - Filter variables
@@ -907,7 +913,7 @@ export class CadenzaClient {
    */
   downloadData(source, dataType, { fileName, filter, parts } = {}) {
     this.#log('CadenzaClient#downloadData', ...arguments);
-    assertSupportedDataType(dataType, ['csv', 'excel', 'json']);
+    assertSupportedDataType(dataType, ['csv', 'excel', 'json', 'pdf']);
     const params = createParams({ dataType, fileName, filter, parts });
     this.#download(resolvePath(source), params);
   }
