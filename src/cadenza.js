@@ -141,6 +141,18 @@ globalThis.cadenza = Object.assign(
  * _Note:_ Since numbers in JavaScript are Double values ([more info on MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number#number_encoding)),
  * for Long variables, the API is currently limited to the Double value range.
  */
+/**
+ * @typedef Feature - A adapted [GeoJSON](https://geojson.org/) feature object.
+ * @property {any[]} objectId - The id of the feature
+ * @property {Geometry} geometry - The geometry
+ * @property {Record<string, string>} properties - The formated properties
+ * @property {number} [area] - The area of a `Polygon` feature
+ * @property {number} [length] - The area of a `LineString` feature
+ */
+/**
+ * @typedef FeatureCollection - A adapted [GeoJSON](https://geojson.org/) feature collection object
+ * @property {Feature[]} features - The features within this collection
+ */
 
 let hasCadenzaSession = false;
 
@@ -470,7 +482,7 @@ export class CadenzaClient {
    *
    * @hidden
    * @param {WorkbookLayerPath | string} layer - The data view layer to set the selection in
-   * @param {unknown[]} values - The IDs of the objects to select
+   * @param {unknown[][]} values - The IDs of the objects to select
    * @return {Promise<void>} A `Promise` for when the selection was set.
    * @postMessage
    */
@@ -484,7 +496,7 @@ export class CadenzaClient {
    *
    * @hidden
    * @param {WorkbookLayerPath | string} layer - The data view layer to change the selection in
-   * @param {unknown[]} values - The IDs of the objects to select
+   * @param {unknown[][]} values - The IDs of the objects to select
    * @return {Promise<void>} A `Promise` for when the selection was changed.
    * @postMessage
    */
@@ -498,7 +510,7 @@ export class CadenzaClient {
    *
    * @hidden
    * @param {WorkbookLayerPath | string} layer - The data view layer to change the selection in
-   * @param {unknown[]} values - The IDs of the objects to unselect
+   * @param {unknown[][]} values - The IDs of the objects to unselect
    * @return {Promise<void>} A `Promise` for when the selection was changed.
    * @postMessage
    */
@@ -869,19 +881,63 @@ export class CadenzaClient {
     return this.#fetch(resolvePath(source), params, signal);
   }
 
+  /**
+   * Fetch object info from a workbook map view.
+   *
+   * @param {EmbeddingTargetId} source - The workbook view to fetch object info from.
+   * @param {(WorkbookLayerPath | string)[]} layerPath - Layer path to identify the layer
+   *  (identified using layer paths or print names)
+   * @param {unknown[][]} objectIds - The IDs of the objects to select
+   * @param {object} [options] - Options
+   * @param {FilterVariables} [options.filter] - Filter variables
+   * @param {AbortSignal} [options.signal] - A signal to abort the data fetching
+   * @param {Boolean} [options.useMapSrs] - Use the map SRS instead of WGS84
+   * @param {Boolean} [options.fullGeometries] - Return non-simplified geometries
+   * @return {Promise<FeatureCollection>} A `Promise` for the fetch response
+   * @throws For invalid arguments
+   */
+  fetchObjectInfo(
+    source,
+    layerPath,
+    objectIds,
+    { filter, signal, useMapSrs, fullGeometries } = {},
+  ) {
+    this.#log('CadenzaClient#fetchObjectInfo', ...arguments);
+    const params = createParams({
+      filter,
+    });
+    return this.#fetch(
+      resolvePath(source) + '/objectinfo',
+      params,
+      signal,
+      JSON.stringify({
+        objectIds,
+        layerPath: array(layerPath),
+        useMapSrs,
+        fullGeometries,
+      }),
+    ).then((response) => response.json());
+  }
+
   async #fetch(
     /** @type string */ path,
     /** @type URLSearchParams */ params,
     /** @type AbortSignal | undefined */ signal,
+    /** @type String | undefined If body is set, the fetch will be a post.*/ body,
   ) {
     const url = this.#createUrl(path, params);
     this.#log('Fetch', url.toString());
+    const method = body ? 'POST' : undefined;
+    const headers = new Headers();
+    headers.set('X-Requested-With', 'XMLHttpRequest');
+    if (body) {
+      headers.set('Content-Type', 'application/json');
+    }
     const res = await fetch(url, {
       signal,
-      headers: {
-        // Make Cadenza return an error instead of showing an error page.
-        'X-Requested-With': 'XMLHttpRequest',
-      },
+      method,
+      headers,
+      body,
     });
     if (!res.ok) {
       const errorType =

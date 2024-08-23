@@ -161,15 +161,20 @@
       },
       setFilter: data => cadenzaClient.setFilter(parseFilterVariables(data.filter)),
       setLayerVisibility: data => cadenzaClient.setLayerVisibility(JSON.parse(data.layer), data.visibility === 'on'),
-      setSelection: data => cadenzaClient.setSelection(JSON.parse(data.layer), JSON.parse(data.values)),
-      addSelection: data => cadenzaClient.addSelection(JSON.parse(data.layer), JSON.parse(data.values)),
-      removeSelection: data => cadenzaClient.removeSelection(JSON.parse(data.layer), JSON.parse(data.values)),
+      setSelection: data => cadenzaClient.setSelection(JSON.parse(data.layer), JSON.parse(data.objectIds)),
+      addSelection: data => cadenzaClient.addSelection(JSON.parse(data.layer), JSON.parse(data.objectIds)),
+      removeSelection: data => cadenzaClient.removeSelection(JSON.parse(data.layer), JSON.parse(data.objectIds)),
       createGeometry: data => cadenzaClient.createGeometry(data.embeddingTargetId, data.geometryType, getOptions(data)),
       editGeometry: ({ geometry, ...data }) => cadenzaClient.editGeometry(data.embeddingTargetId, JSON.parse(geometry), getOptions(data)),
       selectObjects: data => cadenzaClient.selectObjects(data.embeddingTargetId, getOptions(data)),
       fetchData: data => {
         console.log('Inspect the fetchData() request in the devtools.');
         cadenzaClient.fetchData(data.embeddingTargetId, data.dataType, getOptions(data));
+      },
+      fetchObjectInfo: data => {
+        console.log('Inspect the fetchObjectInfo() request in the devtools.');
+        cadenzaClient.fetchObjectInfo(data.embeddingTargetId, JSON.parse(data.layer), JSON.parse(data.objectIds), getOptions(data))
+          .then(oi => console.log(oi));
       },
       downloadData: data => cadenzaClient.downloadData(data.embeddingTargetId, data.dataType, getOptions(data))
     };
@@ -217,6 +222,7 @@
       layers,
       simplifiedOperationMode,
       useMapSrs,
+      fullGeometries,
       zoomToGeometry
     }) {
       return {
@@ -237,6 +243,7 @@
         ...(simplifiedOperationMode === 'on' && { operationMode: 'simplified' }),
         layers: layers ? JSON.parse(layers) : undefined,
         useMapSrs: useMapSrs === 'on',
+        fullGeometries: fullGeometries === 'on',
         zoomTarget: zoomToGeometry === 'on' ? { type: 'geometry' } : undefined
       };
     }
@@ -286,6 +293,7 @@
           <optgroup label="Without Iframe">
             <option value="downloadData">Download data</option>
             <option value="fetchData">Fetch data</option>
+            <option value="fetchObjectInfo">Fetch Object Info</option>
           </optgroup>
         </select>
       </div>
@@ -520,9 +528,9 @@
   </div>
 </template>
 
-<template data-action="setSelection" data-common="layer,layer-selection"></template>
-<template data-action="addSelection" data-common="layer,layer-selection"></template>
-<template data-action="removeSelection" data-common="layer,layer-selection"></template>
+<template data-action="setSelection" data-common="layer,object-ids"></template>
+<template data-action="addSelection" data-common="layer,object-ids"></template>
+<template data-action="removeSelection" data-common="layer,object-ids"></template>
 
 <template data-action="reload">
   <div>
@@ -534,12 +542,12 @@
 </template>
 <template data-action="closeMe">No Parameters needed.</template>
 
-<template id="common-layer-selection">
+<template id="common-object-ids">
   <div>
-    <label for="values">List of Object IDs *</label>
-    <textarea name="values" id="values" rows="5" required></textarea>
+    <label for="objectids">List of object ID value lists *</label>
+    <textarea name="objectIds" id="objectids" rows="5" required></textarea>
     <small>
-      <p>A JSON value like <code>["object1","object2"]</code></p>
+      <p>A JSON value like <code>[["&lt;object1-id&gt;"],["&lt;object2-id&gt;"]]</code></p>
     </small>
   </div>
 </template>
@@ -581,6 +589,25 @@
   <div>
     <label for="embeddingTargetId">Embedding target ID *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
+  </div>
+</template>
+
+<template data-action="fetchObjectInfo" data-common="layer,object-ids,filter">
+  <div>
+    <label for="embeddingTargetId">Embedding target ID *</label>
+    <input name="embeddingTargetId" id="embeddingTargetId" required>
+  </div>
+  <div>
+    <label>
+      <input type="checkbox" name="useMapSrs">
+      Use map SRS
+    </label>
+  </div>
+  <div>
+    <label>
+      <input type="checkbox" name="fullGeometries">
+      Return the non-simplified geometries
+    </label>
   </div>
 </template>
 
