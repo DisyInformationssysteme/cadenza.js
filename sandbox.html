@@ -176,6 +176,11 @@
         cadenzaClient.fetchObjectInfo(data.embeddingTargetId, JSON.parse(data.layer), JSON.parse(data.objectIds), getOptions(data))
           .then(oi => console.log(oi));
       },
+      fetchAreaIntersection: data => {
+        console.log('Inspect the fetchAreaIntersection() request in the devtools.');
+        cadenzaClient.fetchAreaIntersection(data.embeddingTargetId, JSON.parse(data.layer), JSON.parse(data.geometry), getOptions(data))
+          .then(oi => console.log(oi));
+      },
       downloadData: data => cadenzaClient.downloadData(data.embeddingTargetId, data.dataType, getOptions(data))
     };
 
@@ -223,7 +228,9 @@
       simplifiedOperationMode,
       useMapSrs,
       fullGeometries,
-      zoomToGeometry
+      zoomToGeometry,
+      distance,
+      lengthUnit
     }) {
       return {
         disabledUiFeatures: disabledUiFeatures && disabledUiFeatures.split(','),
@@ -244,7 +251,8 @@
         layers: layers ? JSON.parse(layers) : undefined,
         useMapSrs: useMapSrs === 'on',
         fullGeometries: fullGeometries === 'on',
-        zoomTarget: zoomToGeometry === 'on' ? { type: 'geometry' } : undefined
+        zoomTarget: zoomToGeometry === 'on' ? { type: 'geometry' } : undefined,
+        buffer: distance ? { value: Number(distance), lengthUnit: lengthUnit ? lengthUnit : 'm' } : undefined
       };
     }
 
@@ -293,7 +301,6 @@
           <optgroup label="Without Iframe">
             <option value="downloadData">Download data</option>
             <option value="fetchData">Fetch data</option>
-            <option value="fetchObjectInfo">Fetch Object Info</option>
           </optgroup>
         </select>
       </div>
@@ -608,6 +615,42 @@
       <input type="checkbox" name="fullGeometries">
       Return the non-simplified geometries
     </label>
+  </div>
+</template>
+
+<template data-action="fetchAreaIntersection" data-common="layer">
+  <div>
+    <label for="embeddingTargetId">Embedding target ID *</label>
+    <input name="embeddingTargetId" id="embeddingTargetId" required>
+  </div>
+  <div>
+    <label for="geometry">Intersection Geometry (GeoJSON) *</label>
+    <textarea name="geometry" id="geometry" rows="5" required></textarea>
+    <small>
+      <p>
+        The geometry must result in an area in combination with the buffer specification.
+      </p>
+    </small>
+  </div>
+  <div>
+    <label>
+      <input type="checkbox" name="useMapSrs">
+      Use map SRS
+    </label>
+  </div>
+  <div>
+    <label for="distance">Buffer size</label>
+    <input name="distance" id="distance">
+    <label for="lengthUnit">Length unit</label>
+    <select name="lengthUnit" id="lengthUnit">
+      <option>m</option>
+      <option>km</option>
+    </select>
+    <small>
+      <p>
+        A positive buffer size is needed for point or line intersection geometries.
+      </p>
+    </small>
   </div>
 </template>
 

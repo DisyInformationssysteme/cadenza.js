@@ -367,6 +367,30 @@ const response = await cadenzaClient.fetchObjectInfo('embeddingTargetId', 'layer
 const objectInfo = await response;
 ```
 
+### Fetch the area intersection from a Workbook Map View Layer
+
+<small>API: [CadenzaClient#fetchObjectInfo(./classes/CadenzaClient.html#fetchAreaIntersection)</small>
+
+Download the intersection area from a workbook map view layer in JSON format for a given area. The result contains all intersecting objects of the layer, their object ID, if defined the object name and a geometry representing the intersection area, with area size and area perimeter.
+
+```javascript
+const geometry = {
+  type: 'Point',
+  coordinates: [328_627.563458, 5_921_296.662223],
+};
+const bufferSize = {
+  value: 100,
+  lengthUnit: 'm'
+}
+
+const response = await cadenzaClient.fetchAreaIntersection('embeddingTargetId', 'layerPrintName', geometry, {
+  useMapSrs: true,
+  bufferSize: bufferSize
+});
+
+const featureCollection = await response;
+```
+
 ### Download Data From a Workbook View
 
 <small>API: [CadenzaClient#downloadData](./classes/CadenzaClient.html#downloadData)</small>
