@@ -356,7 +356,7 @@ const tableData = await response.json();
 
 <small>API: [CadenzaClient#fetchObjectInfo(./classes/CadenzaClient.html#fetchObjectInfo)</small>
 
-Download the object info from a workbook map view in JSON format. The result contains all information, that is shown in the object info within cadenza.
+Fetch the object info from a workbook map view in JSON format. The result contains all information, that is shown in the object info within cadenza.
 
 ```javascript
 const response = await cadenzaClient.fetchObjectInfo('embeddingTargetId', 'layerPrintName', [['objectId']], {
@@ -364,14 +364,14 @@ const response = await cadenzaClient.fetchObjectInfo('embeddingTargetId', 'layer
   fullGeometries: true
 });
 
-const objectInfo = await response;
+const objectInfo = response;
 ```
 
 ### Fetch the area intersection from a Workbook Map View Layer
 
-<small>API: [CadenzaClient#fetchObjectInfo(./classes/CadenzaClient.html#fetchAreaIntersection)</small>
+<small>API: [CadenzaClient#fetchObjectInfo(./classes/CadenzaClient.html#fetchAreaIntersections)</small>
 
-Download the intersection area from a workbook map view layer in JSON format for a given area. The result contains all intersecting objects of the layer, their object ID, if defined the object name and a geometry representing the intersection area, with area size and area perimeter.
+Fetch the intersection area from a workbook map view layer in JSON format for a given area. The result contains all intersecting objects of the layer, their object ID, if defined the object name and a geometry representing the intersection area, with area size and area perimeter.
 
 ```javascript
 const geometry = {
@@ -383,12 +383,12 @@ const bufferSize = {
   lengthUnit: 'm'
 }
 
-const response = await cadenzaClient.fetchAreaIntersection('embeddingTargetId', 'layerPrintName', geometry, {
+const response = await cadenzaClient.fetchAreaIntersections('embeddingTargetId', 'layerPrintName', geometry, {
   useMapSrs: true,
   bufferSize: bufferSize
 });
 
-const featureCollection = await response;
+const featureCollection = response;
 ```
 
 ### Download Data From a Workbook View

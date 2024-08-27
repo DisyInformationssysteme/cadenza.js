@@ -929,27 +929,26 @@ export class CadenzaClient {
   }
 
   /**
-   *  Fetch the intersection area from a workbook map view layer in JSON format for a given area.
+   *  Fetch the intersection areas from a workbook map view layer in JSON format for a given area.
    *
    * @param {EmbeddingTargetId} source - The workbook view to fetch object info from.
    * @param {(WorkbookLayerPath | string)[]} layerPath - Layer path to identify the layer
    *  (identified using layer paths or print names)
    * @param {Geometry} geometry - The intersection geometry
    * @param {object} [options] - Options
-   * @param {boolean} [options.useMapSrs]  -  Whether the geometry and the extent are in the map's SRS (otherwise EPSG:4326 is assumed)
+   * @param {boolean} [options.useMapSrs]  - The intersection geometry and the result geometries are in the map's SRS (otherwise EPSG:4326 is assumed)
    * @param {Distance} [options.buffer] - Buffer size for geometry of the transition
    * @param {AbortSignal} [options.signal] - A signal to abort the data fetching
    * @return {Promise<FeatureCollection>} A `Promise` for the fetch response
-   * @throws For invalid arguments
    * @server
    */
-  fetchAreaIntersection(
+  fetchAreaIntersections(
     source,
     layerPath,
     geometry,
     { useMapSrs, buffer, signal} = {},
   ) {
-    this.#log('CadenzaClient#areaIntersection', ...arguments);
+    this.#log('CadenzaClient#areaIntersections', ...arguments);
     const params = createParams({});
     return this.#fetch(
       resolvePath(source) + '/area-intersections',
