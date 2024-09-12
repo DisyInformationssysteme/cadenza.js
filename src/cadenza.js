@@ -393,6 +393,7 @@ export class CadenzaClient {
     if (geometry) {
       assertValidGeometryType(geometry.type);
     }
+    const zoomToGeometry = geometry && zoomTarget?.type === 'geometry';
     const params = createParams({
       disabledUiFeatures,
       expandNavigator,
@@ -400,7 +401,9 @@ export class CadenzaClient {
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
       highlightGlobalId,
-      locationFinder,
+      // only use locationFinder if zoom to geometry is not set, to avoid
+      // zooming race condition for Cadenza versions below 10.1
+      locationFinder: zoomToGeometry ? undefined : locationFinder,
       mapExtent,
       operationMode,
       targetType: 'MAP',
@@ -410,7 +413,7 @@ export class CadenzaClient {
     if (geometry) {
       this.#postEvent('setGeometry', {
         geometry,
-        zoomToGeometry: zoomTarget?.type === 'geometry',
+        zoomToGeometry,
       });
     }
   }
@@ -599,10 +602,13 @@ export class CadenzaClient {
   ) {
     this.#log('CadenzaClient#editGeometry', ...arguments);
     assertValidGeometryType(geometry.type);
+    const zoomToGeometry = geometry && zoomTarget?.type === 'geometry';
     const params = createParams({
       action: 'editGeometry',
       filter,
-      locationFinder,
+      // only use locationFinder if zoom to geometry is not set, to avoid
+      // zooming race condition for Cadenza versions below 10.1
+      locationFinder: zoomToGeometry ? undefined : locationFinder,
       mapExtent,
       minScale,
       useMapSrs,
@@ -611,7 +617,7 @@ export class CadenzaClient {
     if (geometry) {
       this.#postEvent('setGeometry', {
         geometry,
-        zoomToGeometry: zoomTarget?.type === 'geometry',
+        zoomToGeometry,
       });
     }
   }
