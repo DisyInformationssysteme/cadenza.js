@@ -946,7 +946,7 @@ export class CadenzaClient {
     source,
     layerPath,
     geometry,
-    { useMapSrs, buffer, signal} = {},
+    { useMapSrs, buffer, signal } = {},
   ) {
     this.#log('CadenzaClient#areaIntersections', ...arguments);
     const params = createParams({});
