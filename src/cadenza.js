@@ -109,6 +109,15 @@ globalThis.cadenza = Object.assign(
  * */
 
 /**
+ * @typedef Distance
+ * @property {number} value
+ * @property {LengthUnit} lengthUnit
+ */
+/**
+ * @typedef {'m'|'km'} LengthUnit
+ */
+
+/**
  * @typedef Geometry - A [GeoJSON](https://geojson.org/) geometry object
  * @property {GeometryType} type - The type of the geometry
  */
@@ -921,6 +930,41 @@ export class CadenzaClient {
         layerPath: array(layerPath),
         useMapSrs,
         fullGeometries,
+      }),
+    ).then((response) => response.json());
+  }
+
+  /**
+   *  Fetch the intersection areas from a workbook map view layer in JSON format for a given area.
+   *
+   * @param {EmbeddingTargetId} source - The workbook view to fetch object info from.
+   * @param {(WorkbookLayerPath | string)[]} layerPath - Layer path to identify the layer
+   *  (identified using layer paths or print names)
+   * @param {Geometry} geometry - The intersection geometry
+   * @param {object} [options] - Options
+   * @param {boolean} [options.useMapSrs]  - The intersection geometry and the result geometries are in the map's SRS (otherwise EPSG:4326 is assumed)
+   * @param {Distance} [options.buffer] - Buffer size for geometry of the transition
+   * @param {AbortSignal} [options.signal] - A signal to abort the data fetching
+   * @return {Promise<FeatureCollection>} A `Promise` for the fetch response
+   * @server
+   */
+  fetchAreaIntersections(
+    source,
+    layerPath,
+    geometry,
+    { useMapSrs, buffer, signal } = {},
+  ) {
+    this.#log('CadenzaClient#areaIntersections', ...arguments);
+    const params = createParams({});
+    return this.#fetch(
+      resolvePath(source) + '/area-intersections',
+      params,
+      signal,
+      JSON.stringify({
+        layerPath: layerPath,
+        geometry: geometry,
+        useMapSrs: useMapSrs,
+        buffer: buffer,
       }),
     ).then((response) => response.json());
   }

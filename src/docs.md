@@ -356,7 +356,7 @@ const tableData = await response.json();
 
 <small>API: [CadenzaClient#fetchObjectInfo(./classes/CadenzaClient.html#fetchObjectInfo)</small>
 
-Download the object info from a workbook map view in JSON format. The result contains all information, that is shown in the object info within cadenza.
+Fetch the object info from a workbook map view in JSON format. The result contains all information, that is shown in the object info within cadenza.
 
 ```javascript
 const response = await cadenzaClient.fetchObjectInfo('embeddingTargetId', 'layerPrintName', [['objectId']], {
@@ -364,7 +364,31 @@ const response = await cadenzaClient.fetchObjectInfo('embeddingTargetId', 'layer
   fullGeometries: true
 });
 
-const objectInfo = await response;
+const objectInfo = response;
+```
+
+### Fetch the area intersection from a Workbook Map View Layer
+
+<small>API: [CadenzaClient#fetchObjectInfo(./classes/CadenzaClient.html#fetchAreaIntersections)</small>
+
+Fetch the intersection area from a workbook map view layer in JSON format for a given area. The result contains all intersecting objects of the layer, their object ID, if defined the object name and a geometry representing the intersection area, with area size and area perimeter.
+
+```javascript
+const geometry = {
+  type: 'Point',
+  coordinates: [328_627.563458, 5_921_296.662223],
+};
+const bufferSize = {
+  value: 100,
+  lengthUnit: 'm'
+}
+
+const response = await cadenzaClient.fetchAreaIntersections('embeddingTargetId', 'layerPrintName', geometry, {
+  useMapSrs: true,
+  bufferSize: bufferSize
+});
+
+const featureCollection = response;
 ```
 
 ### Download Data From a Workbook View
