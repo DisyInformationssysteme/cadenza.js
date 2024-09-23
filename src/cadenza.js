@@ -291,7 +291,9 @@ export class CadenzaClient {
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
-   * @fires {@link CadenzaDrillThroughEvent}
+   * @fires
+   * - {@link CadenzaDrillThroughEvent}
+   * - {@link CadenzaActionEvent}
    * @embed
    */
   show(
@@ -377,7 +379,9 @@ export class CadenzaClient {
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
-   * @fires {@link CadenzaDrillThroughEvent}
+   * @fires
+   * - {@link CadenzaDrillThroughEvent}
+   * - {@link CadenzaActionEvent}
    * @embed
    */
   async showMap(
@@ -1279,7 +1283,8 @@ function array(/** @type unknown */ value) {
 
 // Please do not add internal event types like 'ready' here.
 /**
- * @typedef {'change:selection'
+ * @typedef {'action'
+ * | 'change:selection'
  * | 'drillThrough'
  * | 'editGeometry:ok'
  * | 'editGeometry:update'
@@ -1292,7 +1297,8 @@ function array(/** @type unknown */ value) {
 
 /**
  * @template {CadenzaEventType} T
- * @typedef {T extends 'change:selection' ? CadenzaChangeSelectionEvent
+ * @typedef {T extends 'action' ? CadenzaActionEvent
+ *  : T extends 'change:selection' ? CadenzaChangeSelectionEvent
  *  : T extends 'drillThrough' ? CadenzaDrillThroughEvent
  *  : T extends 'editGeometry:update' ? CadenzaEditGeometryUpdateEvent
  *  : T extends 'editGeometry:ok' ? CadenzaEditGeometryOkEvent
@@ -1310,6 +1316,9 @@ function array(/** @type unknown */ value) {
  * @typedef CadenzaEvent - A Cadenza `postMessage()` event
  * @property {TYPE} type - The event type
  * @property {DETAIL} detail - Optional event details (depending on the event type)
+ */
+/**
+ * @typedef {CadenzaEvent<'action', {context: string}>} CadenzaActionEvent - When the user executed a POST message action, which is defined on an external link in the Cadenza management center.
  */
 /*
  * @hidden

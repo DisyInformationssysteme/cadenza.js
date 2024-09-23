@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `CadenzaClient#fetchAreaIntersections`
 - `CadenzaClient#fetchObjectInfo`
+- `CadenzaActionEvent`
 
 ## 2.11.0 - 2024-07-12
 ### Added
