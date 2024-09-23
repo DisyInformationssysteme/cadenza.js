@@ -961,7 +961,7 @@ export class CadenzaClient {
       params,
       signal,
       JSON.stringify({
-        layerPath: layerPath,
+        layerPath: array(layerPath),
         geometry: geometry,
         useMapSrs: useMapSrs,
         buffer: buffer,
