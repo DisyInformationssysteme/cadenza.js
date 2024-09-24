@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `CadenzaActionEvent`
 
+## 2.13.0 - 2024-09-24
+
 ## 2.12.0 - 2024-09-23
 ### Added
 - `CadenzaClient#fetchAreaIntersections`
