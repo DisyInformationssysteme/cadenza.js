@@ -565,7 +565,15 @@ export class CadenzaClient {
   createGeometry(
     backgroundMapView,
     geometryType,
-    { filter, locationFinder, mapExtent, minScale, useMapSrs, operationMode, signal } = {},
+    {
+      filter,
+      locationFinder,
+      mapExtent,
+      minScale,
+      useMapSrs,
+      operationMode,
+      signal,
+    } = {},
   ) {
     this.#log('CadenzaClient#createGeometry', ...arguments);
     const params = createParams({
@@ -664,7 +672,15 @@ export class CadenzaClient {
    */
   selectObjects(
     backgroundMapView,
-    { filter, layers, locationFinder, mapExtent, useMapSrs, operationMode, signal } = {},
+    {
+      filter,
+      layers,
+      locationFinder,
+      mapExtent,
+      useMapSrs,
+      operationMode,
+      signal,
+    } = {},
   ) {
     this.#log('CadenzaClient#selectObjects', ...arguments);
     const params = createParams({
