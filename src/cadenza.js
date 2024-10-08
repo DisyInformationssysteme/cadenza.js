@@ -162,6 +162,7 @@ globalThis.cadenza = Object.assign(
  * @typedef FeatureCollection - A adapted [GeoJSON](https://geojson.org/) feature collection object
  * @property {Feature[]} features - The features within this collection
  */
+/** @typedef {'error'|'warning'|'info'|'success'} CustomValidityType - The type of custom validity used for disclose on visual presentation and form submission behavior */
 
 let hasCadenzaSession = false;
 
@@ -646,6 +647,23 @@ export class CadenzaClient {
         zoomToGeometry,
       });
     }
+  }
+
+  /**
+   * Set custom validity state of the geometry editor in addition to the default validation state (including errors and
+   * warnings). When set to error the dialog submission is blocked.
+   * If there already is a custom state set it will override it.
+   * Passing '' will reset the custom state to undefined, meaning no custom state is displayed.
+   * If no geometry editing is started, the method call has no effect.
+   * @param {string} message The message to show in the dialog
+   * @param {CustomValidityType} [type] The type of message (defaults to 'error')
+   */
+  setCustomValidity(message, type = 'error') {
+    assert(
+      ['error', 'warning', 'info', 'success'].includes(type),
+      `Invalid validity type: ${type}`,
+    );
+    this.#postEvent('setCustomValidity', { message, type });
   }
 
   /**
