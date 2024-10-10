@@ -231,7 +231,8 @@
       fullGeometries,
       zoomToGeometry,
       distance,
-      lengthUnit
+      lengthUnit,
+      additionalLayerDefinitions
     }) {
       return {
         disabledUiFeatures: disabledUiFeatures && disabledUiFeatures.split(','),
@@ -253,7 +254,8 @@
         useMapSrs: useMapSrs === 'on',
         fullGeometries: fullGeometries === 'on',
         zoomTarget: zoomToGeometry === 'on' ? { type: 'geometry' } : undefined,
-        buffer: distance ? { value: Number(distance), lengthUnit: lengthUnit ? lengthUnit : 'm' } : undefined
+        buffer: distance ? { value: Number(distance), lengthUnit: lengthUnit ? lengthUnit : 'm' } : undefined,
+        additionalLayerDefinitions: additionalLayerDefinitions && JSON.parse(additionalLayerDefinitions)
       };
     }
 
@@ -496,6 +498,10 @@
     <input name="embeddingTargetId" id="embeddingTargetId" required>
   </div>
   <div>
+    <label for="geometry">Additional layers (GeoJSON)</label>
+    <textarea name="additionalLayerDefinitions" id="additionalLayerDefinitions" rows="10"></textarea>
+  </div>
+  <div>
     <label for="geometryType">Geometry type</label>
     <select name="geometryType" id="geometryType">
       <option>Point</option>
@@ -522,6 +528,10 @@
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
+  </div>
+  <div>
+    <label for="geometry">Additional layers (GeoJSON)</label>
+    <textarea name="additionalLayerDefinitions" id="additionalLayerDefinitions" rows="10"></textarea>
   </div>
   <div>
     <label for="geometry">Geometry (GeoJSON) *</label>

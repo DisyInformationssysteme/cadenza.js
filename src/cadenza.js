@@ -555,6 +555,8 @@ export class CadenzaClient {
    * @param {boolean} [options.useMapSrs] - Whether the created geometry should use the map's SRS (otherwise EPSG:4326 will be used)
    * @param {OperationMode} [options.operationMode] - The mode in which a workbook should be operated
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
+   * @param {Object} [options.additionalLayerDefinitions] - Layer definitions to be imported and shown in the background, as a basis for the drawing.
+   * @param {Object[]} [options.additionalLayerDefinitions.additionalLayers] - Layer definition, with name, type and content (a Geojson featureCollection).
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires
@@ -563,7 +565,7 @@ export class CadenzaClient {
    * - {@link CadenzaEditGeometryCancelEvent}
    * @embed
    */
-  createGeometry(
+  async createGeometry(
     backgroundMapView,
     geometryType,
     {
@@ -574,6 +576,7 @@ export class CadenzaClient {
       useMapSrs,
       operationMode,
       signal,
+      additionalLayerDefinitions,
     } = {},
   ) {
     this.#log('CadenzaClient#createGeometry', ...arguments);
@@ -587,7 +590,16 @@ export class CadenzaClient {
       useMapSrs,
       operationMode,
     });
-    return this.#show(resolvePath(backgroundMapView), params, signal);
+    console.log('createGeometry');
+    await this.#show(resolvePath(backgroundMapView), params, signal);
+    if (
+      additionalLayerDefinitions &&
+      additionalLayerDefinitions.additionalLayers
+    ) {
+      additionalLayerDefinitions.additionalLayers.forEach((layer) =>
+        this.#postEvent('importLayers', layer),
+      );
+    }
   }
 
   /**
@@ -604,6 +616,8 @@ export class CadenzaClient {
    * @param {OperationMode} [options.operationMode] - The mode in which a workbook should be operated
    * @param {ZoomTarget} [options.zoomTarget] - A target Cadenza should zoom to
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
+   * @param {Object} [options.additionalLayerDefinitions] - Layer definitions to be imported and shown in the background, as a basis for the drawing.
+   * @param {Object[]} [options.additionalLayerDefinitions.additionalLayers] - Layer definition, with name, type and content (a Geojson featureCollection).
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires
@@ -624,6 +638,7 @@ export class CadenzaClient {
       zoomTarget,
       operationMode,
       signal,
+      additionalLayerDefinitions,
     } = {},
   ) {
     this.#log('CadenzaClient#editGeometry', ...arguments);
@@ -646,6 +661,14 @@ export class CadenzaClient {
         geometry,
         zoomToGeometry,
       });
+    }
+    if (
+      additionalLayerDefinitions &&
+      additionalLayerDefinitions.additionalLayers
+    ) {
+      additionalLayerDefinitions.additionalLayers.forEach((layer) =>
+        this.#postEvent('importLayers', layer),
+      );
     }
   }
 
