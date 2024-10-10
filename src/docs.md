@@ -10,11 +10,16 @@ Cadenza JS is a JavaScript library to use the [disy Cadenza](https://www.disy.ne
 
 Cadenza JS is included in the Cadenza distribution in the corresponding version.
 
-Alternatively you can install the most recent version using npm:
+Alternatively you can install the most recent version for a particular Cadenza Release using npm:
 
 ```bash
-npm install @disy/cadenza.js
+npm install @disy/cadenza.js@~10.2.0 # For latest version for Cadenza 10.2 
 ```
+
+The Cadenza main version is reflected in the corresponding major and minor version of Cadenza JS (e.g. 10.2.0 for Cadenza 10.2), while the last version segment is increased for both, bugfixes and functional changes.
+
+### Cadenza 10.1 and earlier
+For Cadenza 10.1 and earlier versions Cadenza JS used did use genuine semantic versioning. Please consult the Cadenza Documentation for the corresponding major and minor version of cadenza.js.
 
 ## Usage Examples
 
