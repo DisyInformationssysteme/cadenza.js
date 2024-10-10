@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 2.13.2 - 2024-10-10
 ### Added
-- Added the simplified mode switch to Create-, Edit- and Select-Geometry
+- `operationMode` option for `CadenzaClient#createGeometry`, `CadenzaClient#editGeometry` and `CadenzaClient#selectObjects`
 
 ## 2.13.1 - 2024-09-24
 ### Fixed
