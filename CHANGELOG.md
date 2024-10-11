@@ -5,12 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project uses a version scheme based on the Cadenza main version in the format x.x.y, where x.x is the Cadenza main version and y a functional change or bugfix.
 
 ## Unreleased
-### Changed
-- Base the version scheme on the Cadenza main version (starting with Cadenza 10.2). New versions have the format x.x.y, where x.x is the Cadenza main version and y a functional change or bugfix.
-
-## 2.13.2 - 2024-10-10
 ### Added
 - `operationMode` option for `CadenzaClient#createGeometry`, `CadenzaClient#editGeometry` and `CadenzaClient#selectObjects`
+
+### Changed
+- Base the version scheme on the Cadenza main version (starting with Cadenza 10.2). New versions have the format x.x.y, where x.x is the Cadenza main version and y a functional change or bugfix.
 
 ## 2.13.1 - 2024-09-24
 ### Fixed
