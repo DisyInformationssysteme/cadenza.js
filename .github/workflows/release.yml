@@ -1,6 +1,3 @@
-# This workflow should only be used for version releases for Cadenza JS versions bundled with
-# Cadenza 10.2 and later. For earlier versions use the "Legacy Release" workflow.
-
 name: Release
 
 on:
