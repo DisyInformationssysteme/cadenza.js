@@ -58,7 +58,7 @@ jobs:
 
     - name: Bump package version (Cadenza main version release)
       if: "${{ github.event.inputs.cadenza-version != '' }}"
-      run: echo "NEW_VERSION=${{ github.event.inputs.cadenza-version }}.0" >> $GITHUB_ENV
+      run: echo "NEW_VERSION=$(npm --no-git-tag-version version ${{ github.event.inputs.cadenza-version }}.0)" >> $GITHUB_ENV
 
     - name: Set release tag to 'latest'
       run: echo "RELEASE_TAG=latest" >> $GITHUB_ENV
