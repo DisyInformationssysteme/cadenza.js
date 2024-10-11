@@ -7,7 +7,7 @@ on:
         type: string
         description: |
           Cadenza Main Version
-          (Required only to create a new .0 release (e.g. 10.2.0). Otherwise the current version is incremented.)'
+          (e.g. '10.2'; Required only to create a new *.0 release, e.g. 10.2.0 for Cadenza 10.2. Otherwise the current version is incremented)
     
 
 jobs:
