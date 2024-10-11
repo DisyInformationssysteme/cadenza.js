@@ -181,7 +181,8 @@
         cadenzaClient.fetchAreaIntersections(data.embeddingTargetId, JSON.parse(data.layer), JSON.parse(data.geometry), getOptions(data))
           .then(console.log);
       },
-      downloadData: data => cadenzaClient.downloadData(data.embeddingTargetId, data.dataType, getOptions(data))
+      downloadData: data => cadenzaClient.downloadData(data.embeddingTargetId, data.dataType, getOptions(data)),
+      setCustomValidity: data => cadenzaClient.setCustomValidity(data.message, data.type || undefined)
     };
 
     const form = document.getElementById('form');
@@ -247,7 +248,7 @@
         mapExtent: mapExtent && mapExtent.split(',').map(Number),
         minScale: minScale && Number(minScale),
         parts: parts && parts.split(','),
-        ...(simplifiedOperationMode === 'on' && { operationMode: 'simplified' }),
+        operationMode: (simplifiedOperationMode === 'on' ? 'simplified' : 'normal' ),
         layers: layers ? JSON.parse(layers) : undefined,
         useMapSrs: useMapSrs === 'on',
         fullGeometries: fullGeometries === 'on',
@@ -297,6 +298,7 @@
             <option value="createGeometry">Create Geometry</option>
             <option value="editGeometry">Edit Geometry</option>
             <option value="selectObjects">Select Objects</option>
+            <option value="setCustomValidity">Set Custom Validity</option>
           </optgroup>
           <optgroup label="Without Iframe">
             <option value="downloadData">Download data</option>
@@ -472,6 +474,20 @@
   </div>
 </template>
 
+<template data-action="setCustomValidity">
+  <p>Requires a geometry editing UI (Create / Edit Geometry actions) to be opened first.</p>
+  <label for="message">Message</label>
+  <input type="text" name="message" id="message">
+  <label for="type">Type</label>
+  <select name="type" id="type">
+    <option selected></option>
+    <option>success</option>
+    <option>info</option>
+    <option>warning</option>
+    <option>error</option>
+  </select>
+</template>
+
 <template data-action="setFilter" data-common="filter"></template>
 
 <template data-action="createGeometry" data-common="map,filter">
@@ -491,6 +507,12 @@
     </select>
   </div>
   <div>
+    <label>
+      <input type="checkbox" name="simplifiedOperationMode">
+      Simplified operation mode
+    </label>
+  </div>
+  <div>
     <label for="minScale">Minimum Scale</label>
     <input type="number" name="minScale" id="minScale">
   </div>
@@ -506,6 +528,12 @@
     <textarea name="geometry" id="geometry" rows="5" required></textarea>
   </div>
   <div>
+    <label>
+      <input type="checkbox" name="simplifiedOperationMode">
+      Simplified operation mode
+    </label>
+  </div>
+  <div>
     <label for="minScale">Minimum Scale</label>
     <input type="number" name="minScale" id="minScale">
   </div>
@@ -515,6 +543,12 @@
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
+  </div>
+  <div>
+    <label>
+      <input type="checkbox" name="simplifiedOperationMode">
+      Simplified operation mode
+    </label>
   </div>
   <div>
     <label for="layers">Layers</label>

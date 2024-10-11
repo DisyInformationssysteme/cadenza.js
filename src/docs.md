@@ -359,12 +359,10 @@ const tableData = await response.json();
 Fetch the object info from a workbook map view in JSON format. The result contains all information, that is shown in the object info within cadenza.
 
 ```javascript
-const response = await cadenzaClient.fetchObjectInfo('embeddingTargetId', 'layerPrintName', [['objectId']], {
+const objectInfo = await cadenzaClient.fetchObjectInfo('embeddingTargetId', 'layerPrintName', [['objectId']], {
   useMapSrs: false,
   fullGeometries: true
 });
-
-const objectInfo = response;
 ```
 
 ### Fetch the area intersection from a Workbook Map View Layer
@@ -383,12 +381,10 @@ const bufferSize = {
   lengthUnit: 'm'
 }
 
-const response = await cadenzaClient.fetchAreaIntersections('embeddingTargetId', 'layerPrintName', geometry, {
+const featureCollection = await cadenzaClient.fetchAreaIntersections('embeddingTargetId', 'layerPrintName', geometry, {
   useMapSrs: true,
   bufferSize: bufferSize
 });
-
-const featureCollection = response;
 ```
 
 ### Download Data From a Workbook View

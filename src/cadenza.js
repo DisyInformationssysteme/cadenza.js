@@ -162,6 +162,7 @@ globalThis.cadenza = Object.assign(
  * @typedef FeatureCollection - A adapted [GeoJSON](https://geojson.org/) feature collection object
  * @property {Feature[]} features - The features within this collection
  */
+/** @typedef {'error'|'warning'|'info'|'success'} CustomValidityType - The type of custom validity used for disclose on visual presentation and form submission behavior */
 
 let hasCadenzaSession = false;
 
@@ -552,6 +553,7 @@ export class CadenzaClient {
    * @param {Extent} [options.mapExtent] - A map extent to set
    * @param {number} [options.minScale] - The minimum scale where the user should work on. A warning is shown when the map is zoomed out above the threshold.
    * @param {boolean} [options.useMapSrs] - Whether the created geometry should use the map's SRS (otherwise EPSG:4326 will be used)
+   * @param {OperationMode} [options.operationMode] - The mode in which a workbook should be operated
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
@@ -564,7 +566,15 @@ export class CadenzaClient {
   createGeometry(
     backgroundMapView,
     geometryType,
-    { filter, locationFinder, mapExtent, minScale, useMapSrs, signal } = {},
+    {
+      filter,
+      locationFinder,
+      mapExtent,
+      minScale,
+      useMapSrs,
+      operationMode,
+      signal,
+    } = {},
   ) {
     this.#log('CadenzaClient#createGeometry', ...arguments);
     const params = createParams({
@@ -575,6 +585,7 @@ export class CadenzaClient {
       mapExtent,
       minScale,
       useMapSrs,
+      operationMode,
     });
     return this.#show(resolvePath(backgroundMapView), params, signal);
   }
@@ -590,6 +601,7 @@ export class CadenzaClient {
    * @param {Extent} [options.mapExtent] - A map extent to set
    * @param {number} [options.minScale] - The minimum scale where the user should work on. A warning is shown when the map is zoomed out above the threshold.
    * @param {boolean} [options.useMapSrs] - Whether the geometry is in the map's SRS (otherwise EPSG:4326 is assumed)
+   * @param {OperationMode} [options.operationMode] - The mode in which a workbook should be operated
    * @param {ZoomTarget} [options.zoomTarget] - A target Cadenza should zoom to
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
@@ -610,6 +622,7 @@ export class CadenzaClient {
       minScale,
       useMapSrs,
       zoomTarget,
+      operationMode,
       signal,
     } = {},
   ) {
@@ -625,6 +638,7 @@ export class CadenzaClient {
       mapExtent,
       minScale,
       useMapSrs,
+      operationMode,
     });
     await this.#show(resolvePath(backgroundMapView), params, signal);
     if (geometry) {
@@ -633,6 +647,23 @@ export class CadenzaClient {
         zoomToGeometry,
       });
     }
+  }
+
+  /**
+   * Set custom validity state of the geometry editor in addition to the default validation state (including errors and
+   * warnings). When set to error the dialog submission is blocked.
+   * If there already is a custom state set it will override it.
+   * Passing '' will reset the custom state to undefined, meaning no custom state is displayed.
+   * If no geometry editing is started, the method call has no effect.
+   * @param {string} message The message to show in the dialog
+   * @param {CustomValidityType} [type] The type of message (defaults to 'error')
+   */
+  setCustomValidity(message, type = 'error') {
+    assert(
+      ['error', 'warning', 'info', 'success'].includes(type),
+      `Invalid validity type: ${type}`,
+    );
+    this.#postEvent('setCustomValidity', { message, type });
   }
 
   /**
@@ -646,6 +677,7 @@ export class CadenzaClient {
    * @param {string} [options.locationFinder] - A search query for the location finder
    * @param {Extent} [options.mapExtent] - A map extent to set
    * @param {boolean} [options.useMapSrs] - Whether the geometry is in the map's SRS (otherwise EPSG:4326 is assumed)
+   * @param {OperationMode} [options.operationMode] - The mode in which a workbook should be operated
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
@@ -658,7 +690,15 @@ export class CadenzaClient {
    */
   selectObjects(
     backgroundMapView,
-    { filter, layers, locationFinder, mapExtent, useMapSrs, signal } = {},
+    {
+      filter,
+      layers,
+      locationFinder,
+      mapExtent,
+      useMapSrs,
+      operationMode,
+      signal,
+    } = {},
   ) {
     this.#log('CadenzaClient#selectObjects', ...arguments);
     const params = createParams({
@@ -668,6 +708,7 @@ export class CadenzaClient {
       locationFinder,
       mapExtent,
       useMapSrs,
+      operationMode,
     });
     return this.#show(resolvePath(backgroundMapView), params, signal);
   }
@@ -1270,7 +1311,7 @@ function createParams({
     ...(locationFinder && { locationFinder }),
     ...(mapExtent && { mapExtent: mapExtent.join() }),
     ...(minScale && { minScale: String(minScale) }),
-    ...(operationMode && operationMode !== 'normal' && { operationMode }),
+    ...(operationMode && { operationMode }),
     ...(parts && { parts: parts.join() }),
     ...(targetType && { targetType }),
     ...(useMapSrs && { useMapSrs: 'true' }),
