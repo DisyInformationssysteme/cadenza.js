@@ -181,7 +181,8 @@
         cadenzaClient.fetchAreaIntersections(data.embeddingTargetId, JSON.parse(data.layer), JSON.parse(data.geometry), getOptions(data))
           .then(console.log);
       },
-      downloadData: data => cadenzaClient.downloadData(data.embeddingTargetId, data.dataType, getOptions(data))
+      downloadData: data => cadenzaClient.downloadData(data.embeddingTargetId, data.dataType, getOptions(data)),
+      setCustomValidity: data => cadenzaClient.setCustomValidity(data.message, data.type || undefined)
     };
 
     const form = document.getElementById('form');
@@ -297,6 +298,7 @@
             <option value="createGeometry">Create Geometry</option>
             <option value="editGeometry">Edit Geometry</option>
             <option value="selectObjects">Select Objects</option>
+            <option value="setCustomValidity">Set Custom Validity</option>
           </optgroup>
           <optgroup label="Without Iframe">
             <option value="downloadData">Download data</option>
@@ -470,6 +472,20 @@
     <label for="geometry">Geometry (GeoJSON)</label>
     <textarea name="geometry" id="geometry" rows="5"></textarea>
   </div>
+</template>
+
+<template data-action="setCustomValidity">
+  <p>Requires a geometry editing UI (Create / Edit Geometry actions) to be opened first.</p>
+  <label for="message">Message</label>
+  <input type="text" name="message" id="message">
+  <label for="type">Type</label>
+  <select name="type" id="type">
+    <option selected></option>
+    <option>success</option>
+    <option>info</option>
+    <option>warning</option>
+    <option>error</option>
+  </select>
 </template>
 
 <template data-action="setFilter" data-common="filter"></template>
