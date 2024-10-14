@@ -1,6 +1,3 @@
-# This workflow should only be used for version releases for Cadenza JS versions bundled with
-# Cadenza 10.2 and later. For earlier versions use the "Legacy Release" workflow.
-
 name: Release
 
 on:
@@ -10,7 +7,7 @@ on:
         type: string
         description: |
           Cadenza Main Version
-          (Required only to create a new .0 release (e.g. 10.2.0). Otherwise the current version is incremented.)'
+          (e.g. '10.2'; Required only to create a new *.0 release, e.g. 10.2.0 for Cadenza 10.2. Otherwise the current version is incremented)
     
 
 jobs:
