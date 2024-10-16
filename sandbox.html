@@ -232,7 +232,7 @@
       zoomToGeometry,
       distance,
       lengthUnit,
-      additionalLayerDefinitions
+      additionalLayers
     }) {
       return {
         disabledUiFeatures: disabledUiFeatures && disabledUiFeatures.split(','),
@@ -255,7 +255,7 @@
         fullGeometries: fullGeometries === 'on',
         zoomTarget: zoomToGeometry === 'on' ? { type: 'geometry' } : undefined,
         buffer: distance ? { value: Number(distance), lengthUnit: lengthUnit ? lengthUnit : 'm' } : undefined,
-        additionalLayerDefinitions: additionalLayerDefinitions && JSON.parse(additionalLayerDefinitions)
+        additionalLayers: additionalLayers && JSON.parse(additionalLayers)
       };
     }
 
@@ -499,7 +499,7 @@
   </div>
   <div>
     <label for="geometry">Additional layers (GeoJSON)</label>
-    <textarea name="additionalLayerDefinitions" id="additionalLayerDefinitions" rows="10"></textarea>
+    <textarea name="additionalLayers" id="additionalLayers" rows="10"></textarea>
   </div>
   <div>
     <label for="geometryType">Geometry type</label>
@@ -531,7 +531,7 @@
   </div>
   <div>
     <label for="geometry">Additional layers (GeoJSON)</label>
-    <textarea name="additionalLayerDefinitions" id="additionalLayerDefinitions" rows="10"></textarea>
+    <textarea name="additionalLayers" id="additionalLayers" rows="10"></textarea>
   </div>
   <div>
     <label for="geometry">Geometry (GeoJSON) *</label>
