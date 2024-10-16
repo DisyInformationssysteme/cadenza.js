@@ -1333,6 +1333,7 @@ function array(/** @type unknown */ value) {
  * | 'objectInfo'
  * | 'selectObjects:ok'
  * | 'selectObjects:cancel'
+ * | 'reload'
  * } CadenzaEventType - An event type to subscribe to using {@link CadenzaClient#on}
  */
 
@@ -1347,6 +1348,7 @@ function array(/** @type unknown */ value) {
  *  : T extends 'objectInfo' ? CadenzaObjectInfoEvent
  *  : T extends 'selectObjects:ok' ? CadenzaSelectObjectsOkEvent
  *  : T extends 'selectObjects:cancel' ? CadenzaSelectObjectsCancelEvent
+ *  : T extends 'reload' ? CadenzaReloadEvent
  *  : never
  * } CadenzaEventByType
  */
@@ -1391,6 +1393,13 @@ function array(/** @type unknown */ value) {
  * For a selection in a workbook map view with activated feature info, the values also include the simplified geometries of the selected objects.
  */
 /** @typedef {CadenzaEvent<'selectObjects:cancel'>} CadenzaSelectObjectsCancelEvent - When the user cancelled the selection. */
+/**
+ * @typedef {CadenzaEvent<'reload'>} CadenzaReloadEvent - When the user clicked on the 'reload' button in the embedding standby page
+ *
+ * If a user does not interact with the iframe displaying the Cadenza content for a while, a standby embed page is displayed
+ * and the user can click a reload button there. Then the application using Cadenza JS can re-trigger the loading of the iframe
+ * with the correct original URL and parameters and do what was originally done when displaying that iframe.
+ */
 
 export class AbortError extends DOMException {
   constructor() {
