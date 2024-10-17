@@ -540,6 +540,13 @@ export class CadenzaClient {
   }
 
   /**
+   * @typedef {Object} LayerDefinition
+   * @property {string} name - The layer's name.
+   * @property {'geojson'} type - The layer's type.
+   * @property {FeatureCollection} content - The layer's content in geojson format.
+   */
+
+  /**
    * Create a geometry.
    *
    * _Note:_ Under the hood, creating a geometry is similar to editing a geometry.
@@ -555,7 +562,7 @@ export class CadenzaClient {
    * @param {boolean} [options.useMapSrs] - Whether the created geometry should use the map's SRS (otherwise EPSG:4326 will be used)
    * @param {OperationMode} [options.operationMode] - The mode in which a workbook should be operated
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
-   * @param {Object[]} [options.additionalLayers] - Layer definitions to be imported and shown in the background, as a basis for the drawing. Layer definition, with name, type and content (a Geojson featureCollection).
+   * @param {LayerDefinition[]} [options.additionalLayers] - Layer definitions to be imported and shown in the background, as a basis for the drawing.
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires
@@ -589,11 +596,10 @@ export class CadenzaClient {
       useMapSrs,
       operationMode,
     });
-    console.log('createGeometry');
     await this.#show(resolvePath(backgroundMapView), params, signal);
     if (additionalLayers) {
       additionalLayers.forEach((layer) =>
-        this.#postEvent('importLayers', layer),
+        this.#postEvent('importLayer', layer),
       );
     }
   }
@@ -659,7 +665,7 @@ export class CadenzaClient {
     }
     if (additionalLayers) {
       additionalLayers.forEach((layer) =>
-        this.#postEvent('importLayers', layer),
+        this.#postEvent('importLayer', layer),
       );
     }
   }

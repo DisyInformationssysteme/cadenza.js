@@ -260,15 +260,16 @@ cadenzaClient.on('editGeometry:ok', (event) => {
 });
 ```
 
+_Note:_ Under the hood, creating a geometry is similar to editing a geometry.
+That's why the events use the `editGeometry` prefix.
+
+### Create a New Geometry with some reference layers on the background
+
 Create a GeoJSON polygon geometry with a workbook map view and some additional layers in the background.
 
 ```javascript
 cadenzaClient.createGeometry('<embeddingTargetId>', 'Polygon', {
-  additionalLayers: [{"name":"freiburg","type":"geojson","content":{"type":"FeatureCollection","features":[{"type":"Feature","properties":{},"geometry":{"coordinates":[[[7.965977481550681,47.93787211649922],[7.903787681150362,47.64741821336713],[8.310793134690243,47.70344757260733],[7.965977481550681,47.93787211649922]]],"type":"Polygon"}}]}},{"name":"rosenheim","type":"geojson","content":{"type":"FeatureCollection","features":[{"type":"Feature","properties":{},"geometry":{"coordinates":[[[12.061853294216718,47.88265668254172],[12.033589783268809,47.815710545402425],[12.228290018090604,47.80129096292583],[12.061853294216718,47.88265668254172]]],"type":"Polygon"}}]}},{"name":"munich","type":"geojson","content":{"type":"FeatureCollection","features":[{"type":"Feature","properties":{},"geometry":{"coordinates":[[[11.595409108141212,48.25674897671507],[11.380447444994104,48.06020449124574],[11.7399528472356,48.03248124662912],[11.595409108141212,48.25674897671507]]],"type":"Polygon"}}]}}]
-});
-
-cadenzaClient.on('editGeometry:ok', (event) => {
-  console.log('Geometry creation was completed', event.detail.geometry);
+  additionalLayers: [{"name":"layer_name_1","type":"geojson","content": {replace_with_geojson_FeatureCollection}},{"name":"layer_name_2","type":"geojson","content":{replace_with_geojson_FeatureCollection},{"name":"layer_name_3","type":"geojson","content":{replace_with_geojson_FeatureCollection}}]
 });
 ```
 
