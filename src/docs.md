@@ -248,7 +248,7 @@ unsubscribe();
 
 <small>API: [CadenzaClient#createGeometry](./classes/CadenzaClient.html#createGeometry)</small>
 
-Edit a GeoJSON point geometry with a workbook map view in the background. The geometry coordinates are in the map's SRS (`useMapSrs: true`).
+Create a GeoJSON point geometry with a workbook map view in the background. The geometry coordinates are in the map's SRS (`useMapSrs: true`).
 
 ```javascript
 cadenzaClient.createGeometry('<embeddingTargetId>', 'Point', {
@@ -256,7 +256,23 @@ cadenzaClient.createGeometry('<embeddingTargetId>', 'Point', {
 });
 
 cadenzaClient.on('editGeometry:ok', (event) => {
-  console.log('Geometry editing was completed', event.detail.geometry);
+  console.log('Geometry creation was completed', event.detail.geometry);
+});
+```
+
+_Note:_ Under the hood, creating a geometry is similar to editing a geometry.
+That's why the events use the `editGeometry` prefix.
+
+#### Additional Background Layers
+
+Create a GeoJSON polygon geometry with a workbook map view and some additional background layers.
+
+```javascript
+cadenzaClient.createGeometry('<embeddingTargetId>', 'Polygon', {
+  additionalLayers: [
+    { "type": "geojson", "name": "Example", "content": <FeatureCollection> },
+    ...
+  ]
 });
 ```
 
