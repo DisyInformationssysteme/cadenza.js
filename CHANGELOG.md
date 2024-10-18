@@ -7,7 +7,7 @@ This project uses a version scheme based on the Cadenza main version in the form
 ## Unreleased
 
 ### Added
-- `additionalLayerDefinitions` option for `CadenzaClient#createGeometry` and `CadenzaClient#editGeometry`
+- `additionalLayers` option for `CadenzaClient#createGeometry` and `CadenzaClient#editGeometry`
 
 ## 10.2.1 - 2024-10-14
 ### Added
