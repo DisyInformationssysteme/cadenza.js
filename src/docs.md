@@ -270,7 +270,7 @@ Create a GeoJSON polygon geometry with a workbook map view and some additional b
 ```javascript
 cadenzaClient.createGeometry('<embeddingTargetId>', 'Polygon', {
   additionalLayers: [
-    { "type": "geojson", "name": "Example", "content": <FeatureCollection> },
+    { type: 'geojson', name: 'Example', content: <FeatureCollection> },
     ...
   ]
 });
