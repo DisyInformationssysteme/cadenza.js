@@ -276,9 +276,6 @@ cadenzaClient.createGeometry('<embeddingTargetId>', 'Polygon', {
 });
 ```
 
-_Note:_ Under the hood, creating a geometry is similar to editing a geometry.
-That's why the events use the `editGeometry` prefix.
-
 ### Select Objects in a Workbook Map View
 
 <small>API: [CadenzaClient#selectObjects](./classes/CadenzaClient.html#selectObjects)</small>
