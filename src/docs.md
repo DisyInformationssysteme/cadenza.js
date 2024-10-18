@@ -263,13 +263,16 @@ cadenzaClient.on('editGeometry:ok', (event) => {
 _Note:_ Under the hood, creating a geometry is similar to editing a geometry.
 That's why the events use the `editGeometry` prefix.
 
-### Create a New Geometry with some reference layers on the background
+#### Additional Background Layers
 
-Create a GeoJSON polygon geometry with a workbook map view and some additional layers in the background.
+Create a GeoJSON polygon geometry with a workbook map view and some additional background layers.
 
 ```javascript
 cadenzaClient.createGeometry('<embeddingTargetId>', 'Polygon', {
-  additionalLayers: [{"name":"layer_name_1","type":"geojson","content": {replace_with_geojson_FeatureCollection}},{"name":"layer_name_2","type":"geojson","content":{replace_with_geojson_FeatureCollection},{"name":"layer_name_3","type":"geojson","content":{replace_with_geojson_FeatureCollection}}]
+  additionalLayers: [
+    { "type": "geojson", "name": "Example", "content": <FeatureCollection> },
+    ...
+  ]
 });
 ```
 
