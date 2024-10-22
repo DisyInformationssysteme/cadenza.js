@@ -101,7 +101,7 @@ globalThis.cadenza = Object.assign(
 
 /** @typedef {'normal'|'simplified'} OperationMode - The mode in which a workbook should be operated */
 /**
- * @typedef {'workbook-design'|'workbook-view-management'} UiFeature - The name of a Cadenza UI feature
+ * @typedef {'workbook-design'|'workbook-map-add-layer'|'workbook-view-management'} UiFeature - The name of a Cadenza UI feature
  *
  * _Note:_ Supported features are:
  * * `"workbook-design"` - The workbook designer
