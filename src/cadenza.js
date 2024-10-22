@@ -101,10 +101,11 @@ globalThis.cadenza = Object.assign(
 
 /** @typedef {'normal'|'simplified'} OperationMode - The mode in which a workbook should be operated */
 /**
- * @typedef {'workbook-design'|'workbook-view-management'} UiFeature - The name of a Cadenza UI feature
+ * @typedef {'workbook-design'|'workbook-map-add-layer'|'workbook-view-management'} UiFeature - The name of a Cadenza UI feature
  *
  * _Note:_ Supported features are:
  * * `"workbook-design"` - The workbook designer
+ * * `"workbook-map-add-layer"`- Add layers to the map
  * * `"workbook-view-management"` - Add/Edit/Remove workbook views (Is included in 'workbook-design'.)
  * */
 
@@ -555,6 +556,7 @@ export class CadenzaClient {
    * @param {EmbeddingTargetId} backgroundMapView - The workbook map view in the background
    * @param {GeometryType} geometryType - The geometry type
    * @param {object} [options] - Options
+   * @param {UiFeature[]} [options.disabledUiFeatures] - Cadenza UI features to disable
    * @param {FilterVariables} [options.filter] - Filter variables
    * @param {string} [options.locationFinder] - A search query for the location finder
    * @param {Extent} [options.mapExtent] - A map extent to set
@@ -575,6 +577,7 @@ export class CadenzaClient {
     backgroundMapView,
     geometryType,
     {
+      disabledUiFeatures,
       filter,
       locationFinder,
       mapExtent,
@@ -588,6 +591,7 @@ export class CadenzaClient {
     this.#log('CadenzaClient#createGeometry', ...arguments);
     const params = createParams({
       action: 'editGeometry',
+      disabledUiFeatures,
       filter,
       geometryType,
       locationFinder,
@@ -610,6 +614,7 @@ export class CadenzaClient {
    * @param {EmbeddingTargetId} backgroundMapView - The workbook map view in the background
    * @param {Geometry} geometry - The geometry
    * @param {object} [options] - Options
+   * @param {UiFeature[]} [options.disabledUiFeatures] - Cadenza UI features to disable
    * @param {FilterVariables} [options.filter] - Filter variables
    * @param {string} [options.locationFinder] - A search query for the location finder
    * @param {Extent} [options.mapExtent] - A map extent to set
@@ -631,6 +636,7 @@ export class CadenzaClient {
     backgroundMapView,
     geometry,
     {
+      disabledUiFeatures,
       filter,
       locationFinder,
       mapExtent,
@@ -647,6 +653,7 @@ export class CadenzaClient {
     const zoomToGeometry = geometry && zoomTarget?.type === 'geometry';
     const params = createParams({
       action: 'editGeometry',
+      disabledUiFeatures,
       filter,
       // only use locationFinder if zoom to geometry is not set, to avoid
       // zooming race condition for Cadenza versions below 10.1
@@ -1224,7 +1231,11 @@ function validOperationMode(/** @type string */ value) {
 }
 
 function validUiFeature(/** @type string */ value) {
-  return ['workbook-design', 'workbook-view-management'].includes(value);
+  return [
+    'workbook-design',
+    'workbook-map-add-layer',
+    'workbook-view-management',
+  ].includes(value);
 }
 
 function assertSupportedDataType(
