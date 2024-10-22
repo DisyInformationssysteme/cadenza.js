@@ -354,6 +354,15 @@
     </label>
   </div>
   <div>
+    <label>
+      <input type="checkbox" name="expandNavigator">
+      Expand navigator tree
+    </label>
+  </div>
+</template>
+
+<template id="common-disabledUiFeatures">
+  <div>
     <label for="disabledUiFeatures">Disabled UI features</label>
     <input name="disabledUiFeatures" id="disabledUiFeatures" placeholder="feature1,feature2,...">
 
@@ -363,15 +372,10 @@
       Supported features:
       <ul>
         <li>workbook-design</li>
+        <li>workbook-map-add-layer</li>
         <li>workbook-view-management</li>
       </ul>
     </small>
-  </div>
-  <div>
-    <label>
-      <input type="checkbox" name="expandNavigator">
-      Expand navigator tree
-    </label>
   </div>
 </template>
 
@@ -429,7 +433,7 @@
   </div>
 </template>
 
-<template data-action="show" data-common="showWorkbook,filter,show">
+<template data-action="show" data-common="showWorkbook,disabledUiFeatures,filter,show">
   <div>
     <label for="embeddingTargetId">Embedding target ID *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
@@ -465,7 +469,7 @@
   </div>
 </template>
 
-<template data-action="showMap" data-common="zoomTo,map,showWorkbook,filter,show">
+<template data-action="showMap" data-common="zoomTo,map,showWorkbook,disabledUiFeatures,filter,show">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
@@ -492,7 +496,7 @@
 
 <template data-action="setFilter" data-common="filter"></template>
 
-<template data-action="createGeometry" data-common="map,filter">
+<template data-action="createGeometry" data-common="map,disabledUiFeatures,filter">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
@@ -524,7 +528,7 @@
   </div>
 </template>
 
-<template data-action="editGeometry" data-common="zoomTo,map,filter">
+<template data-action="editGeometry" data-common="zoomTo,map,disabledUiFeatures,filter">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
