@@ -8,6 +8,8 @@ This project uses a version scheme based on the Cadenza main version in the form
 
 ### Added
 - `additionalLayers` option for `CadenzaClient#createGeometry` and `CadenzaClient#editGeometry`
+- `disabledUiFeatures` option for `CadenzaClient#createGeometry` and `CadenzaClient#editGeometry`
+- Support for 'workbook-map-add-layer' as disabledUiFeatures value
 
 ## 10.2.1 - 2024-10-14
 ### Added
