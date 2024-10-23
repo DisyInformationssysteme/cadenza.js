@@ -6,7 +6,7 @@ This project uses a version scheme based on the Cadenza main version in the form
 
 ## Unreleased
 ### Added
-- `reload` CadenzaEventType was added and described
+- `CadenzaReloadEvent`
 
 ## 10.2.1 - 2024-10-14
 ### Added
