@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
-- `reload` CadenzaEventType was added and described
+- `CadenzaReloadEvent`
 
 ## 2.10.0 - 2024-06-11
 ### Added
