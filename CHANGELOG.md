@@ -5,10 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project uses a version scheme based on the Cadenza main version in the format x.x.y, where x.x is the Cadenza main version and y a functional change or bugfix.
 
 ## Unreleased
+
+## 10.2.2 - 2024-10-24
 ### Added
 - `CadenzaReloadEvent`
-
-### Added
 - `additionalLayers` option for `CadenzaClient#createGeometry` and `CadenzaClient#editGeometry`
 - `disabledUiFeatures` option for `CadenzaClient#createGeometry` and `CadenzaClient#editGeometry`
 - Support for 'workbook-map-add-layer' as `disabledUiFeatures` value
