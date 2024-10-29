@@ -1401,7 +1401,7 @@ function array(/** @type unknown */ value) {
  *   The extent is transformed according to the `useMapSrs` option.
  */
 /**
- * @typedef {CadenzaEvent<'change:selection', undefined | {layer: WorkbookLayerPath, values: unknown[][]}>} CadenzaChangeSelectionEvent - When the user changed the selection.
+ * @typedef {CadenzaEvent<'change:selection', undefined | {layer: WorkbookLayerPath, values: unknown[][]}>} CadenzaChangeSelectionEvent - When the user changed the selection. `undefined` if no objects were selected.
  *
  * For a selection in a workbook map view with activated feature info, the values also include the simplified geometries of the selected objects.
  */
@@ -1420,7 +1420,7 @@ function array(/** @type unknown */ value) {
 /** @typedef {CadenzaEvent<'error', {type: string, message?: string}>} CadenzaErrorEvent - An error event that is mapped to a {@link CadenzaError} */
 /** @typedef {CadenzaEvent<'objectInfo', {layer: WorkbookLayerPath, objectInfos: {selectionIndex: number, elements: {attributePrintName: string, formattedValue: string}[]}}>} CadenzaObjectInfoEvent - When the user opened the object info flyout. */
 /**
- * @typedef {CadenzaEvent<'selectObjects:ok', {layer: WorkbookLayerPath, values: unknown[][]}>} CadenzaSelectObjectsOkEvent - When the user submitted the selection.
+ * @typedef {CadenzaEvent<'selectObjects:ok', undefined | {layer: WorkbookLayerPath, values: unknown[][]}>} CadenzaSelectObjectsOkEvent - When the user submitted the selection. `undefined` if no objects were selected.
  *
  * For a selection in a workbook map view with activated feature info, the values also include the simplified geometries of the selected objects.
  */
