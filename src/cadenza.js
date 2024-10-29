@@ -540,7 +540,7 @@ export class CadenzaClient {
   }
 
   /**
-   * @typedef {Object} LayerDefinition
+   * @typedef LayerDefinition
    * @property {string} name - The layer's name.
    * @property {'geojson'} type - The layer's type.
    * @property {FeatureCollection} content - The layer's content in geojson format.
@@ -618,7 +618,7 @@ export class CadenzaClient {
    * @param {OperationMode} [options.operationMode] - The mode in which a workbook should be operated
    * @param {ZoomTarget} [options.zoomTarget] - A target Cadenza should zoom to
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
-   * @param {Object[]} [options.additionalLayers] - Layer definitions to be imported and shown in the background, as a basis for the drawing. Each is a layer definition, with name, type and content (a Geojson featureCollection).
+   * @param {LayerDefinition[]} [options.additionalLayers] - Layer definitions to be imported and shown in the background, as a basis for the drawing. Each is a layer definition, with name, type and content (a Geojson featureCollection).
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires
