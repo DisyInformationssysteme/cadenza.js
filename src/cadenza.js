@@ -157,7 +157,7 @@ globalThis.cadenza = Object.assign(
  * @property {Geometry} geometry - The geometry
  * @property {Record<string, string>} properties - The formated properties
  * @property {number} [area] - The area of a `Polygon` feature
- * @property {number} [length] - The area of a `LineString` feature
+ * @property {number} [length] - The length of a `LineString` feature
  */
 /**
  * @typedef FeatureCollection - A adapted [GeoJSON](https://geojson.org/) feature collection object
