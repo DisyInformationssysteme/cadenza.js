@@ -5,7 +5,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project uses a version scheme based on the Cadenza main version in the format x.x.y, where x.x is the Cadenza main version and y a functional change or bugfix.
 
 ## Unreleased
-
+### Changed
+- `CadenzaEditGeometryUpdateEvent`. 
+  - Updated the type definition for the `editGeometry:update` event.
+    - The event's `detail` payload has been changed from `{ geometry: Geometry }` to `FeatureCollection | Feature | undefined`, to bring them in line with the rest of our API.
+- `CadenzaEditGeometryOkEvent`
+  - Updated the type definition for the `editGeometry:ok` event.
+    - The event's `detail` payload has been changed from `{ geometry: Geometry }` to `Feature`, to bring them in line with the rest of our API.
+- `Feature`
+  - Updated the type definition.
+    - Added a `type` property, so it corresponds better to the actual used type.
+    - Added an optional `circumference` property, so it corresponds better to the actual used type.
+- `FeatureCollection`
+  - Updated the type definition.
+    - Added a `type` property, so it corresponds better to the actual used type.
+- `Geometry`
+  - Updated the type definition.
+    - Added a `coordinates` property, so it corresponds better to the actual used type.
 ## 10.2.2 - 2024-10-24
 ### Added
 - `CadenzaReloadEvent`
