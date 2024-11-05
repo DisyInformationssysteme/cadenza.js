@@ -160,6 +160,7 @@ globalThis.cadenza = Object.assign(
  * @property {Geometry} geometry - The geometry
  * @property {Record<string, string>} properties - The formated properties
  * @property {number} [area] - The area of a `Polygon` feature
+ * @property {number} [circumference] - The circumference of a `Polygon` feature
  * @property {number} [length] - The length of a `LineString` feature
  */
 /**
