@@ -1,28 +1,13 @@
 name: Release
 
 on:
-  workflow_dispatch:
-    inputs:
-      cadenza-version:
-        type: string
-        description: |
-          Cadenza Main Version
-          (e.g. '10.2'; Required only to create a new *.0 release, e.g. 10.2.0 for Cadenza 10.2. Otherwise the current version is incremented)
-    
+  workflow_dispatch
 
 jobs:
   release:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Validate version input
-      if: "${{ github.event.inputs.cadenza-version != '' }}"
-      run: |
-        if ! [[ '${{ github.event.inputs.cadenza-version }}' =~ ^[0-9]+\.[0-9]+$ ]]; then
-          echo "Cadenza Version must be specified in the format x.x (e.g. 10.2). Was '${{ github.event.inputs.cadenza-version }}'." >&2
-          exit 1
-        fi
-
     - uses: actions/create-github-app-token@v1
       id: app-token
       with:
@@ -49,13 +34,10 @@ jobs:
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
 
-    - name: Bump package version
-      if: "${{ github.event.inputs.cadenza-version == '' }}"
-      run: echo "NEW_VERSION=$(npm --no-git-tag-version version patch)" >> $GITHUB_ENV
-
-    - name: Bump package version (Cadenza main version release)
-      if: "${{ github.event.inputs.cadenza-version != '' }}"
-      run: echo "NEW_VERSION=$(npm --no-git-tag-version version ${{ github.event.inputs.cadenza-version }}.0)" >> $GITHUB_ENV
+    - name: Prepare package version (e.g. 1.2.3-dev => 1.2.3)
+      run: |
+        npm --no-git-tag-version version patch                                  # Remove -dev suffix
+        echo "RELEASE_VERSION=$(npm pkg get version | tr -d \")" >> $GITHUB_ENV # Determine RELEASE_VERSION
 
     - name: Set release tag to 'latest'
       run: echo "RELEASE_TAG=latest" >> $GITHUB_ENV
@@ -65,15 +47,26 @@ jobs:
       uses: superfaceai/release-changelog-action@v2
       with:
         path-to-changelog: CHANGELOG.md
-        version: ${{ env.NEW_VERSION }}
+        version: ${{ env.RELEASE_VERSION }}
         operation: release
 
-    - name: Commit and tag changes
+    - name: Commit release and tag it
       run: |
         git add "package.json"
         git add "CHANGELOG.md"
-        git commit -m "chore: release ${{ env.NEW_VERSION }}"
-        git tag ${{ env.NEW_VERSION }}
+        git commit -m "chore: release ${{ env.RELEASE_VERSION }}"
+        git tag ${{ env.RELEASE_VERSION }}
+
+    - name: Bump package version to new dev version (e.g. 1.2.3 => 1.2.4-dev)
+      run: |
+        npm --no-git-tag-version version patch                                                              # Determine next release version
+        DEV_VERSION=$(npm pkg get version | tr -d \")-dev && echo "DEV_VERSION=$DEV_VERSION" >> $GITHUB_ENV # Determine DEV_VERSION with -dev suffix
+        npm --no-git-tag-version version $DEV_VERSION                                                       # Set main to $DEV_VERSION
+
+    - name: Commit version bump
+      run: |
+        git add "package.json"
+        git commit -m "chore: bump up version to ${{ env.DEV_VERSION }}"
 
     - name: Push changes
       env:
@@ -85,13 +78,13 @@ jobs:
       uses: superfaceai/release-changelog-action@v2
       with:
         path-to-changelog: CHANGELOG.md
-        version: ${{ env.NEW_VERSION }}
+        version: ${{ env.RELEASE_VERSION }}
         operation: read
 
     - name: Update GitHub release documentation
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: ${{ env.NEW_VERSION }}
+        tag_name: ${{ env.RELEASE_VERSION }}
         body: ${{ steps.get-changelog.outputs.changelog }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
