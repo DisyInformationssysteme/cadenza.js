@@ -118,7 +118,7 @@ globalThis.cadenza = Object.assign(
  * @typedef {'m'|'km'} LengthUnit
  */
 
-/** @typedef {number[]} Coordinate - A tuple with an x and y value // [number, number] */
+/** @typedef {[number, number]} Coordinate - A tuple with an x and y value */
 /**
  * @typedef Geometry - A [GeoJSON](https://geojson.org/) geometry object
  * @property {GeometryType} type - The type of the geometry
