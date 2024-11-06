@@ -10,6 +10,7 @@ This project uses a version scheme based on the Cadenza main version in the form
 - `Feature#circumference` property.
 - `FeatureCollection#type` property
 - `Geometry#coordinates` property
+- Documentation for how to show, fetch and download embedding targets of type report as PDF (via the existing dataType=pdf option).
 
 ### Changed
 - **BREAKING CHANGE** `CadenzaEditGeometryUpdateEvent#detail` is now typed as `FeatureCollection | Feature | undefined`. (Before: `{ geometry: Geometry }`)
