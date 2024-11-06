@@ -346,8 +346,9 @@ export class CadenzaClient {
    *
    * @param {PageSource | EmbeddingTargetId} source - The source to show
    * @param {object} [__namedParameters]
-   * @param {DataType} [__namedParameters.dataType] - Set to 'pdf' for views of type "JasperReports report"
-   *     to show the report PDF directly, without any Cadenza headers or footers.
+   * @param {DataType} [__namedParameters.dataType] - Set to 'pdf' for embedding targets of type report and of views with view
+   *     type of "JasperReports report" to show the generated report PDF directly (without any Cadenza headers or
+   *     footers).
    * @param {UiFeature[]} [__namedParameters.disabledUiFeatures] - Cadenza UI features to disable
    * @param {boolean} [__namedParameters.expandNavigator] - Indicates if the navigator should be expanded.
    * @param {FilterVariables} [__namedParameters.filter] - Filter variables
@@ -1037,8 +1038,9 @@ export class CadenzaClient {
    *
    * @param {EmbeddingTargetId} source - The workbook view to fetch data from.
    * @param {DataType} dataType - The data type you want to get back from the server.
-   *   Currently, `"csv"`, `"excel"` and `"json"` are supported for table and indicator views
-   *   and `"pdf"` for views of type "JasperReports report".
+   *  Currently, `"csv"`, `"excel"` and `"json"` are supported for embedding targets of type view with a view type of
+   *   table and indicator. `"pdf"` is supported for embedding targets of type report and of type view with a view type
+   *   of "JasperReports report".
    * @param {object} [__namedParameters] - Options
    * @param {FilterVariables} [__namedParameters.filter] - Filter variables
    * @param {TablePart[]} [__namedParameters.parts] - Table parts to export; If not specified, all parts are exported.
@@ -1166,8 +1168,9 @@ export class CadenzaClient {
    *
    * @param {EmbeddingTargetId} source - The workbook view to fetch data from.
    * @param {DataType} dataType - The data type you want to get back from the server.
-   *   Currently, `"csv"`, `"excel"` and `"json"` are supported for table and indicator views
-   *   and `"pdf"` for views of type "JasperReports report".
+   *  Currently, `"csv"`, `"excel"` and `"json"` are supported for embedding targets of type view with a view type of
+   *   table and indicator. `"pdf"` is supported for embedding targets of type report and of type view with a view type
+   *   of "JasperReports report".
    * @param {object} [__namedParameters] - Options
    * @param {string} [__namedParameters.fileName] - The file name to use; The file extension is appended by Cadenza.
    * @param {FilterVariables} [__namedParameters.filter] - Filter variables

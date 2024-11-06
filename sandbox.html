@@ -219,7 +219,7 @@
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
       highlightGlobalId,
-      jasperReportAsPdf,
+      requestAsPdf,
       labelSet,
       locationFinder,
       mapExtent,
@@ -243,7 +243,7 @@
         hideMainHeaderAndFooter: (hideMainHeaderAndFooter === 'on'),
         hideWorkbookToolBar: (hideWorkbookToolBar === 'on'),
         highlightGlobalId,
-        ...(jasperReportAsPdf === 'on' && { dataType: 'pdf' }),
+        ...(requestAsPdf === 'on' && { dataType: 'pdf' }),
         labelSet,
         locationFinder,
         mapExtent: mapExtent && mapExtent.split(',').map(Number),
@@ -440,8 +440,8 @@
   </div>
   <div>
     <label>
-      <input type="checkbox" name="jasperReportAsPdf" id="jasperReportAsPdf"/>
-      Show Jasper Report as PDF
+      <input type="checkbox" name="requestAsPdf" id="requestAsPdf"/>
+      Show as PDF (Reports)
     </label>
   </div>
 </template>
