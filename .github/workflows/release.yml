@@ -56,7 +56,7 @@ jobs:
         git add "package-lock.json"
         git add "CHANGELOG.md"
         git commit -m "chore: release ${{ env.RELEASE_VERSION }}"
-        git tag ${{ env.RELEASE_VERSION }}
+        git tag v${{ env.RELEASE_VERSION }}
 
     - name: Push changes
       env:
@@ -74,7 +74,7 @@ jobs:
     - name: Update GitHub release documentation
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: ${{ env.RELEASE_VERSION }}
+        tag_name: v${{ env.RELEASE_VERSION }}
         body: ${{ steps.get-changelog.outputs.changelog }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -82,7 +82,7 @@ jobs:
     - name: Publish npm package
       run: |
         npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
-        npm publish --verbose --access=public --tag=${{ env.RELEASE_TAG }}
+        npm publish --verbose --access=public --tag=v${{ env.RELEASE_TAG }}
       env:
         NPM_TOKEN: ${{ secrets.NPMJS_ACCESS_TOKEN }}
 
