@@ -53,6 +53,7 @@ jobs:
     - name: Commit release and tag it
       run: |
         git add "package.json"
+        git add "package-lock.json"
         git add "CHANGELOG.md"
         git commit -m "chore: release ${{ env.RELEASE_VERSION }}"
         git tag ${{ env.RELEASE_VERSION }}
@@ -94,6 +95,7 @@ jobs:
     - name: Commit version bump
       run: |
         git add "package.json"
+        git add "package-lock.json"
         git commit -m "chore: bump up version to ${{ env.DEV_VERSION }}"
 
     - name: Push changes
