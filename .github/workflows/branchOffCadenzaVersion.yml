@@ -58,6 +58,7 @@ jobs:
     - name: Commit and tag changes
       run: |
         git add "package.json"
+        git add "package-lock.json"
         git commit -m "chore: branch off main as ${{ env.BRANCH_NAME }} and bump main version to ${{ env.NEW_VERSION }}"
 
     - name: Push changes
