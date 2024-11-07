@@ -1,0 +1,66 @@
+name: Branch off Cadenza Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      cadenza-version:
+        type: string
+        required: true
+        description: |
+          Next Cadenza Main Version
+          (e.g. '10.2' for setting the main branch up for development against Cadenza 10.2. This would make 10.2.0-dev the new main branch version.)
+
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Validate version input
+      if: "${{ github.event.inputs.cadenza-version != '' }}"
+      run: |
+        if ! [[ '${{ github.event.inputs.cadenza-version }}' =~ ^[0-9]+\.[0-9]+$ ]]; then
+          echo "Cadenza Version must be specified in the format x.x (e.g. 10.2). Was '${{ github.event.inputs.cadenza-version }}'." >&2
+          exit 1
+        fi
+
+    - uses: actions/create-github-app-token@v1
+      id: app-token
+      with:
+        app-id: ${{ vars.DISY_RELEASE_APP_ID }}
+        private-key: ${{ secrets.DISY_RELEASE_APP_SECRET }}
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ steps.app-token.outputs.token }}
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: package.json
+        cache: 'npm'
+    
+    # Needed for creating the tag
+    - name: Configure Git
+      run: |
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "github-actions[bot]"
+
+    - name: Determine branch name
+      run: echo "BRANCH_NAME=v$(npm pkg get version | tr -d \" | cut -d. -f1,2).x" >> $GITHUB_ENV
+
+    - name: Create branch for current version
+      run: git branch ${{ env.BRANCH_NAME }} main
+
+    - name: Bump package version of main
+      run: echo "NEW_VERSION=$(npm --no-git-tag-version version ${{ github.event.inputs.cadenza-version }}.0-dev)" >> $GITHUB_ENV
+
+    - name: Commit and tag changes
+      run: |
+        git add "package.json"
+        git commit -m "chore: branch off main as ${{ env.BRANCH_NAME }} and bump main version to ${{ env.NEW_VERSION }}"
+
+    - name: Push changes
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: git push -u origin ${{ env.BRANCH_NAME }} && git push origin && git push --tags
