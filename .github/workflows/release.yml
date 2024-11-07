@@ -57,17 +57,6 @@ jobs:
         git commit -m "chore: release ${{ env.RELEASE_VERSION }}"
         git tag ${{ env.RELEASE_VERSION }}
 
-    - name: Bump package version to new dev version (e.g. 1.2.3 => 1.2.4-dev)
-      run: |
-        npm --no-git-tag-version version patch                                                              # Determine next release version
-        DEV_VERSION=$(npm pkg get version | tr -d \")-dev && echo "DEV_VERSION=$DEV_VERSION" >> $GITHUB_ENV # Determine DEV_VERSION with -dev suffix
-        npm --no-git-tag-version version $DEV_VERSION                                                       # Set main to $DEV_VERSION
-
-    - name: Commit version bump
-      run: |
-        git add "package.json"
-        git commit -m "chore: bump up version to ${{ env.DEV_VERSION }}"
-
     - name: Push changes
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -95,3 +84,19 @@ jobs:
         npm publish --verbose --access=public --tag=${{ env.RELEASE_TAG }}
       env:
         NPM_TOKEN: ${{ secrets.NPMJS_ACCESS_TOKEN }}
+
+    - name: Bump package version to new dev version (e.g. 1.2.3 => 1.2.4-dev)
+      run: |
+        npm --no-git-tag-version version patch                                                              # Determine next release version
+        DEV_VERSION=$(npm pkg get version | tr -d \")-dev && echo "DEV_VERSION=$DEV_VERSION" >> $GITHUB_ENV # Determine DEV_VERSION with -dev suffix
+        npm --no-git-tag-version version $DEV_VERSION                                                       # Set main to $DEV_VERSION
+
+    - name: Commit version bump
+      run: |
+        git add "package.json"
+        git commit -m "chore: bump up version to ${{ env.DEV_VERSION }}"
+
+    - name: Push changes
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: git push origin
