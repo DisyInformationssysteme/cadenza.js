@@ -118,9 +118,11 @@ globalThis.cadenza = Object.assign(
  * @typedef {'m'|'km'} LengthUnit
  */
 
+/** @typedef {[number, number]} Coordinate - A tuple with an x and y value */
 /**
  * @typedef Geometry - A [GeoJSON](https://geojson.org/) geometry object
  * @property {GeometryType} type - The type of the geometry
+ * @property {Coordinate | Coordinate[] | Coordinate[][] | Coordinate[][][]} coordinates - The coordinates of the geometry
  */
 /**
  * @typedef {'Point'|'MultiPoint'|'LineString'|'MultiLineString'|'Polygon'|'MultiPolygon'} GeometryType - A GeoJSON geometry type
@@ -153,14 +155,17 @@ globalThis.cadenza = Object.assign(
  */
 /**
  * @typedef Feature - A adapted [GeoJSON](https://geojson.org/) feature object.
+ * @property {'Feature'} type - The object's type
  * @property {any[]} objectId - The id of the feature
  * @property {Geometry} geometry - The geometry
  * @property {Record<string, string>} properties - The formated properties
  * @property {number} [area] - The area of a `Polygon` feature
- * @property {number} [length] - The area of a `LineString` feature
+ * @property {number} [circumference] - The circumference of a `Polygon` feature
+ * @property {number} [length] - The length of a `LineString` feature
  */
 /**
  * @typedef FeatureCollection - A adapted [GeoJSON](https://geojson.org/) feature collection object
+ * @property {'FeatureCollection'} type - The object's type
  * @property {Feature[]} features - The features within this collection
  */
 /** @typedef {'error'|'warning'|'info'|'success'} CustomValidityType - The type of custom validity used for disclose on visual presentation and form submission behavior */
@@ -1414,8 +1419,8 @@ function array(/** @type unknown */ value) {
  * <p>
  * See also: <a href="../index.html#md:json-representation-of-cadenza-object-data">JSON Representation of Cadenza Object Data</a>
  */
-/** @typedef {CadenzaEvent<'editGeometry:update', {geometry: Geometry}>} CadenzaEditGeometryUpdateEvent - When the user changed the geometry. */
-/** @typedef {CadenzaEvent<'editGeometry:ok', {geometry: Geometry}>} CadenzaEditGeometryOkEvent - When the user submitted the geometry. */
+/** @typedef {CadenzaEvent<'editGeometry:update', FeatureCollection | Feature | undefined>} CadenzaEditGeometryUpdateEvent - When the user changed the geometry. `FeatureCollection` if multiple features are present on the edit layer, but the original defined type is not multi-geometry. This is also the case if the dialog was instantiated from a geometry and the original defined type is inherited. `undefined` if no feature is present on the edit layer. */
+/** @typedef {CadenzaEvent<'editGeometry:ok', Feature>} CadenzaEditGeometryOkEvent - When the user submitted the geometry. */
 /** @typedef {CadenzaEvent<'editGeometry:cancel'>} CadenzaEditGeometryCancelEvent - When the user cancelled the geometry editing. */
 /** @typedef {CadenzaEvent<'error', {type: string, message?: string}>} CadenzaErrorEvent - An error event that is mapped to a {@link CadenzaError} */
 /** @typedef {CadenzaEvent<'objectInfo', {layer: WorkbookLayerPath, objectInfos: {selectionIndex: number, elements: {attributePrintName: string, formattedValue: string}[]}}>} CadenzaObjectInfoEvent - When the user opened the object info flyout. */
