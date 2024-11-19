@@ -480,7 +480,7 @@ export class CadenzaClient {
       locationFinder,
       mapExtent,
       useMapSrs,
-      zoomTarget
+      zoomTarget,
     });
     const params = createParams({
       disabledUiFeatures,
@@ -494,7 +494,7 @@ export class CadenzaClient {
       operationMode,
       targetType: 'MAP',
       useMapSrs,
-      validZoomTarget
+      validZoomTarget,
     });
     await this.#show(resolvePath(mapView), params, signal);
     if (geometry) {
@@ -654,7 +654,7 @@ export class CadenzaClient {
       useMapSrs,
       operationMode,
       signal,
-      zoomTarget
+      zoomTarget,
     } = {},
   ) {
     this.#log('CadenzaClient#createGeometry', ...arguments);
@@ -662,7 +662,7 @@ export class CadenzaClient {
       locationFinder,
       mapExtent,
       useMapSrs,
-      zoomTarget
+      zoomTarget,
     });
     const params = createParams({
       action: 'editGeometry',
@@ -674,7 +674,7 @@ export class CadenzaClient {
       minScale,
       operationMode,
       useMapSrs,
-      validZoomTarget
+      validZoomTarget,
     });
     await this.#show(resolvePath(backgroundMapView), params, signal);
     if (additionalLayers) {
@@ -734,7 +734,7 @@ export class CadenzaClient {
       locationFinder,
       mapExtent,
       useMapSrs,
-      zoomTarget
+      zoomTarget,
     });
     const params = createParams({
       action: 'editGeometry',
@@ -745,12 +745,12 @@ export class CadenzaClient {
       minScale,
       operationMode,
       useMapSrs,
-      validZoomTarget
+      validZoomTarget,
     });
     await this.#show(resolvePath(backgroundMapView), params, signal);
     if (geometry) {
       this.#postEvent('setGeometry', {
-        geometry
+        geometry,
       });
     }
     if (additionalLayers) {
@@ -1377,7 +1377,7 @@ function createParams({
   parts,
   targetType,
   useMapSrs,
-  validZoomTarget
+  validZoomTarget,
 }) {
   if (disabledUiFeatures) {
     disabledUiFeatures.forEach((feature) =>
@@ -1478,17 +1478,23 @@ function array(/** @type unknown */ value) {
  * @param {ZoomTarget} [__namedParameters.zoomTarget]
  * @return {ZoomTarget | undefined}
  */
-function createValidZoomTarget (__namedParameters = {}) {
-  if (Object.keys(__namedParameters).length === 0 || !__namedParameters.zoomTarget){
+function createValidZoomTarget(__namedParameters = {}) {
+  if (
+    Object.keys(__namedParameters).length === 0 ||
+    !__namedParameters.zoomTarget
+  ) {
     return { type: 'default' };
   }
   const zoomTarget = __namedParameters.zoomTarget;
   if (zoomTarget.type === 'default') {
     if (__namedParameters.mapExtent) {
-      return {type: 'mapExtent', extent: __namedParameters.mapExtent};
+      return { type: 'mapExtent', extent: __namedParameters.mapExtent };
     }
     if (__namedParameters.locationFinder) {
-      return {type: 'locationFinder', searchQuery: __namedParameters.locationFinder};
+      return {
+        type: 'locationFinder',
+        searchQuery: __namedParameters.locationFinder,
+      };
     }
     return { type: 'default' };
   } else if (zoomTarget.type === 'mapExtent') {
@@ -1496,23 +1502,26 @@ function createValidZoomTarget (__namedParameters = {}) {
       return zoomTarget;
     }
     if (__namedParameters.mapExtent) {
-      return {type:'mapExtent', extent: __namedParameters.mapExtent}
+      return { type: 'mapExtent', extent: __namedParameters.mapExtent };
     }
-    return { type:'default'};
+    return { type: 'default' };
   } else if (zoomTarget.type === 'locationFinder') {
     if (zoomTarget.searchQuery) {
       return zoomTarget;
     }
     if (__namedParameters.locationFinder) {
-      return {type: 'locationFinder', searchQuery: __namedParameters.locationFinder};
+      return {
+        type: 'locationFinder',
+        searchQuery: __namedParameters.locationFinder,
+      };
     }
-    return {type: 'default'};
+    return { type: 'default' };
   } else if (zoomTarget.type === 'geometry') {
     if (zoomTarget.geometry && validGeometryType(zoomTarget.geometry.type)) {
       return zoomTarget;
     }
     if (__namedParameters.geometry) {
-      return {type: 'geometry', geometry: __namedParameters.geometry};
+      return { type: 'geometry', geometry: __namedParameters.geometry };
     }
     return { type: 'default' };
   } else if (zoomTarget.type === 'layerDataExtent') {
@@ -1533,11 +1542,13 @@ function createValidZoomTarget (__namedParameters = {}) {
  *
  * @param {ZoomTarget | undefined} zoomTargetToApply
  */
-function isSetZoomTargetNeeded (zoomTargetToApply) {
-  return !!(zoomTargetToApply &&
+function isSetZoomTargetNeeded(zoomTargetToApply) {
+  return !!(
+    zoomTargetToApply &&
     zoomTargetToApply.type !== 'default' &&
     zoomTargetToApply.type !== 'mapExtent' &&
-    zoomTargetToApply.type !== 'locationFinder');
+    zoomTargetToApply.type !== 'locationFinder'
+  );
 }
 
 // Please do not add internal event types like 'ready' here.
