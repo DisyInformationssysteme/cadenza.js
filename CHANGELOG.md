@@ -11,17 +11,6 @@ This project uses a version scheme based on the Cadenza main version in the form
 ### Deprecated
 - The optional zooming parameters `locationFinder` and `mapExtent` in `CadenzaClient#showMap`, `CadenzaClient#createGeometry` and `CadenzaClient#editGeometry`
 
-## 10.2.3 - 2024-11-07
-### Added
-- `Feature#type` property.
-- `Feature#circumference` property.
-- `FeatureCollection#type` property
-- `Geometry#coordinates` property
-
-### Changed
-- **BREAKING CHANGE** `CadenzaEditGeometryUpdateEvent#detail` is now typed as `FeatureCollection | Feature | undefined`. (Before: `{ geometry: Geometry }`)
-- `CadenzaEditGeometryOkEvent#detail` is now typed as `Feature` to align it with the rest of the API. (Before: `{ geometry: Geometry }`)
-
 ## 10.2.3 - 2024-11-08
 ### Added
 - `Feature#type` property.
