@@ -1,21 +1,21 @@
 /**
  * @typedef CadenzaClientOptions
  * @property {string} [baseUrl] - The base URL of the Cadenza server
- * @property {HTMLIFrameElement | string} [__namedParameters.iframe] - An iframe for embedding Cadenza or the iframe's ID.
+ * @property {HTMLIFrameElement | string} [options.iframe] - An iframe for embedding Cadenza or the iframe's ID.
  *   The iframe is required only for methods that embed Cadenza in an iframe, so e.g. not for {@link CadenzaClient#fetchData}.
  *   If you want to embed Cadenza in multiple iframes, you need to create an instance of the `CadenzaClient` per iframe.
- * @property {ExternalLinkKey} [__namedParameters.webApplication] - An external link that Cadenza uses to resolve the
+ * @property {ExternalLinkKey} [options.webApplication] - An external link that Cadenza uses to resolve the
  *   [target origin](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage#targetorigin) when posting events.
  *   This is required if Cadenza and your application are not running on the same origin.
  *   Please ensure that the user has view privilege for that link!
- * @property {boolean} [__namedParameters.debug] - Whether to enable debug logging
+ * @property {boolean} [options.debug] - Whether to enable debug logging
  */
 
 /**
  * Creates an instance of the Cadenza JS client.
  *
  * @overload
- * @param {CadenzaClientOptions} [__namedParameters] - Options
+ * @param {CadenzaClientOptions} [options] - Options
  * @return {CadenzaClient}
  * @throws For invalid arguments
  */
@@ -26,20 +26,20 @@
  *   Please use the other overload.
  * @overload
  * @param {string} baseUrl - The base URL of the Cadenza server
- * @param {Exclude<CadenzaClientOptions, 'baseUrl'>} [__namedParameters] - Options
+ * @param {Exclude<CadenzaClientOptions, 'baseUrl'>} [options] - Options
  * @return {CadenzaClient}
  * @throws For invalid arguments
  */
 /**
  * @param {string | CadenzaClientOptions} [baseUrlOrOptions]
- * @param {CadenzaClientOptions} [__namedParameters]
+ * @param {CadenzaClientOptions} [options]
  */
-export function cadenza(baseUrlOrOptions, __namedParameters) {
-  __namedParameters =
+export function cadenza(baseUrlOrOptions, options) {
+  options =
     typeof baseUrlOrOptions === 'string'
-      ? { baseUrl: baseUrlOrOptions, ...__namedParameters }
+      ? { baseUrl: baseUrlOrOptions, ...options }
       : baseUrlOrOptions;
-  return new CadenzaClient(__namedParameters);
+  return new CadenzaClient(options);
 }
 
 /* @ts-ignore */
