@@ -163,7 +163,7 @@ globalThis.cadenza = Object.assign(
  * @property {Geometry} [__namedParameters.geometry] - The geometry to zoom to. This property overrides zooming to the geometry
  *    provided by the API call. If not specified, the geometry provided by the API call is used.
  *    If this also is not specified, the {@link DefaultZoomTarget} is used instead.
- * @property {Geometry} [__namedParameters.useMapSrs] - Whether the geometry is specified in the map's SRS (otherwise EPSG:4326 is assumed)
+ * @property {boolean} [__namedParameters.useMapSrs] - Whether the geometry is specified in the map's SRS (otherwise EPSG:4326 is assumed)
  */
 /**
  * @typedef LocationFinderZoomTarget - Instructs Cadenza to zoom to the first result of a location finder search query.
@@ -1523,7 +1523,11 @@ function createValidZoomTarget(__namedParameters = {}) {
       return zoomTarget;
     }
     if (__namedParameters.geometry) {
-      return { type: 'geometry', geometry: __namedParameters.geometry };
+      return {
+        type: 'geometry',
+        geometry: __namedParameters.geometry,
+        useMapSrs: __namedParameters.useMapSrs,
+      };
     }
     return { type: 'default' };
   } else if (zoomTarget.type === 'layerDataExtent') {
