@@ -1413,6 +1413,8 @@ function createParams({
     } else if (validZoomTarget.type === 'locationFinder') {
       mapExtent = undefined;
       locationFinder = validZoomTarget.searchQuery;
+    } else if (validZoomTarget.type === 'default' && mapExtent) {
+      locationFinder = undefined;
     }
   }
   return new URLSearchParams({
