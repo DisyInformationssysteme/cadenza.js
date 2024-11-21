@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -39,6 +39,7 @@
       display: flex;
       flex-direction: column;
       gap: var(--gap);
+      overflow: scroll;
     }
     fieldset > div {
       display: flex;
@@ -121,7 +122,7 @@
           settingsContainer.append(
             document.createElement('hr'),
             commonSettingsTemplate.content.cloneNode(true));
-        })
+        });
       }
 
       const data = localStorage.getItem(`cadenzajs-sandbox-${action}`);
@@ -193,7 +194,7 @@
       localStorage.setItem(`cadenzajs-sandbox-${action}`, JSON.stringify(data));
     };
 
-    actionSelect.classList.toggle('show-unpublished', urlParams.has('showUnpublished'))
+    actionSelect.classList.toggle('show-unpublished', urlParams.has('showUnpublished'));
     actionSelect.value = urlParams.get('action') || 'show';
     actionSelect.onchange();
 
@@ -221,15 +222,13 @@
       highlightGlobalId,
       requestAsPdf,
       labelSet,
-      locationFinder,
-      mapExtent,
       minScale,
       parts,
       layers,
       simplifiedOperationMode,
       useMapSrs,
       fullGeometries,
-      zoomToGeometry,
+      zoomTarget,
       distance,
       lengthUnit,
       additionalLayers
@@ -245,15 +244,13 @@
         highlightGlobalId,
         ...(requestAsPdf === 'on' && { dataType: 'pdf' }),
         labelSet,
-        locationFinder,
-        mapExtent: mapExtent && mapExtent.split(',').map(Number),
         minScale: minScale && Number(minScale),
         parts: parts && parts.split(','),
         operationMode: (simplifiedOperationMode === 'on' ? 'simplified' : 'normal' ),
         layers: layers ? JSON.parse(layers) : undefined,
         useMapSrs: useMapSrs === 'on',
         fullGeometries: fullGeometries === 'on',
-        zoomTarget: zoomToGeometry === 'on' ? { type: 'geometry' } : undefined,
+        zoomTarget: zoomTarget && JSON.parse(zoomTarget),
         buffer: distance ? { value: Number(distance), lengthUnit: lengthUnit ? lengthUnit : 'm' } : undefined,
         additionalLayers: additionalLayers && JSON.parse(additionalLayers)
       };
@@ -399,14 +396,6 @@
       Use map SRS
     </label>
   </div>
-  <div>
-    <label for="mapExtent">Map extent coordinates</label>
-    <input name="mapExtent" id="mapExtent" placeholder="minX,minY,maxX,maxY">
-  </div>
-  <div>
-    <label for="locationFinder">Location finder search query</label>
-    <input name="locationFinder" id="locationFinder">
-  </div>
 </template>
 
 <template id="common-data">
@@ -469,7 +458,7 @@
   </div>
 </template>
 
-<template data-action="showMap" data-common="zoomTo,map,showWorkbook,disabledUiFeatures,filter,show">
+<template data-action="showMap" data-common="zoomTarget,map,showWorkbook,disabledUiFeatures,filter,show">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
@@ -528,7 +517,7 @@
   </div>
 </template>
 
-<template data-action="editGeometry" data-common="zoomTo,map,disabledUiFeatures,filter">
+<template data-action="editGeometry" data-common="zoomTarget,map,disabledUiFeatures,filter">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
@@ -624,12 +613,31 @@
   </div>
 </template>
 
-<template id="common-zoomTo">
+<template id="common-zoomTarget">
   <div>
-    <label>
-      <input type="checkbox" name="zoomToGeometry">
-      Zoom to geometry
-    </label>
+    <label for="zoomTarget">Zoom Target</label>
+    <textarea name="zoomTarget" id="zoomTarget" rows="5"></textarea>
+    <small>
+      <p>JSON Object</p>
+      <p>
+        Hints for some types:
+        <ul>
+          <li>'geometry' of 'geometry': GeoJSON geometry</li>
+          <li>'extent' of 'mapExtent': [minX,minY,maxX,maxY]</li>
+        </ul>
+      </p>
+      <p>
+        Supported zoomTargets as examples to use:
+        <ul>
+          <li>{"type": "default"}</li>
+          <li>{"type": "geometry", "geometry": {"coordinates":[[[9.598504509838506,52.70992820638244],[8.899110702389294,51.72257425885121],[10.906499617840836,51.725944168909365],[9.598504509838506,52.70992820638244]]],"type":"Polygon"}, "useMapSrs": false}</li>
+          <li>{"type": "locationFinder", "searchQuery": "Hamburg"}</li>
+          <li>{"type": "mapExtent", "extent": [9.585571,53.38169,10.483704,53.859007]}</li>
+          <li>{"type": "dataExtent"}</li>
+          <li>{"type": "layerDataExtent", "layers": ["Messstellen", "Gewässer"]}</li>
+        </ul>
+      </p>
+    </small>
   </div>
 </template>
 

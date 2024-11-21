@@ -7,6 +7,7 @@ This project uses a version scheme based on the Cadenza main version in the form
 ## Unreleased
 ### Added
 - Multiple `ZoomTarget` types added
+- Added the 'ZoomTarget' also to the sandbox
 
 ### Deprecated
 - The optional zooming parameters `locationFinder` and `mapExtent` in `CadenzaClient#showMap`, `CadenzaClient#createGeometry` and `CadenzaClient#editGeometry`
