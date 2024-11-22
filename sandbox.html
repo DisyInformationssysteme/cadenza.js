@@ -476,30 +476,57 @@
   </div>
   <div>
     <label for="geometry">Additional layers (GeoJSON)</label>
-    <textarea name="additionalLayers" id="additionalLayers" rows="10" placeholder="featureCollections array"></textarea>
+    <textarea name="additionalLayers" id="additionalLayers" rows="10"></textarea>
     <small>
-      [{
-      "name":"freiburg",
-      "type":"geojson",
-      "content":{"type":"FeatureCollection","features":[
-      {"type":"Feature","properties":{},
-      "geometry":{
-      "coordinates":[[[7.965977481550681,47.93787211649922],[7.903787681150362,47.64741821336713],[8.310793134690243,47.70344757260733],[7.965977481550681,47.93787211649922]]],
-      "type":"Polygon"
-      }
-      }
-      ]}
-      }]
+      <strong>Example:</strong>
+      <pre>
+[
+  {
+    "type":"geojson",
+    "name":"freiburg",
+    "content":{
+      "type":"FeatureCollection",
+      "features":[
+        {
+          "type":"Feature",
+          "properties":{},
+          "geometry":{
+            "coordinates":[
+              [
+                [7.965977481550681,47.93787211649922],
+                [7.903787681150362,47.64741821336713],
+                [8.310793134690243,47.70344757260733],
+                [7.965977481550681,47.93787211649922]
+              ]
+            ],
+            "type":"Polygon"
+          }
+        }
+      ]
+    }
+  }
+]
+        </pre>
     </small>
   </div>
   <div>
     <label for="geometry">Geometry (GeoJSON)</label>
-    <textarea name="geometry" id="geometry" rows="5" placeholder="GeoJSON geometry"></textarea>
+    <textarea name="geometry" id="geometry" rows="5"></textarea>
     <small>
-      {
-      "coordinates":[[[9.598504509838506,52.70992820638244],[8.899110702389294,51.72257425885121],[10.906499617840836,51.725944168909365],[9.598504509838506,52.70992820638244]]],
-      "type":"Polygon"
-      }
+      <strong>Example:</strong>
+      <pre>
+{
+  "coordinates":[
+    [
+      [9.598504509838506,52.70992820638244],
+      [8.899110702389294,51.72257425885121],
+      [10.906499617840836,51.725944168909365],
+      [9.598504509838506,52.70992820638244]
+    ]
+  ],
+  "type":"Polygon"
+}
+      </pre>
     </small>
   </div>
 </template>
@@ -527,20 +554,37 @@
   </div>
   <div>
     <label for="geometry">Additional layers (GeoJSON)</label>
-    <textarea name="additionalLayers" id="additionalLayers" rows="10" placeholder="featureCollections array"></textarea>
+    <textarea name="additionalLayers" id="additionalLayers" rows="10"></textarea>
     <small>
-      [{
-      "name":"freiburg",
-      "type":"geojson",
-      "content":{"type":"FeatureCollection","features":[
-        {"type":"Feature","properties":{},
+      <strong>Example:</strong>
+      <pre>
+[
+  {
+    "type":"geojson",
+    "name":"freiburg",
+    "content":{
+      "type":"FeatureCollection",
+      "features":[
+        {
+          "type":"Feature",
+          "properties":{},
           "geometry":{
-            "coordinates":[[[7.965977481550681,47.93787211649922],[7.903787681150362,47.64741821336713],[8.310793134690243,47.70344757260733],[7.965977481550681,47.93787211649922]]],
+            "coordinates":[
+              [
+                [7.965977481550681,47.93787211649922],
+                [7.903787681150362,47.64741821336713],
+                [8.310793134690243,47.70344757260733],
+                [7.965977481550681,47.93787211649922]
+              ]
+            ],
             "type":"Polygon"
           }
         }
-      ]}
-      }]
+      ]
+    }
+  }
+]
+        </pre>
     </small>
   </div>
   <div>
@@ -573,30 +617,57 @@
   </div>
   <div>
     <label for="geometry">Additional layers (GeoJSON)</label>
-    <textarea name="additionalLayers" id="additionalLayers" rows="10" placeholder="featureCollections array"></textarea>
+    <textarea name="additionalLayers" id="additionalLayers" rows="10"></textarea>
     <small>
-      [{
-      "name":"freiburg",
-      "type":"geojson",
-      "content":{"type":"FeatureCollection","features":[
-      {"type":"Feature","properties":{},
-      "geometry":{
-      "coordinates":[[[7.965977481550681,47.93787211649922],[7.903787681150362,47.64741821336713],[8.310793134690243,47.70344757260733],[7.965977481550681,47.93787211649922]]],
-      "type":"Polygon"
-      }
-      }
-      ]}
-      }]
+      <strong>Example:</strong>
+      <pre>
+[
+  {
+    "type":"geojson",
+    "name":"freiburg",
+    "content":{
+      "type":"FeatureCollection",
+      "features":[
+        {
+          "type":"Feature",
+          "properties":{},
+          "geometry":{
+            "coordinates":[
+              [
+                [7.965977481550681,47.93787211649922],
+                [7.903787681150362,47.64741821336713],
+                [8.310793134690243,47.70344757260733],
+                [7.965977481550681,47.93787211649922]
+              ]
+            ],
+            "type":"Polygon"
+          }
+        }
+      ]
+    }
+  }
+]
+        </pre>
     </small>
   </div>
   <div>
     <label for="geometry">Geometry (GeoJSON) *</label>
-    <textarea name="geometry" id="geometry" rows="5" required placeholder="GeoJSON geometry"></textarea>
+    <textarea name="geometry" id="geometry" rows="5" required></textarea>
     <small>
-      {
-      "coordinates":[[[9.598504509838506,52.70992820638244],[8.899110702389294,51.72257425885121],[10.906499617840836,51.725944168909365],[9.598504509838506,52.70992820638244]]],
-      "type":"Polygon"
-      }
+      <strong>Example:</strong>
+      <pre>
+{
+  "coordinates":[
+    [
+      [9.598504509838506,52.70992820638244],
+      [8.899110702389294,51.72257425885121],
+      [10.906499617840836,51.725944168909365],
+      [9.598504509838506,52.70992820638244]
+    ]
+  ],
+  "type":"Polygon"
+}
+      </pre>
     </small>
   </div>
   <div>
