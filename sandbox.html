@@ -544,7 +544,7 @@
   </div>
 </template>
 
-<template data-action="selectObjects" data-common="map,filter">
+<template data-action="selectObjects" data-common="zoomTarget,map,filter">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
@@ -618,22 +618,21 @@
     <label for="zoomTarget">Zoom Target</label>
     <textarea name="zoomTarget" id="zoomTarget" rows="5"></textarea>
     <small>
-      <p>JSON Object</p>
+      <p>Optional JSON Object</p>
       <p>
         Hints for some types:
         <ul>
           <li>'geometry' of 'geometry': GeoJSON geometry</li>
-          <li>'extent' of 'mapExtent': [minX,minY,maxX,maxY]</li>
+          <li>'extent' of 'static': [minX,minY,maxX,maxY]</li>
         </ul>
       </p>
       <p>
         Supported zoomTargets as examples to use:
         <ul>
-          <li>{"type": "default"}</li>
-          <li>{"type": "geometry", "geometry": {"coordinates":[[[9.598504509838506,52.70992820638244],[8.899110702389294,51.72257425885121],[10.906499617840836,51.725944168909365],[9.598504509838506,52.70992820638244]]],"type":"Polygon"}, "useMapSrs": false}</li>
-          <li>{"type": "locationFinder", "searchQuery": "Hamburg"}</li>
-          <li>{"type": "mapExtent", "extent": [9.585571,53.38169,10.483704,53.859007]}</li>
-          <li>{"type": "dataExtent"}</li>
+          <li>{"type": "geometry", "geometry": {"coordinates":[[[9.598504509838506,52.70992820638244],[8.899110702389294,51.72257425885121],[10.906499617840836,51.725944168909365],[9.598504509838506,52.70992820638244]]],"type":"Polygon"}}</li>
+          <li>{"type": "locationFinder", "query": "Hamburg"}</li>
+          <li>{"type": "static", "extent": [9.585571,53.38169,10.483704,53.859007]}</li>
+          <li>{"type": "layerDataExtent"}</li>
           <li>{"type": "layerDataExtent", "layers": ["Messstellen", "Gewässer"]}</li>
         </ul>
       </p>

@@ -6,7 +6,7 @@ This project uses a version scheme based on the Cadenza main version in the form
 
 ## Unreleased
 ### Added
-- Multiple `ZoomTarget` types added
+- `LayerDataExtentZoomTarget`, `LocationFinderZoomTarget` and `StaticZoomTarget` added
 - Added the 'ZoomTarget' also to the sandbox
 
 ### Deprecated
