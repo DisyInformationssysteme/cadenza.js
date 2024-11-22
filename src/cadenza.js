@@ -385,6 +385,7 @@ export class CadenzaClient {
    * @param {boolean} [options.useMapSrs] -  Whether the geometry and the extent are in the map's SRS (otherwise EPSG:4326 is assumed)
    * @param {ZoomTarget} [options.zoomTarget] - A target Cadenza should zoom to
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
+   * @param {LayerDefinition[]} [options.additionalLayers] - Layer definitions to be imported and shown in the background, as a basis for the drawing.
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires
@@ -408,6 +409,7 @@ export class CadenzaClient {
       useMapSrs,
       zoomTarget,
       signal,
+      additionalLayers,
     } = {},
   ) {
     this.#log('CadenzaClient#showMap', ...arguments);
@@ -436,6 +438,11 @@ export class CadenzaClient {
         geometry,
         zoomToGeometry,
       });
+    }
+    if (additionalLayers) {
+      additionalLayers.forEach((layer) =>
+        this.#postEvent('importLayer', layer),
+      );
     }
   }
 
