@@ -6,6 +6,7 @@ This project uses a version scheme based on the Cadenza main version in the form
 
 ## Unreleased
 
+## 10.2.6 - 2024-11-25
 ### Fixed
 - `geometry` parameter now applies again as `GeometryExtentStrategy`
 
