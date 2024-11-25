@@ -7,8 +7,8 @@ This project uses a version scheme based on the Cadenza main version in the form
 ## Unreleased
 ### Added
 - `additionalLayers` option for `CadenzaClient#showMap`
-- Added `LayerDataExtentStrategy`, `LocationFinderExtentStrategy` and `StaticExtentStrategy`
-- Added the 'Extent Strategy' also to the sandbox
+- `LayerDataExtentStrategy`, `LocationFinderExtentStrategy` and `StaticExtentStrategy`
+- "Extent Strategy" also to the sandbox
 - Improved sandbox 'additionalLayers' and 'geometry' examples
 
 ### Changed
