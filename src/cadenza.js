@@ -800,7 +800,7 @@ export class CadenzaClient {
   #setExtentStrategy(/** @type {ExtentStrategy | undefined} */ extentStrategy) {
     const type = extentStrategy?.type;
     // Other extent strategies are handled via URL parameters.
-    if (type === 'geometry' || type === 'static') {
+    if (type === 'geometry' || type === 'layerData') {
       this.#postEvent('setExtentStrategy', extentStrategy);
     }
   }
@@ -1469,6 +1469,8 @@ function sanitizeExtentStrategy({
           return { type: 'geometry', geometry };
         }
         break;
+      case 'layerData':
+        return extentStrategy;
     }
   }
   if (mapExtent) {
