@@ -1429,7 +1429,7 @@ function array(/** @type unknown */ value) {
 
 /**
  * Creates a valid extent strategy based on these rules:
- * - `extentStrategy` trumps `mapExtent`, `mapExtent` trumps `locationFinder`.
+ * - `extentStrategy` trumps `geometry`, `geometry` trumps `mapExtent`, `mapExtent` trumps `locationFinder`.
  * - `mapExtent`, `locationFinder`, and `geometry` are used as fallback for
  *   {@link StaticExtentStrategy#extent}, {@link LocationFinderExtentStrategy#query},
  *   and {@link GeometryExtentStrategy#geometry} respectively.
@@ -1472,6 +1472,9 @@ function sanitizeExtentStrategy({
       default:
         return extentStrategy;
     }
+  }
+  if (geometry) {
+    return { type: 'geometry', geometry };
   }
   if (mapExtent) {
     return { type: 'static', extent: mapExtent };

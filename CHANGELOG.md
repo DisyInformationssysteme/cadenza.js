@@ -6,6 +6,9 @@ This project uses a version scheme based on the Cadenza main version in the form
 
 ## Unreleased
 
+### Fixed
+- `geometry` parameter now applies again as `GeometryExtentStrategy`
+
 ## 10.2.5 - 2024-11-25
 ### Added
 - 'Additional Layers' to the sandbox of 'Edit Geometry'
