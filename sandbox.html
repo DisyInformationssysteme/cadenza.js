@@ -228,7 +228,7 @@
       simplifiedOperationMode,
       useMapSrs,
       fullGeometries,
-      zoomTarget,
+      extentStrategy,
       distance,
       lengthUnit,
       additionalLayers
@@ -250,7 +250,7 @@
         layers: layers ? JSON.parse(layers) : undefined,
         useMapSrs: useMapSrs === 'on',
         fullGeometries: fullGeometries === 'on',
-        zoomTarget: zoomTarget && JSON.parse(zoomTarget),
+        extentStrategy: extentStrategy && JSON.parse(extentStrategy),
         buffer: distance ? { value: Number(distance), lengthUnit: lengthUnit ? lengthUnit : 'm' } : undefined,
         additionalLayers: additionalLayers && JSON.parse(additionalLayers)
       };
@@ -458,65 +458,10 @@
   </div>
 </template>
 
-<template data-action="showMap" data-common="zoomTarget,map,showWorkbook,disabledUiFeatures,filter,show">
+<template data-action="showMap" data-common="additionalLayers,extentStrategy,map,showWorkbook,disabledUiFeatures,filter,show">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
-  </div>
-  <div>
-    <label for="geometry">Additional layers (GeoJSON)</label>
-    <textarea name="additionalLayers" id="additionalLayers" rows="10"></textarea>
-    <small>
-      <strong>Example:</strong>
-      <pre>
-[
-  {
-    "type":"geojson",
-    "name":"freiburg",
-    "content":{
-      "type":"FeatureCollection",
-      "features":[
-        {
-          "type":"Feature",
-          "properties":{},
-          "geometry":{
-            "coordinates":[
-              [
-                [7.965977481550681,47.93787211649922],
-                [7.903787681150362,47.64741821336713],
-                [8.310793134690243,47.70344757260733],
-                [7.965977481550681,47.93787211649922]
-              ]
-            ],
-            "type":"Polygon"
-          }
-        }
-      ]
-    }
-  }
-]
-        </pre>
-    </small>
-  </div>
-  <div>
-    <label for="geometry">Geometry (GeoJSON)</label>
-    <textarea name="geometry" id="geometry" rows="5"></textarea>
-    <small>
-      <strong>Example:</strong>
-      <pre>
-{
-  "coordinates":[
-    [
-      [9.598504509838506,52.70992820638244],
-      [8.899110702389294,51.72257425885121],
-      [10.906499617840836,51.725944168909365],
-      [9.598504509838506,52.70992820638244]
-    ]
-  ],
-  "type":"Polygon"
-}
-      </pre>
-    </small>
   </div>
 </template>
 
@@ -536,45 +481,10 @@
 
 <template data-action="setFilter" data-common="filter"></template>
 
-<template data-action="createGeometry" data-common="zoomTarget,map,disabledUiFeatures,filter">
+<template data-action="createGeometry" data-common="additionalLayers,extentStrategy,map,disabledUiFeatures,filter">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
-  </div>
-  <div>
-    <label for="geometry">Additional layers (GeoJSON)</label>
-    <textarea name="additionalLayers" id="additionalLayers" rows="10"></textarea>
-    <small>
-      <strong>Example:</strong>
-      <pre>
-[
-  {
-    "type":"geojson",
-    "name":"freiburg",
-    "content":{
-      "type":"FeatureCollection",
-      "features":[
-        {
-          "type":"Feature",
-          "properties":{},
-          "geometry":{
-            "coordinates":[
-              [
-                [7.965977481550681,47.93787211649922],
-                [7.903787681150362,47.64741821336713],
-                [8.310793134690243,47.70344757260733],
-                [7.965977481550681,47.93787211649922]
-              ]
-            ],
-            "type":"Polygon"
-          }
-        }
-      ]
-    }
-  }
-]
-        </pre>
-    </small>
   </div>
   <div>
     <label for="geometryType">Geometry type</label>
@@ -599,45 +509,10 @@
   </div>
 </template>
 
-<template data-action="editGeometry" data-common="zoomTarget,map,disabledUiFeatures,filter">
+<template data-action="editGeometry" data-common="extentStrategy,map,disabledUiFeatures,filter">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
-  </div>
-  <div>
-    <label for="geometry">Additional layers (GeoJSON)</label>
-    <textarea name="additionalLayers" id="additionalLayers" rows="10"></textarea>
-    <small>
-      <strong>Example:</strong>
-      <pre>
-[
-  {
-    "type":"geojson",
-    "name":"freiburg",
-    "content":{
-      "type":"FeatureCollection",
-      "features":[
-        {
-          "type":"Feature",
-          "properties":{},
-          "geometry":{
-            "coordinates":[
-              [
-                [7.965977481550681,47.93787211649922],
-                [7.903787681150362,47.64741821336713],
-                [8.310793134690243,47.70344757260733],
-                [7.965977481550681,47.93787211649922]
-              ]
-            ],
-            "type":"Polygon"
-          }
-        }
-      ]
-    }
-  }
-]
-        </pre>
-    </small>
   </div>
   <div>
     <label for="geometry">Geometry (GeoJSON) *</label>
@@ -671,7 +546,7 @@
   </div>
 </template>
 
-<template data-action="selectObjects" data-common="zoomTarget,map,filter">
+<template data-action="selectObjects" data-common="extentStrategy,map,filter">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
@@ -740,10 +615,68 @@
   </div>
 </template>
 
-<template id="common-zoomTarget">
+<template id="common-additionalLayers">
   <div>
-    <label for="zoomTarget">Zoom Target</label>
-    <textarea name="zoomTarget" id="zoomTarget" rows="5"></textarea>
+    <label for="geometry">Additional layers (GeoJSON)</label>
+    <textarea name="additionalLayers" id="additionalLayers" rows="10"></textarea>
+    <small>
+      <strong>Example:</strong>
+      <pre>
+[
+  {
+    "type":"geojson",
+    "name":"freiburg",
+    "content":{
+      "type":"FeatureCollection",
+      "features":[
+        {
+          "type":"Feature",
+          "properties":{},
+          "geometry":{
+            "coordinates":[
+              [
+                [7.965977481550681,47.93787211649922],
+                [7.903787681150362,47.64741821336713],
+                [8.310793134690243,47.70344757260733],
+                [7.965977481550681,47.93787211649922]
+              ]
+            ],
+            "type":"Polygon"
+          }
+        }
+      ]
+    }
+  }
+]
+        </pre>
+    </small>
+  </div>
+  <div>
+    <label for="geometry">Geometry (GeoJSON)</label>
+    <textarea name="geometry" id="geometry" rows="5"></textarea>
+    <small>
+      <strong>Example:</strong>
+      <pre>
+{
+  "coordinates":[
+    [
+      [9.598504509838506,52.70992820638244],
+      [8.899110702389294,51.72257425885121],
+      [10.906499617840836,51.725944168909365],
+      [9.598504509838506,52.70992820638244]
+    ]
+  ],
+  "type":"Polygon"
+}
+      </pre>
+    </small>
+  </div>
+</template>
+
+<template id="common-extentStrategy">
+  <div>
+    <label for="extentStrategy">Extent Strategy</label>
+    <textarea name="extentStrategy" id="extentStrategy" rows="5"></textarea>
     <small>
       <p>Optional JSON Object</p>
       <p>
@@ -754,13 +687,13 @@
         </ul>
       </p>
       <p>
-        Supported zoomTargets as examples to use:
+        Supported extent strategies as examples to use:
         <ul>
           <li>{"type": "geometry", "geometry": {"coordinates":[[[9.598504509838506,52.70992820638244],[8.899110702389294,51.72257425885121],[10.906499617840836,51.725944168909365],[9.598504509838506,52.70992820638244]]],"type":"Polygon"}}</li>
           <li>{"type": "locationFinder", "query": "Hamburg"}</li>
           <li>{"type": "static", "extent": [9.585571,53.38169,10.483704,53.859007]}</li>
-          <li>{"type": "layerDataExtent"}</li>
-          <li>{"type": "layerDataExtent", "layers": ["Messstellen", "Gewässer"]}</li>
+          <li>{"type": "layerData"}</li>
+          <li>{"type": "layerData", "layers": ["Messstellen", "Gewässer"]}</li>
         </ul>
       </p>
     </small>
