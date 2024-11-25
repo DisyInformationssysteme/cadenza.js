@@ -1473,6 +1473,9 @@ function sanitizeExtentStrategy({
         return extentStrategy;
     }
   }
+  if (geometry) {
+    return { type: 'geometry', geometry };
+  }
   if (mapExtent) {
     return { type: 'static', extent: mapExtent };
   }
