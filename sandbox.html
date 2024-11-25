@@ -689,11 +689,27 @@
       <p>
         Supported extent strategies as examples to use:
         <ul>
-          <li>{"type": "geometry", "geometry": {"coordinates":[[[9.598504509838506,52.70992820638244],[8.899110702389294,51.72257425885121],[10.906499617840836,51.725944168909365],[9.598504509838506,52.70992820638244]]],"type":"Polygon"}}</li>
-          <li>{"type": "locationFinder", "query": "Hamburg"}</li>
-          <li>{"type": "static", "extent": [9.585571,53.38169,10.483704,53.859007]}</li>
-          <li>{"type": "layerData"}</li>
-          <li>{"type": "layerData", "layers": ["Messstellen", "Gewässer"]}</li>
+          <li><pre>{
+  "type": "geometry",
+  "geometry": {
+    "coordinates":[[
+      [9.598504509838506,52.70992820638244],
+      [8.899110702389294,51.72257425885121],
+      [10.906499617840836,51.725944168909365],
+      [9.598504509838506,52.70992820638244]]],
+      "type":"Polygon"
+  }
+}</pre></li>
+          <li><pre>{"type": "locationFinder", "query": "Hamburg"}</pre></li>
+          <li><pre>{
+  "type": "static",
+  "extent": [9.585571,53.38169,10.483704,53.859007]
+}</pre></li>
+          <li><pre>{"type": "layerData"}</pre></li>
+          <li><pre>{
+  "type": "layerData",
+  "layers": ["Messstellen", "Gewässer"]
+}</pre></li>
         </ul>
       </p>
     </small>
