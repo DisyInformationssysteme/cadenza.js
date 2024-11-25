@@ -1469,7 +1469,7 @@ function sanitizeExtentStrategy({
           return { type: 'geometry', geometry };
         }
         break;
-      case 'layerData':
+      default:
         return extentStrategy;
     }
   }
