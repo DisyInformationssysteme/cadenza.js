@@ -7,7 +7,12 @@ This project uses a version scheme based on the Cadenza main version in the form
 ## Unreleased
 ### Added
 - `additionalLayers` option for `CadenzaClient#showMap`
-- Improved sandbox additionalLayers and geometry coordinates examples
+- `LayerDataExtentZoomTarget`, `LocationFinderZoomTarget` and `StaticZoomTarget` added
+- Added the 'ZoomTarget' also to the sandbox
+- Improved sandbox 'additionalLayers' and 'geometry' examples
+
+### Deprecated
+- The optional zooming parameters `locationFinder` and `mapExtent` in `CadenzaClient#showMap`, `CadenzaClient#createGeometry` and `CadenzaClient#editGeometry`
 
 ## 10.2.3 - 2024-11-08
 ### Added

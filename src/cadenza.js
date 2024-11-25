@@ -110,6 +110,13 @@ globalThis.cadenza = Object.assign(
  * */
 
 /**
+ * @typedef LayerDefinition
+ * @property {string} name - The layer's name.
+ * @property {'geojson'} type - The layer's type.
+ * @property {FeatureCollection} content - The layer's content in geojson format.
+ */
+
+/**
  * @typedef Distance
  * @property {number} value
  * @property {LengthUnit} lengthUnit
@@ -132,11 +139,34 @@ globalThis.cadenza = Object.assign(
 /** @typedef {[number,number,number,number]} Extent - An array of numbers representing an extent: [minx, miny, maxx, maxy] */
 
 /**
- * @typedef {GeometryZoomTarget} ZoomTarget - An object describing a target to zoom to
+ * @typedef {GeometryZoomTarget|
+ * LayerDataExtentZoomTarget|
+ * LocationFinderZoomTarget|
+ * StaticZoomTarget} ZoomTarget - Options for defining the initial extent of a workbook map view;
+ *   If the options do not result in a defined extent, Cadenza's default logic is used:
+ *   The map will zoom in the way the underlying workbook map view was configured to initially zoom including all auto
+ *   zooming configurations.
  */
 /**
- * @typedef GeometryZoomTarget - Instructs Cadenza to zoom to a provided {@Link Geometry}
- * @property {'geometry'} type The type of the zoom target
+ * @typedef GeometryZoomTarget - The given {@link Geometry} defines the initial map extent.
+ * @property {'geometry'} type - The zoom target type
+ * @property {Geometry} [geometry] - This geometry takes precedence over another geometry that might be given in an API call.
+ */
+/**
+ * @typedef LayerDataExtentZoomTarget - The given layers define the initial map extent.
+ * @property {'layerDataExtent'} type - The zoom target type
+ * @property {(WorkbookLayerPath | string)[]} [layers] - A layer is ignored if either the layer or its extent is not known to Cadenza.
+ *   If no layers are given, __all__ map layers are used.
+ */
+/**
+ * @typedef LocationFinderZoomTarget - The first result of a location finder query defines the initial map extent.
+ * @property {'locationFinder'} type - The zoom target type
+ * @property {string} query - This query takes precedence over another query that might be given in an API call.
+ */
+/**
+ * @typedef StaticZoomTarget - The given extent is used as the initial map extent.
+ * @property {'static'} type - The zoom target type
+ * @property {Extent} extent - This extent takes precedence over another extent that might be given in an API call.
  */
 
 /**
@@ -186,7 +216,8 @@ let firstEmbeddingTargetShown;
  *   When aborted, the result Promise is rejected with an {@link AbortError}.
  * * If there's another error, the result Promise is rejected with a {@link CadenzaError}.
  * * For methods that support the `hideMainHeaderAndFooter` and `hideWorkbookToolBar` parameters - the parameters cannot override the configuration of an embedding target.
- * * For methods that support the `locationFinder` and `mapExtent` parameters - when both are given, the `mapExtent` takes precedence.
+ * * For methods that support the _deprecated_ `locationFinder` and `mapExtent` parameters - when both are given, the `mapExtent` takes precedence.
+ *   * Both `locationFinder` and `mapExtent` parameters are _deprecated_ - Use {@link LocationFinderZoomTarget} or {@link StaticZoomTarget} instead.
  */
 // Must be exported to be included in the docs.
 export class CadenzaClient {
@@ -214,7 +245,7 @@ export class CadenzaClient {
   /**
    *
    * @hidden
-   * @param {CadenzaClientOptions} [options]
+   * @param {CadenzaClientOptions} [__namedParameters]
    */
   constructor({ baseUrl, debug = false, iframe, webApplication } = {}) {
     if (webApplication) {
@@ -284,19 +315,19 @@ export class CadenzaClient {
    * Show a page, workbook, worksheet or workbook view in an iframe.
    *
    * @param {PageSource | EmbeddingTargetId} source - The source to show
-   * @param {object} [options]
-   * @param {DataType} [options.dataType] - Set to 'pdf' for embedding targets of type report and of views with view
+   * @param {object} [__namedParameters]
+   * @param {DataType} [__namedParameters.dataType] - Set to 'pdf' for embedding targets of type report and of views with view
    *     type of "JasperReports report" to show the generated report PDF directly (without any Cadenza headers or
    *     footers).
-   * @param {UiFeature[]} [options.disabledUiFeatures] - Cadenza UI features to disable
-   * @param {boolean} [options.expandNavigator] - Indicates if the navigator should be expanded.
-   * @param {FilterVariables} [options.filter] - Filter variables
-   * @param {boolean} [options.hideMainHeaderAndFooter] - Whether to hide the main Cadenza header and footer
-   * @param {boolean} [options.hideWorkbookToolBar] - Whether to hide the workbook toolbar
-   * @param {GlobalId} [options.highlightGlobalId] - The ID of an item to highlight / expand in the navigator
-   * @param {String} [options.labelSet] - The name of a label set defined in the `basicweb-config.xml` (only supported for the welcome page)
-   * @param {OperationMode} [options.operationMode] - The mode in which a workbook should be operated
-   * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
+   * @param {UiFeature[]} [__namedParameters.disabledUiFeatures] - Cadenza UI features to disable
+   * @param {boolean} [__namedParameters.expandNavigator] - Indicates if the navigator should be expanded.
+   * @param {FilterVariables} [__namedParameters.filter] - Filter variables
+   * @param {boolean} [__namedParameters.hideMainHeaderAndFooter] - Whether to hide the main Cadenza header and footer
+   * @param {boolean} [__namedParameters.hideWorkbookToolBar] - Whether to hide the workbook toolbar
+   * @param {GlobalId} [__namedParameters.highlightGlobalId] - The ID of an item to highlight / expand in the navigator
+   * @param {String} [__namedParameters.labelSet] - The name of a label set defined in the `basicweb-config.xml` (only supported for the welcome page)
+   * @param {OperationMode} [__namedParameters.operationMode] - The mode in which a workbook should be operated
+   * @param {AbortSignal} [__namedParameters.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires
@@ -347,8 +378,8 @@ export class CadenzaClient {
 
   /**
    * Reload the views of a worksheet.
-   * @param {object} [options] - Options
-   * @param {boolean} [options.invalidateCaches] - When true, caches will be invalidated for objecttypes used
+   * @param {object} [__namedParameters] - Options
+   * @param {boolean} [__namedParameters.invalidateCaches] - When true, caches will be invalidated for objecttypes used
    *   in the worksheet
    * @postMessage
    */
@@ -371,21 +402,21 @@ export class CadenzaClient {
    * Show a workbook map view in an iframe.
    *
    * @param {EmbeddingTargetId} mapView - The workbook map view to show
-   * @param {object} [options] - Options
-   * @param {UiFeature[]} [options.disabledUiFeatures] - Cadenza UI features to disable
-   * @param {boolean} [options.expandNavigator] - Indicates if the navigator should be expanded.
-   * @param {FilterVariables} [options.filter] - Filter variables
-   * @param {Geometry} [options.geometry] - A geometry to show on the map
-   * @param {boolean} [options.hideMainHeaderAndFooter] - Whether to hide the main Cadenza header and footer
-   * @param {boolean} [options.hideWorkbookToolBar] - Whether to hide the workbook toolbar
-   * @param {GlobalId} [options.highlightGlobalId] - The ID of an item to highlight / expand in the navigator
-   * @param {string} [options.locationFinder] - A search query for the location finder
-   * @param {Extent} [options.mapExtent] - A map extent to set
-   * @param {OperationMode} [options.operationMode] - The mode in which a workbook should be operated
-   * @param {boolean} [options.useMapSrs] -  Whether the geometry and the extent are in the map's SRS (otherwise EPSG:4326 is assumed)
-   * @param {ZoomTarget} [options.zoomTarget] - A target Cadenza should zoom to
-   * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
-   * @param {LayerDefinition[]} [options.additionalLayers] - Layer definitions to be imported and shown in the background, as a basis for the drawing.
+   * @param {object} [__namedParameters] - Options
+   * @param {LayerDefinition[]} [__namedParameters.additionalLayers] - Layer definitions to be imported and shown in the background, as a basis for the drawing.
+   * @param {UiFeature[]} [__namedParameters.disabledUiFeatures] - Cadenza UI features to disable
+   * @param {boolean} [__namedParameters.expandNavigator] - Indicates if the navigator should be expanded.
+   * @param {FilterVariables} [__namedParameters.filter] - Filter variables
+   * @param {Geometry} [__namedParameters.geometry] - A geometry to show on the map
+   * @param {boolean} [__namedParameters.hideMainHeaderAndFooter] - Whether to hide the main Cadenza header and footer
+   * @param {boolean} [__namedParameters.hideWorkbookToolBar] - Whether to hide the workbook toolbar
+   * @param {GlobalId} [__namedParameters.highlightGlobalId] - The ID of an item to highlight / expand in the navigator
+   * @param {string} [__namedParameters.locationFinder] - A search query for the location finder - _Deprecated_: Use {@link LocationFinderZoomTarget} instead.
+   * @param {Extent} [__namedParameters.mapExtent] - A map extent to set - _Deprecated_: Use {@link StaticZoomTarget} instead.
+   * @param {OperationMode} [__namedParameters.operationMode] - The mode in which a workbook should be operated
+   * @param {AbortSignal} [__namedParameters.signal] - A signal to abort the iframe loading
+   * @param {boolean} [__namedParameters.useMapSrs] - Whether the coordinates specified in other parameters are specified in the map's SRS (otherwise EPSG:4326 is assumed)
+   * @param {ZoomTarget} [__namedParameters.zoomTarget] - Defines the initial map extent; If not given, Cadenza's default logic is used.
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires
@@ -416,7 +447,12 @@ export class CadenzaClient {
     if (geometry) {
       assertValidGeometryType(geometry.type);
     }
-    const zoomToGeometry = geometry && zoomTarget?.type === 'geometry';
+    const validZoomTarget = sanitizeZoomTarget({
+      geometry,
+      locationFinder,
+      mapExtent,
+      zoomTarget,
+    });
     const params = createParams({
       disabledUiFeatures,
       expandNavigator,
@@ -424,26 +460,23 @@ export class CadenzaClient {
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
       highlightGlobalId,
-      // only use locationFinder if zoom to geometry is not set, to avoid
-      // zooming race condition for Cadenza versions below 10.1
-      locationFinder: zoomToGeometry ? undefined : locationFinder,
-      mapExtent,
       operationMode,
       targetType: 'MAP',
       useMapSrs,
+      validZoomTarget,
     });
     await this.#show(resolvePath(mapView), params, signal);
     if (geometry) {
       this.#postEvent('setGeometry', {
         geometry,
-        zoomToGeometry,
       });
     }
     if (additionalLayers) {
-      additionalLayers.forEach((layer) =>
-        this.#postEvent('importLayer', layer),
-      );
+      for (const layer of additionalLayers) {
+        await this.#postRequest('importLayer', layer);
+      }
     }
+    this.#setZoomTarget(validZoomTarget);
   }
 
   /**
@@ -554,13 +587,6 @@ export class CadenzaClient {
   }
 
   /**
-   * @typedef LayerDefinition
-   * @property {string} name - The layer's name.
-   * @property {'geojson'} type - The layer's type.
-   * @property {FeatureCollection} content - The layer's content in geojson format.
-   */
-
-  /**
    * Create a geometry.
    *
    * _Note:_ Under the hood, creating a geometry is similar to editing a geometry.
@@ -568,16 +594,17 @@ export class CadenzaClient {
    *
    * @param {EmbeddingTargetId} backgroundMapView - The workbook map view in the background
    * @param {GeometryType} geometryType - The geometry type
-   * @param {object} [options] - Options
-   * @param {UiFeature[]} [options.disabledUiFeatures] - Cadenza UI features to disable
-   * @param {FilterVariables} [options.filter] - Filter variables
-   * @param {string} [options.locationFinder] - A search query for the location finder
-   * @param {Extent} [options.mapExtent] - A map extent to set
-   * @param {number} [options.minScale] - The minimum scale where the user should work on. A warning is shown when the map is zoomed out above the threshold.
-   * @param {boolean} [options.useMapSrs] - Whether the created geometry should use the map's SRS (otherwise EPSG:4326 will be used)
-   * @param {OperationMode} [options.operationMode] - The mode in which a workbook should be operated
-   * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
-   * @param {LayerDefinition[]} [options.additionalLayers] - Layer definitions to be imported and shown in the background, as a basis for the drawing.
+   * @param {object} [__namedParameters] - Options
+   * @param {LayerDefinition[]} [__namedParameters.additionalLayers] - Layer definitions to be imported and shown in the background, as a basis for the drawing.
+   * @param {UiFeature[]} [__namedParameters.disabledUiFeatures] - Cadenza UI features to disable
+   * @param {FilterVariables} [__namedParameters.filter] - Filter variables
+   * @param {string} [__namedParameters.locationFinder] - A search query for the location finder - _Deprecated_: Use {@link LocationFinderZoomTarget} instead.
+   * @param {Extent} [__namedParameters.mapExtent] - A map extent to set - _Deprecated_: Use {@link StaticZoomTarget} instead.
+   * @param {number} [__namedParameters.minScale] - The minimum scale where the user should work on. A warning is shown when the map is zoomed out above the threshold.
+   * @param {OperationMode} [__namedParameters.operationMode] - The mode in which a workbook should be operated
+   * @param {AbortSignal} [__namedParameters.signal] - A signal to abort the iframe loading
+   * @param {boolean} [__namedParameters.useMapSrs] - Whether the coordinates specified in other parameters are specified in the map's SRS and the created geometry should use the map's SRS (otherwise EPSG:4326 is assumed)
+   * @param {ZoomTarget} [__namedParameters.zoomTarget] - Defines the initial map extent; If not given, Cadenza's default logic is used.
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires
@@ -590,6 +617,7 @@ export class CadenzaClient {
     backgroundMapView,
     geometryType,
     {
+      additionalLayers,
       disabledUiFeatures,
       filter,
       locationFinder,
@@ -598,27 +626,32 @@ export class CadenzaClient {
       useMapSrs,
       operationMode,
       signal,
-      additionalLayers,
+      zoomTarget,
     } = {},
   ) {
     this.#log('CadenzaClient#createGeometry', ...arguments);
+    const validZoomTarget = sanitizeZoomTarget({
+      locationFinder,
+      mapExtent,
+      zoomTarget,
+    });
     const params = createParams({
       action: 'editGeometry',
       disabledUiFeatures,
       filter,
       geometryType,
-      locationFinder,
-      mapExtent,
       minScale,
-      useMapSrs,
       operationMode,
+      useMapSrs,
+      validZoomTarget,
     });
     await this.#show(resolvePath(backgroundMapView), params, signal);
     if (additionalLayers) {
-      additionalLayers.forEach((layer) =>
-        this.#postEvent('importLayer', layer),
-      );
+      for (const layer of additionalLayers) {
+        await this.#postRequest('importLayer', layer);
+      }
     }
+    this.#setZoomTarget(validZoomTarget);
   }
 
   /**
@@ -626,17 +659,17 @@ export class CadenzaClient {
    *
    * @param {EmbeddingTargetId} backgroundMapView - The workbook map view in the background
    * @param {Geometry} geometry - The geometry
-   * @param {object} [options] - Options
-   * @param {UiFeature[]} [options.disabledUiFeatures] - Cadenza UI features to disable
-   * @param {FilterVariables} [options.filter] - Filter variables
-   * @param {string} [options.locationFinder] - A search query for the location finder
-   * @param {Extent} [options.mapExtent] - A map extent to set
-   * @param {number} [options.minScale] - The minimum scale where the user should work on. A warning is shown when the map is zoomed out above the threshold.
-   * @param {boolean} [options.useMapSrs] - Whether the geometry is in the map's SRS (otherwise EPSG:4326 is assumed)
-   * @param {OperationMode} [options.operationMode] - The mode in which a workbook should be operated
-   * @param {ZoomTarget} [options.zoomTarget] - A target Cadenza should zoom to
-   * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
-   * @param {LayerDefinition[]} [options.additionalLayers] - Layer definitions to be imported and shown in the background, as a basis for the drawing. Each is a layer definition, with name, type and content (a Geojson featureCollection).
+   * @param {object} [__namedParameters] - Options
+   * @param {LayerDefinition[]} [__namedParameters.additionalLayers] - Layer definitions to be imported and shown in the background, as a basis for the drawing. Each is a layer definition, with name, type and content (a Geojson featureCollection).
+   * @param {UiFeature[]} [__namedParameters.disabledUiFeatures] - Cadenza UI features to disable
+   * @param {FilterVariables} [__namedParameters.filter] - Filter variables
+   * @param {string} [__namedParameters.locationFinder] - A search query for the location finder - _Deprecated_: Use {@link LocationFinderZoomTarget} instead.
+   * @param {Extent} [__namedParameters.mapExtent] - A map extent to set - _Deprecated_: Use {@link StaticZoomTarget} instead.
+   * @param {number} [__namedParameters.minScale] - The minimum scale where the user should work on. A warning is shown when the map is zoomed out above the threshold.
+   * @param {OperationMode} [__namedParameters.operationMode] - The mode in which a workbook should be operated
+   * @param {AbortSignal} [__namedParameters.signal] - A signal to abort the iframe loading
+   * @param {boolean} [__namedParameters.useMapSrs] - Whether the coordinates specified in other parameters are specified in the map's SRS (otherwise EPSG:4326 is assumed)
+   * @param {ZoomTarget} [__namedParameters.zoomTarget] - Defines the initial map extent; If not given, Cadenza's default logic is used.
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires
@@ -649,45 +682,47 @@ export class CadenzaClient {
     backgroundMapView,
     geometry,
     {
+      additionalLayers,
       disabledUiFeatures,
       filter,
       locationFinder,
       mapExtent,
       minScale,
-      useMapSrs,
-      zoomTarget,
       operationMode,
       signal,
-      additionalLayers,
+      useMapSrs,
+      zoomTarget,
     } = {},
   ) {
     this.#log('CadenzaClient#editGeometry', ...arguments);
     assertValidGeometryType(geometry.type);
-    const zoomToGeometry = geometry && zoomTarget?.type === 'geometry';
+    const validZoomTarget = sanitizeZoomTarget({
+      geometry,
+      locationFinder,
+      mapExtent,
+      zoomTarget,
+    });
     const params = createParams({
       action: 'editGeometry',
       disabledUiFeatures,
       filter,
-      // only use locationFinder if zoom to geometry is not set, to avoid
-      // zooming race condition for Cadenza versions below 10.1
-      locationFinder: zoomToGeometry ? undefined : locationFinder,
-      mapExtent,
       minScale,
-      useMapSrs,
       operationMode,
+      useMapSrs,
+      validZoomTarget,
     });
     await this.#show(resolvePath(backgroundMapView), params, signal);
     if (geometry) {
       this.#postEvent('setGeometry', {
         geometry,
-        zoomToGeometry,
       });
     }
     if (additionalLayers) {
-      additionalLayers.forEach((layer) =>
-        this.#postEvent('importLayer', layer),
-      );
+      for (const layer of additionalLayers) {
+        await this.#postRequest('importLayer', layer);
+      }
     }
+    this.#setZoomTarget(validZoomTarget);
   }
 
   /**
@@ -711,15 +746,16 @@ export class CadenzaClient {
    * Select objects in a workbook map.
    *
    * @param {EmbeddingTargetId} backgroundMapView - The workbook map view
-   * @param {object} [options] - Options
-   * @param {FilterVariables} [options.filter] - Filter variables
-   * @param {(WorkbookLayerPath | string)[]} [options.layers] - Layers to restrict the selection to
+   * @param {object} [__namedParameters] - Options
+   * @param {FilterVariables} [__namedParameters.filter] - Filter variables
+   * @param {(WorkbookLayerPath | string)[]} [__namedParameters.layers] - Layers to restrict the selection to
    *  (identified using layer paths or print names)
-   * @param {string} [options.locationFinder] - A search query for the location finder
-   * @param {Extent} [options.mapExtent] - A map extent to set
-   * @param {boolean} [options.useMapSrs] - Whether the geometry is in the map's SRS (otherwise EPSG:4326 is assumed)
-   * @param {OperationMode} [options.operationMode] - The mode in which a workbook should be operated
-   * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
+   * @param {string} [__namedParameters.locationFinder] - A search query for the location finder - _Deprecated_: Use {@link LocationFinderZoomTarget} instead.
+   * @param {Extent} [__namedParameters.mapExtent] - A map extent to set - _Deprecated_: Use {@link StaticZoomTarget} instead.
+   * @param {boolean} [__namedParameters.useMapSrs] - Whether the coordinates specified in other parameters are specified in the map's SRS (otherwise EPSG:4326 is assumed)
+   * @param {OperationMode} [__namedParameters.operationMode] - The mode in which a workbook should be operated
+   * @param {AbortSignal} [__namedParameters.signal] - A signal to abort the iframe loading
+   * @param {ZoomTarget} [__namedParameters.zoomTarget] - Defines the initial map extent; If not given, Cadenza's default logic is used.
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires
@@ -729,7 +765,7 @@ export class CadenzaClient {
    * - {@link CadenzaSelectObjectsCancelEvent}
    * @embed
    */
-  selectObjects(
+  async selectObjects(
     backgroundMapView,
     {
       filter,
@@ -739,19 +775,34 @@ export class CadenzaClient {
       useMapSrs,
       operationMode,
       signal,
+      zoomTarget,
     } = {},
   ) {
     this.#log('CadenzaClient#selectObjects', ...arguments);
+    const validZoomTarget = sanitizeZoomTarget({
+      geometry: undefined,
+      locationFinder,
+      mapExtent,
+      zoomTarget,
+    });
     const params = createParams({
       action: 'selectObjects',
       filter,
       layers: layers?.map(array),
-      locationFinder,
-      mapExtent,
       useMapSrs,
       operationMode,
+      validZoomTarget,
     });
-    return this.#show(resolvePath(backgroundMapView), params, signal);
+    await this.#show(resolvePath(backgroundMapView), params, signal);
+    this.#setZoomTarget(validZoomTarget);
+  }
+
+  #setZoomTarget(/** @type {ZoomTarget | undefined} */ zoomTarget) {
+    const type = zoomTarget?.type;
+    // Other zoom targets are handled via URL parameters.
+    if (type === 'geometry' || type === 'static') {
+      this.#postEvent('setZoomTarget', zoomTarget);
+    }
   }
 
   /**
@@ -965,13 +1016,13 @@ export class CadenzaClient {
    *
    * @param {EmbeddingTargetId} source - The workbook view to fetch data from.
    * @param {DataType} dataType - The data type you want to get back from the server.
-   *   Currently, `"csv"`, `"excel"` and `"json"` are supported for embedding targets of type view with a view type of
+   *  Currently, `"csv"`, `"excel"` and `"json"` are supported for embedding targets of type view with a view type of
    *   table and indicator. `"pdf"` is supported for embedding targets of type report and of type view with a view type
    *   of "JasperReports report".
-   * @param {object} [options] - Options
-   * @param {FilterVariables} [options.filter] - Filter variables
-   * @param {TablePart[]} [options.parts] - Table parts to export; If not specified, all parts are exported.
-   * @param {AbortSignal} [options.signal] - A signal to abort the data fetching
+   * @param {object} [__namedParameters] - Options
+   * @param {FilterVariables} [__namedParameters.filter] - Filter variables
+   * @param {TablePart[]} [__namedParameters.parts] - Table parts to export; If not specified, all parts are exported.
+   * @param {AbortSignal} [__namedParameters.signal] - A signal to abort the data fetching
    * @return {Promise<Response>} A `Promise` for the fetch response
    * @throws For invalid arguments
    * @server
@@ -990,11 +1041,11 @@ export class CadenzaClient {
    * @param {(WorkbookLayerPath | string)[]} layerPath - Layer path to identify the layer
    *  (identified using layer paths or print names)
    * @param {unknown[][]} objectIds - The IDs of the objects to select
-   * @param {object} [options] - Options
-   * @param {FilterVariables} [options.filter] - Filter variables
-   * @param {AbortSignal} [options.signal] - A signal to abort the data fetching
-   * @param {Boolean} [options.useMapSrs] - Use the map SRS instead of WGS84
-   * @param {Boolean} [options.fullGeometries] - Return non-simplified geometries
+   * @param {object} [__namedParameters] - Options
+   * @param {FilterVariables} [__namedParameters.filter] - Filter variables
+   * @param {AbortSignal} [__namedParameters.signal] - A signal to abort the data fetching
+   * @param {Boolean} [__namedParameters.useMapSrs] - Use the map SRS instead of WGS84
+   * @param {Boolean} [__namedParameters.fullGeometries] - Return non-simplified geometries
    * @return {Promise<FeatureCollection>} A `Promise` for the fetch response
    * @throws For invalid arguments
    */
@@ -1028,10 +1079,10 @@ export class CadenzaClient {
    * @param {(WorkbookLayerPath | string)[]} layerPath - Layer path to identify the layer
    *  (identified using layer paths or print names)
    * @param {Geometry} geometry - The intersection geometry
-   * @param {object} [options] - Options
-   * @param {boolean} [options.useMapSrs]  - The intersection geometry and the result geometries are in the map's SRS (otherwise EPSG:4326 is assumed)
-   * @param {Distance} [options.buffer] - Buffer size for geometry of the transition
-   * @param {AbortSignal} [options.signal] - A signal to abort the data fetching
+   * @param {object} [__namedParameters] - Options
+   * @param {boolean} [__namedParameters.useMapSrs]  - The intersection geometry and the result geometries are in the map's SRS (otherwise EPSG:4326 is assumed)
+   * @param {Distance} [__namedParameters.buffer] - Buffer size for geometry of the transition
+   * @param {AbortSignal} [__namedParameters.signal] - A signal to abort the data fetching
    * @return {Promise<FeatureCollection>} A `Promise` for the fetch response
    * @server
    */
@@ -1095,13 +1146,13 @@ export class CadenzaClient {
    *
    * @param {EmbeddingTargetId} source - The workbook view to fetch data from.
    * @param {DataType} dataType - The data type you want to get back from the server.
-   *   Currently, `"csv"`, `"excel"` and `"json"` are supported for embedding targets of type view with a view type of
+   *  Currently, `"csv"`, `"excel"` and `"json"` are supported for embedding targets of type view with a view type of
    *   table and indicator. `"pdf"` is supported for embedding targets of type report and of type view with a view type
    *   of "JasperReports report".
-   * @param {object} [options] - Options
-   * @param {string} [options.fileName] - The file name to use; The file extension is appended by Cadenza.
-   * @param {FilterVariables} [options.filter] - Filter variables
-   * @param {TablePart[]} [options.parts] - Table parts to export; If not specified, all parts are exported.
+   * @param {object} [__namedParameters] - Options
+   * @param {string} [__namedParameters.fileName] - The file name to use; The file extension is appended by Cadenza.
+   * @param {FilterVariables} [__namedParameters.filter] - Filter variables
+   * @param {TablePart[]} [__namedParameters.parts] - Table parts to export; If not specified, all parts are exported.
    * @throws For invalid arguments
    * @server
    */
@@ -1274,13 +1325,12 @@ function assertSupportedDataType(
  * @param {GlobalId} [params.highlightGlobalId]
  * @param {string} [params.labelSet]
  * @param {WorkbookLayerPath[]} [params.layers]
- * @param {string} [params.locationFinder]
- * @param {Extent} [params.mapExtent]
  * @param {number} [params.minScale]
  * @param {OperationMode} [params.operationMode]
  * @param {TablePart[]} [params.parts]
  * @param {'MAP'} [params.targetType]
  * @param {boolean} [params.useMapSrs]
+ * @param {ZoomTarget | undefined} [params.validZoomTarget]
  * @return {URLSearchParams}
  */
 function createParams({
@@ -1296,13 +1346,12 @@ function createParams({
   highlightGlobalId,
   labelSet,
   layers,
-  locationFinder,
-  mapExtent,
   minScale,
   operationMode,
   parts,
   targetType,
   useMapSrs,
+  validZoomTarget,
 }) {
   if (disabledUiFeatures) {
     disabledUiFeatures.forEach((feature) =>
@@ -1330,6 +1379,15 @@ function createParams({
     parts.forEach((part) =>
       assert(validTablePart(part), `Invalid table part: ${part}`),
     );
+  }
+  let locationFinder;
+  let mapExtent;
+  if (validZoomTarget) {
+    if (validZoomTarget.type === 'static') {
+      mapExtent = validZoomTarget.extent;
+    } else if (validZoomTarget.type === 'locationFinder') {
+      locationFinder = validZoomTarget.query;
+    }
   }
   return new URLSearchParams({
     ...(action && { action }),
@@ -1367,6 +1425,58 @@ function createParams({
 
 function array(/** @type unknown */ value) {
   return Array.isArray(value) ? value : [value];
+}
+
+/**
+ * Creates a valid zoom target based on these rules:
+ * - `zoomTarget` trumps `mapExtent`, `mapExtent` trumps `locationFinder`.
+ * - `mapExtent`, `locationFinder`, and `geometry` are used as fallback for
+ *   {@link StaticZoomTarget#extent}, {@link LocationFinderZoomTarget#query},
+ *   and {@link GeometryZoomTarget#geometry} respectively.
+ *
+ * If the result is not a valid zoom target, the return value is undefined.
+ *
+ * @param {object} __namedParameters
+ * @param {Geometry} [__namedParameters.geometry]
+ * @param {string} [__namedParameters.locationFinder]
+ * @param {Extent} [__namedParameters.mapExtent]
+ * @param {ZoomTarget} [__namedParameters.zoomTarget]
+ * @return {ZoomTarget | undefined}
+ */
+function sanitizeZoomTarget({
+  zoomTarget,
+  mapExtent,
+  locationFinder,
+  geometry,
+} = {}) {
+  if (zoomTarget) {
+    switch (zoomTarget.type) {
+      case 'static':
+        const extent = zoomTarget.extent ?? mapExtent;
+        if (extent) {
+          return { type: 'static', extent };
+        }
+        break;
+      case 'locationFinder':
+        const query = zoomTarget.query ?? locationFinder;
+        if (query) {
+          return { type: 'locationFinder', query };
+        }
+        break;
+      case 'geometry':
+        geometry = zoomTarget.geometry ?? geometry;
+        if (geometry) {
+          return { type: 'geometry', geometry };
+        }
+        break;
+    }
+  }
+  if (mapExtent) {
+    return { type: 'static', extent: mapExtent };
+  }
+  if (locationFinder) {
+    return { type: 'locationFinder', query: locationFinder };
+  }
 }
 
 // Please do not add internal event types like 'ready' here.
