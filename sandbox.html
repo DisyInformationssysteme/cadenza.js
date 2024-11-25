@@ -464,8 +464,59 @@
     <input name="embeddingTargetId" id="embeddingTargetId" required>
   </div>
   <div>
+    <label for="geometry">Additional layers (GeoJSON)</label>
+    <textarea name="additionalLayers" id="additionalLayers" rows="10"></textarea>
+    <small>
+      <strong>Example:</strong>
+      <pre>
+[
+  {
+    "type":"geojson",
+    "name":"freiburg",
+    "content":{
+      "type":"FeatureCollection",
+      "features":[
+        {
+          "type":"Feature",
+          "properties":{},
+          "geometry":{
+            "coordinates":[
+              [
+                [7.965977481550681,47.93787211649922],
+                [7.903787681150362,47.64741821336713],
+                [8.310793134690243,47.70344757260733],
+                [7.965977481550681,47.93787211649922]
+              ]
+            ],
+            "type":"Polygon"
+          }
+        }
+      ]
+    }
+  }
+]
+        </pre>
+    </small>
+  </div>
+  <div>
     <label for="geometry">Geometry (GeoJSON)</label>
-    <textarea name="geometry" id="geometry" rows="5" placeholder="{&quot;coordinates&quot;:[[[9.598504509838506,52.70992820638244],[8.899110702389294,51.72257425885121],[10.906499617840836,51.725944168909365],[9.598504509838506,52.70992820638244]]],&quot;type&quot;:&quot;Polygon&quot;}"></textarea>
+    <textarea name="geometry" id="geometry" rows="5"></textarea>
+    <small>
+      <strong>Example:</strong>
+      <pre>
+{
+  "coordinates":[
+    [
+      [9.598504509838506,52.70992820638244],
+      [8.899110702389294,51.72257425885121],
+      [10.906499617840836,51.725944168909365],
+      [9.598504509838506,52.70992820638244]
+    ]
+  ],
+  "type":"Polygon"
+}
+      </pre>
+    </small>
   </div>
 </template>
 
@@ -492,7 +543,38 @@
   </div>
   <div>
     <label for="geometry">Additional layers (GeoJSON)</label>
-    <textarea name="additionalLayers" id="additionalLayers" rows="10" placeholder="[ { type: &quot;geojson&quot;, name: &quot;Stuttgart&quot;, content: { &quot;type&quot;: &quot;FeatureCollection&quot;, &quot;features&quot;: [ { &quot;type&quot;: &quot;Feature&quot;, &quot;properties&quot;: {}, &quot;geometry&quot;: { &quot;coordinates&quot;: [ [ [ 9.019743777219759, 48.939075160317145 ], [ 9.060437807540097, 48.70393235548886 ], [ 9.734017619469824, 48.7841975772329 ], [ 9.019743777219759, 48.939075160317145 ] ] ], &quot;type&quot;: &quot;Polygon&quot; } } ] } } ]"></textarea>
+    <textarea name="additionalLayers" id="additionalLayers" rows="10"></textarea>
+    <small>
+      <strong>Example:</strong>
+      <pre>
+[
+  {
+    "type":"geojson",
+    "name":"freiburg",
+    "content":{
+      "type":"FeatureCollection",
+      "features":[
+        {
+          "type":"Feature",
+          "properties":{},
+          "geometry":{
+            "coordinates":[
+              [
+                [7.965977481550681,47.93787211649922],
+                [7.903787681150362,47.64741821336713],
+                [8.310793134690243,47.70344757260733],
+                [7.965977481550681,47.93787211649922]
+              ]
+            ],
+            "type":"Polygon"
+          }
+        }
+      ]
+    }
+  }
+]
+        </pre>
+    </small>
   </div>
   <div>
     <label for="geometryType">Geometry type</label>
@@ -524,13 +606,58 @@
   </div>
   <div>
     <label for="geometry">Additional layers (GeoJSON)</label>
-    <button>Add example</button>
-    <textarea name="additionalLayers" id="additionalLayers" rows="10" placeholder="[ { type: &quot;geojson&quot;, name: &quot;Stuttgart&quot;, content: { &quot;type&quot;: &quot;FeatureCollection&quot;, &quot;features&quot;: [ { &quot;type&quot;: &quot;Feature&quot;, &quot;properties&quot;: {}, &quot;geometry&quot;: { &quot;coordinates&quot;: [ [ [ 9.019743777219759, 48.939075160317145 ], [ 9.060437807540097, 48.70393235548886 ], [ 9.734017619469824, 48.7841975772329 ], [ 9.019743777219759, 48.939075160317145 ] ] ], &quot;type&quot;: &quot;Polygon&quot; } } ] } } ]"></textarea>
+    <textarea name="additionalLayers" id="additionalLayers" rows="10"></textarea>
+    <small>
+      <strong>Example:</strong>
+      <pre>
+[
+  {
+    "type":"geojson",
+    "name":"freiburg",
+    "content":{
+      "type":"FeatureCollection",
+      "features":[
+        {
+          "type":"Feature",
+          "properties":{},
+          "geometry":{
+            "coordinates":[
+              [
+                [7.965977481550681,47.93787211649922],
+                [7.903787681150362,47.64741821336713],
+                [8.310793134690243,47.70344757260733],
+                [7.965977481550681,47.93787211649922]
+              ]
+            ],
+            "type":"Polygon"
+          }
+        }
+      ]
+    }
+  }
+]
+        </pre>
+    </small>
   </div>
   <div>
     <label for="geometry">Geometry (GeoJSON) *</label>
-    <textarea name="geometry" id="geometry" rows="5" required placeholder="{&quot;coordinates&quot;:[[[9.598504509838506,52.70992820638244],[8.899110702389294,51.72257425885121],[10.906499617840836,51.725944168909365],[9.598504509838506,52.70992820638244]]],&quot;type&quot;:&quot;Polygon&quot;}"></textarea>
-    <small></small>
+    <textarea name="geometry" id="geometry" rows="5" required></textarea>
+    <small>
+      <strong>Example:</strong>
+      <pre>
+{
+  "coordinates":[
+    [
+      [9.598504509838506,52.70992820638244],
+      [8.899110702389294,51.72257425885121],
+      [10.906499617840836,51.725944168909365],
+      [9.598504509838506,52.70992820638244]
+    ]
+  ],
+  "type":"Polygon"
+}
+      </pre>
+    </small>
   </div>
   <div>
     <label>

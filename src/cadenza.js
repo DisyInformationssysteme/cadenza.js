@@ -403,6 +403,7 @@ export class CadenzaClient {
    *
    * @param {EmbeddingTargetId} mapView - The workbook map view to show
    * @param {object} [__namedParameters] - Options
+   * @param {LayerDefinition[]} [__namedParameters.additionalLayers] - Layer definitions to be imported and shown in the background, as a basis for the drawing.
    * @param {UiFeature[]} [__namedParameters.disabledUiFeatures] - Cadenza UI features to disable
    * @param {boolean} [__namedParameters.expandNavigator] - Indicates if the navigator should be expanded.
    * @param {FilterVariables} [__namedParameters.filter] - Filter variables
@@ -439,6 +440,7 @@ export class CadenzaClient {
       useMapSrs,
       zoomTarget,
       signal,
+      additionalLayers,
     } = {},
   ) {
     this.#log('CadenzaClient#showMap', ...arguments);
@@ -468,6 +470,11 @@ export class CadenzaClient {
       this.#postEvent('setGeometry', {
         geometry,
       });
+    }
+    if (additionalLayers) {
+      for (const layer of additionalLayers) {
+        await this.#postRequest('importLayer', layer);
+      }
     }
     this.#setZoomTarget(validZoomTarget);
   }
