@@ -5,11 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project uses a version scheme based on the Cadenza main version in the format x.x.y, where x.x is the Cadenza main version and y a functional change or bugfix.
 
 ## Unreleased
-### Fixed
-- Removed duplicate geometry section in `sandbox.html#editGeometry`
 
+## 10.2.7 - 2024-11-26
 ### Changed
 - Examples in the sandbox are now displayed more compactly
+
+### Fixed
+- Removed duplicate geometry section in `sandbox.html#editGeometry`
 
 ## 10.2.6 - 2024-11-25
 ### Fixed
