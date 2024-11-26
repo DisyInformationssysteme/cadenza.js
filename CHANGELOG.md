@@ -9,7 +9,7 @@ This project uses a version scheme based on the Cadenza main version in the form
 - Removed duplicate geometry section in `sandbox.html#editGeometry`
 
 ### Changed
-- Examples are now displayed more compact
+- Examples in the sandbox are now displayed more compactly
 
 ## 10.2.6 - 2024-11-25
 ### Fixed
