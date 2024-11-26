@@ -457,7 +457,7 @@
   </div>
 </template>
 
-<template data-action="showMap" data-common="additionalLayers,extentStrategy,map,showWorkbook,disabledUiFeatures,filter,show">
+<template data-action="showMap" data-common="geometry,additionalLayers,extentStrategy,map,showWorkbook,disabledUiFeatures,filter,show">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
@@ -648,6 +648,29 @@
   }
 ]
         </pre>
+    </small>
+  </div>
+</template>
+
+<template id="common-geometry">
+  <div>
+    <label for="geometry">Geometry (GeoJSON) *</label>
+    <textarea name="geometry" id="geometry" rows="5"></textarea>
+    <small>
+      <strong>Example:</strong>
+      <pre>
+{
+  "coordinates":[
+    [
+      [9.598504509838506,52.70992820638244],
+      [8.899110702389294,51.72257425885121],
+      [10.906499617840836,51.725944168909365],
+      [9.598504509838506,52.70992820638244]
+    ]
+  ],
+  "type":"Polygon"
+}
+      </pre>
     </small>
   </div>
 </template>
