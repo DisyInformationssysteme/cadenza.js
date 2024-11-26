@@ -7,7 +7,9 @@ This project uses a version scheme based on the Cadenza main version in the form
 ## Unreleased
 ### Fixed
 - Removed duplicate geometry section in `sandbox.html#editGeometry`
-- Horizontal scrollbar in `sandbox.html` left sidebar now appears sticky.
+
+### Changed
+- Examples are now displayed more compact
 
 ## 10.2.6 - 2024-11-25
 ### Fixed
