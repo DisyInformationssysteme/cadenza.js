@@ -6,6 +6,7 @@ This project uses a version scheme based on the Cadenza main version in the form
 
 ## Unreleased
 
+## 10.2.8 - 2024-11-27
 ### Changed
 - The required field indicator '*' of the 'geometry' parameter in the 'Show Map' example in the sandbox has been removed
 
