@@ -209,7 +209,7 @@ let firstEmbeddingTargetShown;
  * _Notes:_
  * * Most public methods are tagged with one of these modifiers:
  *   * `Embed`: The method embeds Cadenza in the given iframe.
- *   * `Post Message`: The method communicates with an embedded or parent/opener Cadenza via postMessage.
+ *   * `Post Message`: The method communicates with an embedded Cadenza via postMessage.
  *   * `Post Message Parent`: The method communicates with a parent/opener Cadenza via postMessage.
  *   * `Server`: The method communicates with the Cadenza server via HTTP.
  * * Most public methods can be aborted using an [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal).
