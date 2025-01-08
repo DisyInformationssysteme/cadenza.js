@@ -161,9 +161,9 @@
       },
       setFilter: data => cadenzaClient.setFilter(parseFilterVariables(data.filter)),
       setLayerVisibility: data => cadenzaClient.setLayerVisibility(JSON.parse(data.layer), data.visibility === 'on'),
-      setSelection: data => cadenzaClient.setSelection(JSON.parse(data.layer), JSON.parse(data.objectIds)),
-      addSelection: data => cadenzaClient.addSelection(JSON.parse(data.layer), JSON.parse(data.objectIds)),
-      removeSelection: data => cadenzaClient.removeSelection(JSON.parse(data.layer), JSON.parse(data.objectIds)),
+      setSelection: data => cadenzaClient.setSelection(JSON.parse(data.layer), JSON.parse(data.objectIds), {extentStrategy: JSON.parse(data.extentStrategy)}),
+      addSelection: data => cadenzaClient.addSelection(JSON.parse(data.layer), JSON.parse(data.objectIds), { extentStrategy: JSON.parse(data.extentStrategy) }),
+      removeSelection: data => cadenzaClient.removeSelection(JSON.parse(data.layer), JSON.parse(data.objectIds), { extentStrategy: JSON.parse(data.extentStrategy) }),
       createGeometry: data => cadenzaClient.createGeometry(data.embeddingTargetId, data.geometryType, getOptions(data)),
       editGeometry: ({ geometry, ...data }) => cadenzaClient.editGeometry(data.embeddingTargetId, JSON.parse(geometry), getOptions(data)),
       selectObjects: data => cadenzaClient.selectObjects(data.embeddingTargetId, getOptions(data)),
@@ -229,7 +229,7 @@
       simplifiedOperationMode,
       useMapSrs,
       fullGeometries,
-      zoomToGeometry,
+      extentStrategy,
       distance,
       lengthUnit
     }) {
@@ -252,7 +252,7 @@
         layers: layers ? JSON.parse(layers) : undefined,
         useMapSrs: useMapSrs === 'on',
         fullGeometries: fullGeometries === 'on',
-        zoomTarget: zoomToGeometry === 'on' ? { type: 'geometry' } : undefined,
+        extentStrategy: extentStrategy && JSON.parse(extentStrategy),
         buffer: distance ? { value: Number(distance), lengthUnit: lengthUnit ? lengthUnit : 'm' } : undefined
       };
     }
@@ -463,7 +463,7 @@
   </div>
 </template>
 
-<template data-action="showMap" data-common="zoomTo,map,showWorkbook,filter,show">
+<template data-action="showMap" data-common="extentStrategy,map,showWorkbook,filter,show">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
@@ -518,7 +518,7 @@
   </div>
 </template>
 
-<template data-action="editGeometry" data-common="zoomTo,map,filter">
+<template data-action="editGeometry" data-common="extentStrategy,map,filter">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
@@ -571,7 +571,7 @@
   </div>
 </template>
 
-<template data-action="setSelection" data-common="layer,object-ids"></template>
+<template data-action="setSelection" data-common="layer,object-ids,extentStrategy"></template>
 <template data-action="addSelection" data-common="layer,object-ids"></template>
 <template data-action="removeSelection" data-common="layer,object-ids"></template>
 
@@ -608,12 +608,35 @@
   </div>
 </template>
 
-<template id="common-zoomTo">
+<template id="common-extentStrategy">
   <div>
-    <label>
-      <input type="checkbox" name="zoomToGeometry">
-      Zoom to geometry
-    </label>
+    <label for="extentStrategy">Extent Strategy</label>
+    <textarea name="extentStrategy" id="extentStrategy" rows="5"></textarea>
+    <small>
+      <p>Optional JSON Object</p>
+      <p>
+        Hints for some types:
+      <ul>
+        <li>'geometry' of 'geometry': GeoJSON geometry</li>
+      </ul>
+      </p>
+      <p>
+        Supported extent strategies as examples to use:
+      <ul>
+        <li><pre>{
+  "type": "geometry",
+  "geometry": {
+    "coordinates":[[
+      [9.598504509838506,52.70992820638244],
+      [8.899110702389294,51.72257425885121],
+      [10.906499617840836,51.725944168909365],
+      [9.598504509838506,52.70992820638244]]],
+      "type":"Polygon"
+  }
+}</pre></li>
+      </ul>
+      </p>
+    </small>
   </div>
 </template>
 

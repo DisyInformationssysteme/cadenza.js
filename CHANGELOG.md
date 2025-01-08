@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- `extentStrategy` option for the internal methods `CadenzaClient#setSelection`, `CadenzaClient#addSelection`, `CadenzaClient#removeSelection`
+
+### Changed
+- **BREAKING CHANGE** Renamed `zoomTarget` parameter, `ZoomTarget` type and `GeometryZoomTarget` type to `extentStrategy`, `ExtentStrategy` and `GeometryExtentStrategy`
+
 ## 2.14.1 - 2024-10-24
 ### Added
 - `CadenzaReloadEvent`
