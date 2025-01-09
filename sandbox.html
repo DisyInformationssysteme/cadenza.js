@@ -162,9 +162,9 @@
       },
       setFilter: data => cadenzaClient.setFilter(parseFilterVariables(data.filter)),
       setLayerVisibility: data => cadenzaClient.setLayerVisibility(JSON.parse(data.layer), data.visibility === 'on'),
-      setSelection: data => cadenzaClient.setSelection(JSON.parse(data.layer), JSON.parse(data.objectIds)),
-      addSelection: data => cadenzaClient.addSelection(JSON.parse(data.layer), JSON.parse(data.objectIds)),
-      removeSelection: data => cadenzaClient.removeSelection(JSON.parse(data.layer), JSON.parse(data.objectIds)),
+      setSelection: data => cadenzaClient.setSelection(JSON.parse(data.layer), JSON.parse(data.objectIds), {extentStrategy: JSON.parse(data.extentStrategy)}),
+      addSelection: data => cadenzaClient.addSelection(JSON.parse(data.layer), JSON.parse(data.objectIds), { extentStrategy: JSON.parse(data.extentStrategy) }),
+      removeSelection: data => cadenzaClient.removeSelection(JSON.parse(data.layer), JSON.parse(data.objectIds), { extentStrategy: JSON.parse(data.extentStrategy) }),
       createGeometry: data => cadenzaClient.createGeometry(data.embeddingTargetId, data.geometryType, getOptions(data)),
       editGeometry: ({ geometry, ...data }) => cadenzaClient.editGeometry(data.embeddingTargetId, JSON.parse(geometry), getOptions(data)),
       selectObjects: data => cadenzaClient.selectObjects(data.embeddingTargetId, getOptions(data)),
@@ -578,9 +578,9 @@
   </div>
 </template>
 
-<template data-action="setSelection" data-common="layer,object-ids"></template>
-<template data-action="addSelection" data-common="layer,object-ids"></template>
-<template data-action="removeSelection" data-common="layer,object-ids"></template>
+<template data-action="setSelection" data-common="layer,object-ids,extentStrategy"></template>
+<template data-action="addSelection" data-common="layer,object-ids,extentStrategy"></template>
+<template data-action="removeSelection" data-common="layer,object-ids,extentStrategy"></template>
 
 <template data-action="reload">
   <div>
