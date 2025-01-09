@@ -129,13 +129,11 @@ globalThis.cadenza = Object.assign(
 /** @typedef {[number,number,number,number]} Extent - An array of numbers representing an extent: [minx, miny, maxx, maxy] */
 
 /**
- * @typedef {GeometryExtentStrategy} ExtentStrategy - Options for defining the initial extent
+ * @typedef {GeometryZoomTarget} ZoomTarget - An object describing a target to zoom to
  */
-
 /**
- * @typedef GeometryExtentStrategy - The given {@link Geometry} defines the initial map extent.
- * @property {'geometry'} type - The extent strategy type
- * @property {Geometry} [geometry] - This geometry takes precedence over another geometry that might be given in an API call.
+ * @typedef GeometryZoomTarget - Instructs Cadenza to zoom to a provided {@Link Geometry}
+ * @property {'geometry'} type The type of the zoom target
  */
 
 /**
@@ -378,7 +376,7 @@ export class CadenzaClient {
    * @param {Extent} [options.mapExtent] - A map extent to set
    * @param {OperationMode} [options.operationMode] - The mode in which a workbook should be operated
    * @param {boolean} [options.useMapSrs] -  Whether the geometry and the extent are in the map's SRS (otherwise EPSG:4326 is assumed)
-   * @param {ExtentStrategy} [options.extentStrategy] - Strategy to define the new map extent
+   * @param {ZoomTarget} [options.zoomTarget] - A target Cadenza should zoom to
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
@@ -401,7 +399,7 @@ export class CadenzaClient {
       mapExtent,
       operationMode,
       useMapSrs,
-      extentStrategy,
+      zoomTarget,
       signal,
     } = {},
   ) {
@@ -409,7 +407,7 @@ export class CadenzaClient {
     if (geometry) {
       assertValidGeometryType(geometry.type);
     }
-    const zoomToGeometry = geometry && extentStrategy?.type === 'geometry';
+    const zoomToGeometry = geometry && zoomTarget?.type === 'geometry';
     const params = createParams({
       disabledUiFeatures,
       expandNavigator,
@@ -502,31 +500,12 @@ export class CadenzaClient {
    * @hidden
    * @param {WorkbookLayerPath | string} layer - The data view layer to set the selection in
    * @param {unknown[][]} values - The IDs of the objects to select
-   * @param {object} [__namedParameters]
-   * @param {GeometryExtentStrategy} [__namedParameters.extentStrategy] - Strategy to define the new map extent
    * @return {Promise<void>} A `Promise` for when the selection was set.
    * @postMessage
    */
-  setSelection(layer, values, { extentStrategy } = {}) {
+  setSelection(layer, values) {
     this.#log('CadenzaClient#setSelection', ...arguments);
-    const selectionResult = this.#postRequest('setSelection', {
-      layer: array(layer),
-      values,
-    });
-    this.#setExtentStrategy(extentStrategy);
-    return selectionResult;
-  }
-
-  /**
-   * Zooms to the extent provided by the strategy
-   *
-   * @param {GeometryExtentStrategy} [extentStrategy] - Strategy to define the new map extent
-   */
-  #setExtentStrategy(extentStrategy) {
-    const type = extentStrategy?.type;
-    if (type === 'geometry') {
-      this.#postEvent('setExtentStrategy', extentStrategy);
-    }
+    return this.#postRequest('setSelection', { layer: array(layer), values });
   }
 
   /**
@@ -535,19 +514,12 @@ export class CadenzaClient {
    * @hidden
    * @param {WorkbookLayerPath | string} layer - The data view layer to change the selection in
    * @param {unknown[][]} values - The IDs of the objects to select
-   * @param {object} [__namedParameters]
-   * @param {GeometryExtentStrategy} [__namedParameters.extentStrategy] - Strategy to define the new map extent
    * @return {Promise<void>} A `Promise` for when the selection was changed.
    * @postMessage
    */
-  addSelection(layer, values, { extentStrategy } = {}) {
+  addSelection(layer, values) {
     this.#log('CadenzaClient#addSelection', ...arguments);
-    const selectionResult = this.#postRequest('addSelection', {
-      layer: array(layer),
-      values,
-    });
-    this.#setExtentStrategy(extentStrategy);
-    return selectionResult;
+    return this.#postRequest('addSelection', { layer: array(layer), values });
   }
 
   /**
@@ -556,19 +528,15 @@ export class CadenzaClient {
    * @hidden
    * @param {WorkbookLayerPath | string} layer - The data view layer to change the selection in
    * @param {unknown[][]} values - The IDs of the objects to unselect
-   * @param {object} [__namedParameters]
-   * @param {GeometryExtentStrategy} [__namedParameters.extentStrategy] - Strategy to define the new map extent
    * @return {Promise<void>} A `Promise` for when the selection was changed.
    * @postMessage
    */
-  removeSelection(layer, values, { extentStrategy } = {}) {
+  removeSelection(layer, values) {
     this.#log('CadenzaClient#removeSelection', ...arguments);
-    const selectionResult = this.#postRequest('removeSelection', {
+    return this.#postRequest('removeSelection', {
       layer: array(layer),
       values,
     });
-    this.#setExtentStrategy(extentStrategy);
-    return selectionResult;
   }
 
   /**
@@ -634,7 +602,7 @@ export class CadenzaClient {
    * @param {number} [options.minScale] - The minimum scale where the user should work on. A warning is shown when the map is zoomed out above the threshold.
    * @param {boolean} [options.useMapSrs] - Whether the geometry is in the map's SRS (otherwise EPSG:4326 is assumed)
    * @param {OperationMode} [options.operationMode] - The mode in which a workbook should be operated
-   * @param {ExtentStrategy} [options.extentStrategy] - Strategy to define the new map extent
+   * @param {ZoomTarget} [options.zoomTarget] - A target Cadenza should zoom to
    * @param {AbortSignal} [options.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
@@ -653,14 +621,14 @@ export class CadenzaClient {
       mapExtent,
       minScale,
       useMapSrs,
-      extentStrategy,
+      zoomTarget,
       operationMode,
       signal,
     } = {},
   ) {
     this.#log('CadenzaClient#editGeometry', ...arguments);
     assertValidGeometryType(geometry.type);
-    const zoomToGeometry = geometry && extentStrategy?.type === 'geometry';
+    const zoomToGeometry = geometry && zoomTarget?.type === 'geometry';
     const params = createParams({
       action: 'editGeometry',
       filter,
