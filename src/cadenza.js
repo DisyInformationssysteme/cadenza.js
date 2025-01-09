@@ -547,12 +547,19 @@ export class CadenzaClient {
    * @hidden
    * @param {WorkbookLayerPath | string} layer - The data view layer to set the selection in
    * @param {unknown[][]} values - The IDs of the objects to select
+   * @param {object} [__namedParameters]
+   * @param {GeometryExtentStrategy} [__namedParameters.extentStrategy] - Strategy to define the new map extent
    * @return {Promise<void>} A `Promise` for when the selection was set.
    * @postMessage
    */
-  setSelection(layer, values) {
+  setSelection(layer, values, { extentStrategy } = {}) {
     this.#log('CadenzaClient#setSelection', ...arguments);
-    return this.#postRequest('setSelection', { layer: array(layer), values });
+    const selectionResult = this.#postRequest('setSelection', {
+      layer: array(layer),
+      values,
+    });
+    this.#setExtentStrategy(extentStrategy);
+    return selectionResult;
   }
 
   /**
@@ -561,12 +568,19 @@ export class CadenzaClient {
    * @hidden
    * @param {WorkbookLayerPath | string} layer - The data view layer to change the selection in
    * @param {unknown[][]} values - The IDs of the objects to select
+   * @param {object} [__namedParameters]
+   * @param {GeometryExtentStrategy} [__namedParameters.extentStrategy] - Strategy to define the new map extent
    * @return {Promise<void>} A `Promise` for when the selection was changed.
    * @postMessage
    */
-  addSelection(layer, values) {
+  addSelection(layer, values, { extentStrategy } = {}) {
     this.#log('CadenzaClient#addSelection', ...arguments);
-    return this.#postRequest('addSelection', { layer: array(layer), values });
+    const selectionResult = this.#postRequest('addSelection', {
+      layer: array(layer),
+      values,
+    });
+    this.#setExtentStrategy(extentStrategy);
+    return selectionResult;
   }
 
   /**
@@ -575,15 +589,19 @@ export class CadenzaClient {
    * @hidden
    * @param {WorkbookLayerPath | string} layer - The data view layer to change the selection in
    * @param {unknown[][]} values - The IDs of the objects to unselect
+   * @param {object} [__namedParameters]
+   * @param {GeometryExtentStrategy} [__namedParameters.extentStrategy] - Strategy to define the new map extent
    * @return {Promise<void>} A `Promise` for when the selection was changed.
    * @postMessage
    */
-  removeSelection(layer, values) {
+  removeSelection(layer, values, { extentStrategy } = {}) {
     this.#log('CadenzaClient#removeSelection', ...arguments);
-    return this.#postRequest('removeSelection', {
+    const selectionResult = this.#postRequest('removeSelection', {
       layer: array(layer),
       values,
     });
+    this.#setExtentStrategy(extentStrategy);
+    return selectionResult;
   }
 
   /**
