@@ -51,6 +51,13 @@ jobs:
     # Build with the new version, because the new version is shown in the docs
     - run: npm run build
 
+    - name: Publish npm package
+      run: |
+        npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
+        npm publish --verbose --access=public --tag=${{ env.RELEASE_TAG }}
+      env:
+        NPM_TOKEN: ${{ secrets.NPMJS_ACCESS_TOKEN }}
+
     # Update changelog unreleased section with new version
     - name: Update changelog
       uses: superfaceai/release-changelog-action@v2
@@ -86,10 +93,3 @@ jobs:
         body: ${{ steps.get-changelog.outputs.changelog }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Publish npm package
-      run: |
-        npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
-        npm publish --verbose --access=public --tag=${{ env.RELEASE_TAG }}
-      env:
-        NPM_TOKEN: ${{ secrets.NPMJS_ACCESS_TOKEN }}
