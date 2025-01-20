@@ -26,7 +26,6 @@ jobs:
 
     - run: npm ci
     - run: npm test
-    - run: npm run build
 
     # Needed for creating the tag
     - name: Configure Git
@@ -41,6 +40,17 @@ jobs:
 
     - name: Set release tag to 'latest'
       run: echo "RELEASE_TAG=latest" >> $GITHUB_ENV
+
+    # Build with the new version, because the new version is shown in the docs
+    - run: npm run build
+
+    # Try to publish the package before doing any other persistent changes.
+    - name: Publish npm package
+      run: |
+        npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
+        npm publish --verbose --access=public --tag=${{ env.RELEASE_TAG }}
+      env:
+        NPM_TOKEN: ${{ secrets.NPMJS_ACCESS_TOKEN }}
 
     # Update changelog unreleased section with new version
     - name: Update changelog
@@ -78,13 +88,6 @@ jobs:
         body: ${{ steps.get-changelog.outputs.changelog }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Publish npm package
-      run: |
-        npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
-        npm publish --verbose --access=public --tag=${{ env.RELEASE_TAG }}
-      env:
-        NPM_TOKEN: ${{ secrets.NPMJS_ACCESS_TOKEN }}
 
     - name: Bump package version to new dev version (e.g. 1.2.3 => 1.2.4-dev)
       run: |
