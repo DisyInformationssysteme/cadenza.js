@@ -22,6 +22,8 @@ const WELCOME_PAGE: PageSource = {
   page: 'welcome',
 };
 
+global.MessageChannel = jest.fn();
+
 describe('cadenza()', () => {
   it('Is globally available, too, but the global can be removed', () => {
     expect(globalThis.cadenza.noConflict()).toBe(cadenza);
