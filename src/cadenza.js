@@ -345,11 +345,12 @@ export class CadenzaClient {
    * @param {object} [options] - Options
    * @param {boolean} [options.invalidateCaches] - When true, caches will be invalidated for objecttypes used
    *   in the worksheet
+   * @return {Promise<void>} A `Promise` which resolves when the views of the worksheet have finished reloading
    * @postMessage
    */
   reload({ invalidateCaches = false } = {}) {
     this.#log('CadenzaClient#reload', ...arguments);
-    this.#postEvent('reload', { invalidateCaches });
+    return this.#postRequest('reload', { invalidateCaches });
   }
 
   /**
