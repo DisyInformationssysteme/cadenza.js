@@ -11,6 +11,10 @@
  * @property {boolean} [options.debug] - Whether to enable debug logging
  */
 
+// This placeholder is replaced when Cadenza JS is released,
+// i.e. during development, the version is not available.
+const CADENZAJS_VERSION = '{{version}}';
+
 /**
  * Creates an instance of the Cadenza JS client.
  *
@@ -42,11 +46,14 @@ export function cadenza(baseUrlOrOptions, options) {
   return new CadenzaClient(options);
 }
 
+cadenza.version = CADENZAJS_VERSION;
+
 /* @ts-ignore */
 const previousGlobalCadenza = globalThis.cadenza;
 globalThis.cadenza = Object.assign(
   (/** @type Parameters<cadenza> */ ...args) => cadenza(...args),
   {
+    version: CADENZAJS_VERSION,
     noConflict() {
       globalThis.cadenza = previousGlobalCadenza;
       return cadenza;

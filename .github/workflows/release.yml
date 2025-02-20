@@ -44,6 +44,9 @@ jobs:
     # Build with the new version, because the new version is shown in the docs
     - run: npm run build
 
+    - name: Replace {{version}} placeholder with release version
+      run: sed -i "s/{{version}}/${RELEASE_VERSION}/" ./cadenza.js
+
     # Try to publish the package before doing any other persistent changes.
     - name: Publish npm package
       run: |

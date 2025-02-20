@@ -11,6 +11,7 @@ This project uses a version scheme based on the Cadenza main version in the form
 
 ### Added
 - `extentStrategy` option for the internal methods `CadenzaClient#setSelection`, `CadenzaClient#addSelection`, `CadenzaClient#removeSelection`
+- `version` property on the `cadenza()` function, which exposes the Cadenza JS version at runtime.
 
 ## 10.2.8 - 2024-11-27
 ### Changed
