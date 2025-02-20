@@ -6,12 +6,13 @@ This project uses a version scheme based on the Cadenza main version in the form
 
 ## Unreleased
 
-### Changed
-- The `reload` command returns a Promise which resolves when all views which can be reloaded have finished reloading.
-
+## 10.2.9 - 2025-02-20
 ### Added
 - `extentStrategy` option for the internal methods `CadenzaClient#setSelection`, `CadenzaClient#addSelection`, `CadenzaClient#removeSelection`
 - `version` property on the `cadenza()` function, which exposes the Cadenza JS version at runtime.
+
+### Changed
+- The `reload` command returns a Promise which resolves when all views which can be reloaded have finished reloading.
 
 ## 10.2.8 - 2024-11-27
 ### Changed
