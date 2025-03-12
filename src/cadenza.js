@@ -303,7 +303,7 @@ export class CadenzaClient {
     const targetWindow = this.#iframe
       ? this.iframe?.contentWindow
       : // If a window does not have a parent, its parent property is a reference to itself.
-        window.opener ?? (window.parent !== window ? window.parent : null);
+        (window.opener ?? (window.parent !== window ? window.parent : null));
     return /** @type {WindowProxy | null} */ targetWindow;
   }
 
