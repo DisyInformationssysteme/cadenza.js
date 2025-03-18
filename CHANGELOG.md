@@ -6,6 +6,8 @@ This project uses a version scheme based on the Cadenza main version in the form
 
 ## Unreleased
 
+## 10.3.0 - 2025-03-18
+
 ## 10.2.9 - 2025-02-20
 ### Added
 - `extentStrategy` option for the internal methods `CadenzaClient#setSelection`, `CadenzaClient#addSelection`, `CadenzaClient#removeSelection`
