@@ -206,6 +206,11 @@ globalThis.cadenza = Object.assign(
  * @property {Feature[]} features - The features within this collection
  */
 /** @typedef {'error'|'warning'|'info'|'success'} CustomValidityType - The type of custom validity used for disclose on visual presentation and form submission behavior */
+/**
+ * @typedef SnappingOptions
+ * @property {WorkbookLayerPath | string} layer - The layer to snap to
+ * @property {('toVertices' | 'toEdges' | 'lineTracing')[]} [types] - Snapping types; Without this option, the Cadenza default snapping types are used.
+ */
 
 let hasCadenzaSession = false;
 
@@ -370,6 +375,7 @@ export class CadenzaClient {
       );
     }
     const params = createParams({
+      dataType,
       disabledUiFeatures,
       expandNavigator,
       filter,
@@ -377,7 +383,6 @@ export class CadenzaClient {
       hideWorkbookToolBar,
       highlightGlobalId,
       labelSet,
-      dataType,
       operationMode,
     });
     return this.#show(resolvePath(source), params, signal);
@@ -414,6 +419,7 @@ export class CadenzaClient {
    * @param {LayerDefinition[]} [__namedParameters.additionalLayers] - Layer definitions to be imported and shown in the background, as a basis for the drawing.
    * @param {UiFeature[]} [__namedParameters.disabledUiFeatures] - Cadenza UI features to disable
    * @param {boolean} [__namedParameters.expandNavigator] - Indicates if the navigator should be expanded.
+   * @param {ExtentStrategy} [__namedParameters.extentStrategy] - Defines the initial map extent; If not given, Cadenza's default logic is used.
    * @param {FilterVariables} [__namedParameters.filter] - Filter variables
    * @param {Geometry} [__namedParameters.geometry] - A geometry to show on the map
    * @param {boolean} [__namedParameters.hideMainHeaderAndFooter] - Whether to hide the main Cadenza header and footer
@@ -424,7 +430,6 @@ export class CadenzaClient {
    * @param {OperationMode} [__namedParameters.operationMode] - The mode in which a workbook should be operated
    * @param {AbortSignal} [__namedParameters.signal] - A signal to abort the iframe loading
    * @param {boolean} [__namedParameters.useMapSrs] - Whether the coordinates specified in other parameters are specified in the map's SRS (otherwise EPSG:4326 is assumed)
-   * @param {ExtentStrategy} [__namedParameters.extentStrategy] - Defines the initial map extent; If not given, Cadenza's default logic is used.
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires
@@ -435,8 +440,10 @@ export class CadenzaClient {
   async showMap(
     mapView,
     {
+      additionalLayers,
       disabledUiFeatures,
       expandNavigator,
+      extentStrategy,
       filter,
       geometry,
       hideMainHeaderAndFooter,
@@ -446,9 +453,7 @@ export class CadenzaClient {
       mapExtent,
       operationMode,
       useMapSrs,
-      extentStrategy,
       signal,
-      additionalLayers,
     } = {},
   ) {
     this.#log('CadenzaClient#showMap', ...arguments);
@@ -456,10 +461,10 @@ export class CadenzaClient {
       assertValidGeometryType(geometry.type);
     }
     const validExtentStrategy = sanitizeExtentStrategy({
+      extentStrategy,
       geometry,
       locationFinder,
       mapExtent,
-      extentStrategy,
     });
     const params = createParams({
       disabledUiFeatures,
@@ -623,14 +628,15 @@ export class CadenzaClient {
    * @param {object} [__namedParameters] - Options
    * @param {LayerDefinition[]} [__namedParameters.additionalLayers] - Layer definitions to be imported and shown in the background, as a basis for the drawing.
    * @param {UiFeature[]} [__namedParameters.disabledUiFeatures] - Cadenza UI features to disable
+   * @param {ExtentStrategy} [__namedParameters.extentStrategy] - Defines the initial map extent; If not given, Cadenza's default logic is used.
    * @param {FilterVariables} [__namedParameters.filter] - Filter variables
    * @param {string} [__namedParameters.locationFinder] - A search query for the location finder - _Deprecated_: Use {@link LocationFinderExtentStrategy} instead.
    * @param {Extent} [__namedParameters.mapExtent] - A map extent to set - _Deprecated_: Use {@link StaticExtentStrategy} instead.
    * @param {number} [__namedParameters.minScale] - The minimum scale where the user should work on. A warning is shown when the map is zoomed out above the threshold.
    * @param {OperationMode} [__namedParameters.operationMode] - The mode in which a workbook should be operated
    * @param {AbortSignal} [__namedParameters.signal] - A signal to abort the iframe loading
+   * @param {SnappingOptions} [__namedParameters.snapping] - Passing these options enables snapping
    * @param {boolean} [__namedParameters.useMapSrs] - Whether the coordinates specified in other parameters are specified in the map's SRS and the created geometry should use the map's SRS (otherwise EPSG:4326 is assumed)
-   * @param {ExtentStrategy} [__namedParameters.extentStrategy] - Defines the initial map extent; If not given, Cadenza's default logic is used.
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires
@@ -645,6 +651,7 @@ export class CadenzaClient {
     {
       additionalLayers,
       disabledUiFeatures,
+      extentStrategy,
       filter,
       locationFinder,
       mapExtent,
@@ -652,14 +659,14 @@ export class CadenzaClient {
       useMapSrs,
       operationMode,
       signal,
-      extentStrategy,
+      snapping,
     } = {},
   ) {
     this.#log('CadenzaClient#createGeometry', ...arguments);
     const validExtentStrategy = sanitizeExtentStrategy({
+      extentStrategy,
       locationFinder,
       mapExtent,
-      extentStrategy,
     });
     const params = createParams({
       action: 'editGeometry',
@@ -668,6 +675,7 @@ export class CadenzaClient {
       geometryType,
       minScale,
       operationMode,
+      snapping,
       useMapSrs,
       validExtentStrategy,
     });
@@ -688,14 +696,15 @@ export class CadenzaClient {
    * @param {object} [__namedParameters] - Options
    * @param {LayerDefinition[]} [__namedParameters.additionalLayers] - Layer definitions to be imported and shown in the background, as a basis for the drawing. Each is a layer definition, with name, type and content (a Geojson featureCollection).
    * @param {UiFeature[]} [__namedParameters.disabledUiFeatures] - Cadenza UI features to disable
+   * @param {ExtentStrategy} [__namedParameters.extentStrategy] - Defines the initial map extent; If not given, Cadenza's default logic is used.
    * @param {FilterVariables} [__namedParameters.filter] - Filter variables
    * @param {string} [__namedParameters.locationFinder] - A search query for the location finder - _Deprecated_: Use {@link LocationFinderExtentStrategy} instead.
    * @param {Extent} [__namedParameters.mapExtent] - A map extent to set - _Deprecated_: Use {@link StaticExtentStrategy} instead.
    * @param {number} [__namedParameters.minScale] - The minimum scale where the user should work on. A warning is shown when the map is zoomed out above the threshold.
    * @param {OperationMode} [__namedParameters.operationMode] - The mode in which a workbook should be operated
    * @param {AbortSignal} [__namedParameters.signal] - A signal to abort the iframe loading
+   * @param {SnappingOptions} [__namedParameters.snapping] - Passing these options enables snapping
    * @param {boolean} [__namedParameters.useMapSrs] - Whether the coordinates specified in other parameters are specified in the map's SRS (otherwise EPSG:4326 is assumed)
-   * @param {ExtentStrategy} [__namedParameters.extentStrategy] - Defines the initial map extent; If not given, Cadenza's default logic is used.
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires
@@ -710,23 +719,24 @@ export class CadenzaClient {
     {
       additionalLayers,
       disabledUiFeatures,
+      extentStrategy,
       filter,
       locationFinder,
       mapExtent,
       minScale,
       operationMode,
       signal,
+      snapping,
       useMapSrs,
-      extentStrategy,
     } = {},
   ) {
     this.#log('CadenzaClient#editGeometry', ...arguments);
     assertValidGeometryType(geometry.type);
     const validExtentStrategy = sanitizeExtentStrategy({
+      extentStrategy,
       geometry,
       locationFinder,
       mapExtent,
-      extentStrategy,
     });
     const params = createParams({
       action: 'editGeometry',
@@ -734,6 +744,7 @@ export class CadenzaClient {
       filter,
       minScale,
       operationMode,
+      snapping,
       useMapSrs,
       validExtentStrategy,
     });
@@ -773,6 +784,7 @@ export class CadenzaClient {
    *
    * @param {EmbeddingTargetId} backgroundMapView - The workbook map view
    * @param {object} [__namedParameters] - Options
+   * @param {ExtentStrategy} [__namedParameters.extentStrategy] - Defines the initial map extent; If not given, Cadenza's default logic is used.
    * @param {FilterVariables} [__namedParameters.filter] - Filter variables
    * @param {(WorkbookLayerPath | string)[]} [__namedParameters.layers] - Layers to restrict the selection to
    *  (identified using layer paths or print names)
@@ -781,7 +793,6 @@ export class CadenzaClient {
    * @param {boolean} [__namedParameters.useMapSrs] - Whether the coordinates specified in other parameters are specified in the map's SRS (otherwise EPSG:4326 is assumed)
    * @param {OperationMode} [__namedParameters.operationMode] - The mode in which a workbook should be operated
    * @param {AbortSignal} [__namedParameters.signal] - A signal to abort the iframe loading
-   * @param {ExtentStrategy} [__namedParameters.extentStrategy] - Defines the initial map extent; If not given, Cadenza's default logic is used.
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires
@@ -794,6 +805,7 @@ export class CadenzaClient {
   async selectObjects(
     backgroundMapView,
     {
+      extentStrategy,
       filter,
       layers,
       locationFinder,
@@ -801,7 +813,6 @@ export class CadenzaClient {
       useMapSrs,
       operationMode,
       signal,
-      extentStrategy,
     } = {},
   ) {
     this.#log('CadenzaClient#selectObjects', ...arguments);
@@ -1069,9 +1080,9 @@ export class CadenzaClient {
    * @param {unknown[][]} objectIds - The IDs of the objects to select
    * @param {object} [__namedParameters] - Options
    * @param {FilterVariables} [__namedParameters.filter] - Filter variables
+   * @param {Boolean} [__namedParameters.fullGeometries] - Return non-simplified geometries
    * @param {AbortSignal} [__namedParameters.signal] - A signal to abort the data fetching
    * @param {Boolean} [__namedParameters.useMapSrs] - Use the map SRS instead of WGS84
-   * @param {Boolean} [__namedParameters.fullGeometries] - Return non-simplified geometries
    * @return {Promise<FeatureCollection>} A `Promise` for the fetch response
    * @throws For invalid arguments
    */
@@ -1079,7 +1090,7 @@ export class CadenzaClient {
     source,
     layerPath,
     objectIds,
-    { filter, signal, useMapSrs, fullGeometries } = {},
+    { filter, signal, fullGeometries, useMapSrs } = {},
   ) {
     this.#log('CadenzaClient#fetchObjectInfo', ...arguments);
     const params = createParams({
@@ -1090,10 +1101,10 @@ export class CadenzaClient {
       params,
       signal,
       JSON.stringify({
+        fullGeometries,
         objectIds,
         layerPath: array(layerPath),
         useMapSrs,
-        fullGeometries,
       }),
     ).then((response) => response.json());
   }
@@ -1106,9 +1117,9 @@ export class CadenzaClient {
    *  (identified using layer paths or print names)
    * @param {Geometry} geometry - The intersection geometry
    * @param {object} [__namedParameters] - Options
-   * @param {boolean} [__namedParameters.useMapSrs]  - The intersection geometry and the result geometries are in the map's SRS (otherwise EPSG:4326 is assumed)
    * @param {Distance} [__namedParameters.buffer] - Buffer size for geometry of the transition
    * @param {AbortSignal} [__namedParameters.signal] - A signal to abort the data fetching
+   * @param {boolean} [__namedParameters.useMapSrs]  - The intersection geometry and the result geometries are in the map's SRS (otherwise EPSG:4326 is assumed)
    * @return {Promise<FeatureCollection>} A `Promise` for the fetch response
    * @server
    */
@@ -1116,7 +1127,7 @@ export class CadenzaClient {
     source,
     layerPath,
     geometry,
-    { useMapSrs, buffer, signal } = {},
+    { buffer, signal, useMapSrs } = {},
   ) {
     this.#log('CadenzaClient#areaIntersections', ...arguments);
     const params = createParams({});
@@ -1125,10 +1136,10 @@ export class CadenzaClient {
       params,
       signal,
       JSON.stringify({
+        buffer,
         layerPath: array(layerPath),
-        geometry: geometry,
-        useMapSrs: useMapSrs,
-        buffer: buffer,
+        geometry,
+        useMapSrs,
       }),
     ).then((response) => response.json());
   }
@@ -1355,6 +1366,7 @@ function assertSupportedDataType(
  * @param {OperationMode} [params.operationMode]
  * @param {TablePart[]} [params.parts]
  * @param {'MAP'} [params.targetType]
+ * @param {SnappingOptions} [params.snapping]
  * @param {boolean} [params.useMapSrs]
  * @param {ExtentStrategy | undefined} [params.validExtentStrategy]
  * @return {URLSearchParams}
@@ -1376,6 +1388,7 @@ function createParams({
   operationMode,
   parts,
   targetType,
+  snapping,
   useMapSrs,
   validExtentStrategy,
 }) {
@@ -1435,15 +1448,14 @@ function createParams({
     ...(hideWorkbookToolBar && { hideWorkbookToolBar: 'true' }),
     ...(highlightGlobalId && { highlightGlobalId }),
     ...(labelSet && { labelSet }),
-    ...(layers &&
-      layers.length && {
-        layers: JSON.stringify(layers),
-      }),
+    ...(layers?.length && { layers: JSON.stringify(layers) }),
     ...(locationFinder && { locationFinder }),
     ...(mapExtent && { mapExtent: mapExtent.join() }),
     ...(minScale && { minScale: String(minScale) }),
     ...(operationMode && { operationMode }),
     ...(parts && { parts: parts.join() }),
+    ...(snapping && { snappingLayer: JSON.stringify(array(snapping.layer)) }),
+    ...(snapping?.types?.length && { snappingTypes: snapping.types.join() }),
     ...(targetType && { targetType }),
     ...(useMapSrs && { useMapSrs: 'true' }),
   });
@@ -1519,9 +1531,9 @@ function sanitizeExtentStrategy({
  * | 'editGeometry:update'
  * | 'editGeometry:cancel'
  * | 'objectInfo'
+ * | 'reload'
  * | 'selectObjects:ok'
  * | 'selectObjects:cancel'
- * | 'reload'
  * } CadenzaEventType - An event type to subscribe to using {@link CadenzaClient#on}
  */
 
@@ -1534,9 +1546,9 @@ function sanitizeExtentStrategy({
  *  : T extends 'editGeometry:ok' ? CadenzaEditGeometryOkEvent
  *  : T extends 'editGeometry:cancel' ? CadenzaEditGeometryCancelEvent
  *  : T extends 'objectInfo' ? CadenzaObjectInfoEvent
+ *  : T extends 'reload' ? CadenzaReloadEvent
  *  : T extends 'selectObjects:ok' ? CadenzaSelectObjectsOkEvent
  *  : T extends 'selectObjects:cancel' ? CadenzaSelectObjectsCancelEvent
- *  : T extends 'reload' ? CadenzaReloadEvent
  *  : never
  * } CadenzaEventByType
  */
