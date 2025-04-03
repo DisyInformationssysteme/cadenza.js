@@ -165,8 +165,8 @@
       setSelection: data => cadenzaClient.setSelection(JSON.parse(data.layer), JSON.parse(data.objectIds), {extentStrategy: JSON.parse(data.extentStrategy)}),
       addSelection: data => cadenzaClient.addSelection(JSON.parse(data.layer), JSON.parse(data.objectIds), { extentStrategy: JSON.parse(data.extentStrategy) }),
       removeSelection: data => cadenzaClient.removeSelection(JSON.parse(data.layer), JSON.parse(data.objectIds), { extentStrategy: JSON.parse(data.extentStrategy) }),
-      createGeometry: data => cadenzaClient.createGeometry(data.embeddingTargetId, data.geometryType, getOptions(data)),
-      editGeometry: ({ geometry, ...data }) => cadenzaClient.editGeometry(data.embeddingTargetId, JSON.parse(geometry), getOptions(data)),
+      createGeometry: (data, formData) => cadenzaClient.createGeometry(data.embeddingTargetId, data.geometryType, getOptions(data, formData)),
+      editGeometry: ({ geometry, ...data }, formData) => cadenzaClient.editGeometry(data.embeddingTargetId, JSON.parse(geometry), getOptions(data, formData)),
       selectObjects: data => cadenzaClient.selectObjects(data.embeddingTargetId, getOptions(data)),
       fetchData: data => {
         console.log('Inspect the fetchData() request in the devtools.');
@@ -189,8 +189,9 @@
     const form = document.getElementById('form');
     form.onsubmit = (event) => {
       event.preventDefault();
-      const { action, ...data } = Object.fromEntries(new FormData(form));
-      actionHandlers[action](data);
+      const formData = new FormData(form);
+      const { action, ...data } = Object.fromEntries(formData);
+      actionHandlers[action](data, formData);
       localStorage.setItem(`cadenzajs-sandbox-${action}`, JSON.stringify(data));
     };
 
@@ -212,47 +213,52 @@
     }
 
     function getOptions ({
+      additionalLayers,
       disabledUiFeatures,
+      distance,
       expandNavigator,
+      extentStrategy,
+      fullGeometries,
       fileName,
       filter,
       geometry,
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
       highlightGlobalId,
-      requestAsPdf,
       labelSet,
+      layers,
+      lengthUnit,
       minScale,
       parts,
-      layers,
+      requestAsPdf,
       simplifiedOperationMode,
+      snappingLayer,
       useMapSrs,
-      fullGeometries,
-      extentStrategy,
-      distance,
-      lengthUnit,
-      additionalLayers
-    }) {
+    }, formData) {
       return {
+        additionalLayers: additionalLayers && JSON.parse(additionalLayers),
+        buffer: distance ? { value: Number(distance), lengthUnit: lengthUnit ? lengthUnit : 'm' } : undefined,
+        ...(requestAsPdf === 'on' && { dataType: 'pdf' }),
         disabledUiFeatures: disabledUiFeatures && disabledUiFeatures.split(','),
         expandNavigator: (expandNavigator === 'on'),
+        extentStrategy: extentStrategy && JSON.parse(extentStrategy),
         fileName,
         filter: filter && parseFilterVariables(filter),
+        fullGeometries: fullGeometries === 'on',
         geometry: geometry && JSON.parse(geometry),
         hideMainHeaderAndFooter: (hideMainHeaderAndFooter === 'on'),
         hideWorkbookToolBar: (hideWorkbookToolBar === 'on'),
         highlightGlobalId,
-        ...(requestAsPdf === 'on' && { dataType: 'pdf' }),
         labelSet,
-        minScale: minScale && Number(minScale),
-        parts: parts && parts.split(','),
-        operationMode: (simplifiedOperationMode === 'on' ? 'simplified' : 'normal' ),
         layers: layers ? JSON.parse(layers) : undefined,
+        minScale: minScale && Number(minScale),
+        operationMode: (simplifiedOperationMode === 'on' ? 'simplified' : 'normal' ),
+        parts: parts && parts.split(','),
+        snapping: snappingLayer ? {
+          layer: snappingLayer,
+          types: formData?.getAll('snappingTypes')
+        }: undefined,
         useMapSrs: useMapSrs === 'on',
-        fullGeometries: fullGeometries === 'on',
-        extentStrategy: extentStrategy && JSON.parse(extentStrategy),
-        buffer: distance ? { value: Number(distance), lengthUnit: lengthUnit ? lengthUnit : 'm' } : undefined,
-        additionalLayers: additionalLayers && JSON.parse(additionalLayers)
       };
     }
 
@@ -481,7 +487,7 @@
 
 <template data-action="setFilter" data-common="filter"></template>
 
-<template data-action="createGeometry" data-common="additionalLayers,extentStrategy,map,disabledUiFeatures,filter">
+<template data-action="createGeometry" data-common="additionalLayers,extentStrategy,map,snapping,disabledUiFeatures,filter">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
@@ -509,7 +515,7 @@
   </div>
 </template>
 
-<template data-action="editGeometry" data-common="additionalLayers,extentStrategy,map,disabledUiFeatures,filter">
+<template data-action="editGeometry" data-common="additionalLayers,extentStrategy,map,snapping,disabledUiFeatures,filter">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
@@ -543,6 +549,42 @@
   <div>
     <label for="minScale">Minimum Scale</label>
     <input type="number" name="minScale" id="minScale">
+  </div>
+</template>
+
+<template id="common-snapping">
+  <div>
+    <label for="snappingLayer">Snapping Layer *</label>
+    <input name="snappingLayer" id="snappingLayer" required>
+    <small>
+      <p>
+        A JSON value like <code>"&lt;layerPrintName&gt;"</code> or
+        <code>["&lt;layerGroupPrintName&gt;","&lt;layerPrintName&gt;"]</code>
+      </p>
+    </small>
+  </div>
+  <div>
+    <label for="snappingTypes">Snapping Types</label>
+    <div role="group" id="snappingTypes">
+      <div>
+        <label>
+          <input type="checkbox" name="snappingTypes" value="toVertices">
+          To Vertices
+        </label>
+      </div>
+      <div>
+        <label>
+          <input type="checkbox" name="snappingTypes" value="toEdges">
+          To Edges
+        </label>
+      </div>
+      <div>
+        <label>
+          <input type="checkbox" name="snappingTypes" value="lineTracing">
+          Line Tracing
+        </label>
+      </div>
+    </div>
   </div>
 </template>
 
