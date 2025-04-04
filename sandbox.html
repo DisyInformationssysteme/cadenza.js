@@ -255,7 +255,7 @@
         operationMode: (simplifiedOperationMode === 'on' ? 'simplified' : 'normal' ),
         parts: parts && parts.split(','),
         snapping: snappingLayer ? {
-          layer: snappingLayer,
+          layer: JSON.parse(snappingLayer),
           types: formData?.getAll('snappingTypes')
         }: undefined,
         useMapSrs: useMapSrs === 'on',
