@@ -108,9 +108,10 @@ globalThis.cadenza = Object.assign(
 
 /** @typedef {'normal'|'simplified'} OperationMode - The mode in which a workbook should be operated */
 /**
- * @typedef {'workbook-design'|'workbook-map-add-layer'|'workbook-view-management'} UiFeature - The name of a Cadenza UI feature
+ * @typedef {'geometry-edit-translate'|'workbook-design'|'workbook-map-add-layer'|'workbook-view-management'} UiFeature - The name of a Cadenza UI feature
  *
  * _Note:_ Supported features are:
+ * * `"geometry-edit-translate"` - Enables translation interactions when editing geometries
  * * `"workbook-design"` - The workbook designer
  * * `"workbook-map-add-layer"`- Add layers to the map
  * * `"workbook-view-management"` - Add/Edit/Remove workbook views (Is included in 'workbook-design'.)
@@ -308,7 +309,7 @@ export class CadenzaClient {
     const targetWindow = this.#iframe
       ? this.iframe?.contentWindow
       : // If a window does not have a parent, its parent property is a reference to itself.
-        (window.opener ?? (window.parent !== window ? window.parent : null));
+        window.opener ?? (window.parent !== window ? window.parent : null);
     return /** @type {WindowProxy | null} */ targetWindow;
   }
 

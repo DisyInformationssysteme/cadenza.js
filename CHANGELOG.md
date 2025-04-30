@@ -6,7 +6,7 @@ This project uses a version scheme based on the Cadenza main version in the form
 
 ## Unreleased
 ### Added
-- UIFeature `geometry-edit-translate` has been introduced to allow disabling translation interactions when editing geometries.
+- `UIFeature` value `geometry-edit-translate`
 
 ## 10.3.1 - 2025-04-04
 ### Added
