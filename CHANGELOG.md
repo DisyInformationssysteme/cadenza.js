@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project uses a version scheme based on the Cadenza main version in the format x.x.y, where x.x is the Cadenza main version and y a functional change or bugfix.
 
 ## Unreleased
+### Added
+- UIFeature `geometry-edit-translate` has been introduced to allow disabling translation interactions when editing geometries.
 
 ## 10.3.1 - 2025-04-04
 ### Added

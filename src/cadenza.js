@@ -1335,6 +1335,7 @@ function validOperationMode(/** @type string */ value) {
 
 function validUiFeature(/** @type string */ value) {
   return [
+    'geometry-edit-translate',
     'workbook-design',
     'workbook-map-add-layer',
     'workbook-view-management',
