@@ -108,10 +108,9 @@ globalThis.cadenza = Object.assign(
 
 /** @typedef {'normal'|'simplified'} OperationMode - The mode in which a workbook should be operated */
 /**
- * @typedef {'geometry-edit-translate'|'workbook-design'|'workbook-map-add-layer'|'workbook-view-management'} UiFeature - The name of a Cadenza UI feature
+ * @typedef {'workbook-design'|'workbook-map-add-layer'|'workbook-view-management'} UiFeature - The name of a Cadenza UI feature
  *
  * _Note:_ Supported features are:
- * * `"geometry-edit-translate"` - Enables translation interactions when editing geometries
  * * `"workbook-design"` - The workbook designer
  * * `"workbook-map-add-layer"`- Add layers to the map
  * * `"workbook-view-management"` - Add/Edit/Remove workbook views (Is included in 'workbook-design'.)
@@ -1336,7 +1335,6 @@ function validOperationMode(/** @type string */ value) {
 
 function validUiFeature(/** @type string */ value) {
   return [
-    'geometry-edit-translate',
     'workbook-design',
     'workbook-map-add-layer',
     'workbook-view-management',
