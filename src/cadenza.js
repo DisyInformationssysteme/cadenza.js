@@ -921,8 +921,8 @@ export class CadenzaClient {
       ];
 
       console.log(
-        `Listening on origin '${window.location.origin}' for the '${cadenzaReadyEventType}' message of Cadenza. The listening takes place in the window`,
-        window,
+        `Listening on origin '${this.#origin}' for the '${cadenzaReadyEventType}' event of Cadenza in the window `,
+        this.#targetWindow,
       );
     });
 

@@ -6,7 +6,7 @@ This project uses a version scheme based on the Cadenza main version in the form
 
 ## Unreleased
 ### Added
-- Log message when starting to listen on the 'ready' event of Cadenza
+- Log message to the console when starting to listen on the 'ready' event of Cadenza
 
 ## 10.3.3 - 2025-05-05
 ### Removed
