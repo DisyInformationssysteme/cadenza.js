@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project uses a version scheme based on the Cadenza main version in the format x.x.y, where x.x is the Cadenza main version and y a functional change or bugfix.
 
 ## Unreleased
+
+## 10.3.4 - 2025-05-16
 ### Added
 - Log message to the console when starting to listen on the 'ready' event of Cadenza
 
