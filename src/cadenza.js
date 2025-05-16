@@ -910,13 +910,20 @@ export class CadenzaClient {
         signal.addEventListener('abort', onabort);
       }
 
+      const cadenzaReadyEventType = 'ready';
+
       unsubscribes = [
-        this.#on('ready', () => resolve()),
+        this.#on(cadenzaReadyEventType, () => resolve()),
         this.#on('error', (/** @type {CadenzaErrorEvent} */ event) => {
           const { type, message } = event.detail;
           reject(new CadenzaError(type, message ?? 'Loading failed'));
         }),
       ];
+
+      console.log(
+        `Listening on origin '${this.#origin}' for the '${cadenzaReadyEventType}' event of Cadenza in the window `,
+        this.#targetWindow,
+      );
     });
 
     promise
