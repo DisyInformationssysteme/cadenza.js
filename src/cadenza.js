@@ -955,7 +955,7 @@ function validKebabCaseString(/** @type string */ value) {
 }
 
 function validRepositoryName(/** @type string */ value) {
-  return /^[\w -]{1,255}$/.test(value);
+  return /^[\wäöüÄÖÜß -]{1,255}$/.test(value);
 }
 
 function validBase64String(/** @type string */ value) {
