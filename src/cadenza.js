@@ -108,12 +108,13 @@ globalThis.cadenza = Object.assign(
 
 /** @typedef {'normal'|'simplified'} OperationMode - The mode in which a workbook should be operated */
 /**
- * @typedef {'workbook-design'|'workbook-map-add-layer'|'workbook-view-management'} UiFeature - The name of a Cadenza UI feature
+ * @typedef {'workbook-design'|'workbook-map-add-layer'|'workbook-view-management'|'embedded-view-dialog-footer-buttons'} UiFeature - The name of a Cadenza UI feature
  *
  * _Note:_ Supported features are:
  * * `"workbook-design"` - The workbook designer
  * * `"workbook-map-add-layer"`- Add layers to the map
  * * `"workbook-view-management"` - Add/Edit/Remove workbook views (Is included in 'workbook-design'.)
+ * * `"embedded-view-dialog-footer-buttons"` - Apply and Cancel buttons for Create/Edit Geometries and Select Objects dialogs
  * */
 
 /**
@@ -784,6 +785,7 @@ export class CadenzaClient {
    *
    * @param {EmbeddingTargetId} backgroundMapView - The workbook map view
    * @param {object} [__namedParameters] - Options
+   * @param {UiFeature[]} [__namedParameters.disabledUiFeatures] - Cadenza UI features to disable
    * @param {ExtentStrategy} [__namedParameters.extentStrategy] - Defines the initial map extent; If not given, Cadenza's default logic is used.
    * @param {FilterVariables} [__namedParameters.filter] - Filter variables
    * @param {(WorkbookLayerPath | string)[]} [__namedParameters.layers] - Layers to restrict the selection to
@@ -805,6 +807,7 @@ export class CadenzaClient {
   async selectObjects(
     backgroundMapView,
     {
+      disabledUiFeatures,
       extentStrategy,
       filter,
       layers,
@@ -824,6 +827,7 @@ export class CadenzaClient {
     });
     const params = createParams({
       action: 'selectObjects',
+      disabledUiFeatures,
       filter,
       layers: layers?.map(array),
       useMapSrs,
@@ -1345,6 +1349,7 @@ function validUiFeature(/** @type string */ value) {
     'workbook-design',
     'workbook-map-add-layer',
     'workbook-view-management',
+    'embedded-view-dialog-footer-buttons',
   ].includes(value);
 }
 
