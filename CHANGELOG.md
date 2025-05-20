@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project uses a version scheme based on the Cadenza main version in the format x.x.y, where x.x is the Cadenza main version and y a functional change or bugfix.
 
 ## Unreleased
+### Added
+- Support for setting spatial filters define on an embedded target
 
 ## 10.3.4 - 2025-05-16
 ### Added
@@ -57,7 +59,6 @@ This project uses a version scheme based on the Cadenza main version in the form
 - `LayerDataExtentStrategy`, `LocationFinderExtentStrategy` and `StaticExtentStrategy`
 - "Extent Strategy" also to the sandbox
 - Improved sandbox 'additionalLayers' and 'geometry' examples
-- Support for setting spatial filters define on an embedded target
 
 ### Changed
 - **BREAKING CHANGE** Renamed `zoomTarget` parameter, `ZoomTarget` type and `GeometryZoomTarget` type to `extentStrategy`, `ExtentStrategy` and `GeometryExtentStrategy`
