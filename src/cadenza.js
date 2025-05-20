@@ -194,11 +194,11 @@ globalThis.cadenza = Object.assign(
 /**
  * @typedef SpatialFilterValue - Defines a spatial filter variable value.
  * @property {SpatialRelation} spatialRelation - Defines how geometries must interact with the given filter geometry to be accepted by the filter
- * @property {SpatialFilterGeometry} geometry - A valid [GeoJSON](https://geojson.org/) geometry restricted to type "Polygon".
+ * @property {Polygon} geometry - A valid [GeoJSON](https://geojson.org/) geometry restricted to type "Polygon".
  */
 /** @typedef {'overlaps' | 'notOverlaps' | 'contains'} SpatialRelation - Defines how geometries interact */
 /**
- * @typedef {Geometry} SpatialFilterGeometry
+ * @typedef {Geometry} Polygon
  * @property {'Polygon'} type - The type of the geometry. Only 'Polygon' supported
  */
 /**
@@ -1386,9 +1386,7 @@ function validSpatialRelation(/** @type SpatialRelation */ spatialRelation) {
   return ['overlaps', 'notOverlaps', 'contains'].includes(spatialRelation);
 }
 
-function validSpatialFilterGeometry(
-  /** @type SpatialFilterGeometry */ geometry,
-) {
+function validSpatialFilterGeometry(/** @type Polygon */ geometry) {
   return typeof geometry === 'object' && geometry.type === 'Polygon';
 }
 
