@@ -183,12 +183,23 @@ globalThis.cadenza = Object.assign(
  */
 /** @typedef {'columns' | 'values' | 'totals'} TablePart - A part of a table to export */
 /**
- * @typedef {Record<string, string | string[] | number | Date | null>} FilterVariables - Filter variable names and values
+ * @typedef {Record<string, string | string[] | number | Date | SpatialFilterValue | null>} FilterVariables - Filter variable names and values
  *
  * Variables of type String, Integer, Long, Double and Date can be set.
+ * A property named "$spatial" reflects a Spatial filter value and must adhere to type {@link SpatialFilterValue}.
  *
  * _Note:_ Since numbers in JavaScript are Double values ([more info on MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number#number_encoding)),
  * for Long variables, the API is currently limited to the Double value range.
+ */
+/**
+ * @typedef SpatialFilterValue - Defines a spatial filter variable value.
+ * @property {SpatialRelation} spatialRelation - Defines how geometries must interact with the given filter geometry to be accepted by the filter
+ * @property {SpatialFilterGeometry} geometry - A valid [GeoJSON](https://geojson.org/) geometry restricted to type "Polygon".
+ */
+/** @typedef {'overlaps' | 'notOverlaps' | 'contains'} SpatialRelation - Defines how geometries interact */
+/**
+ * @typedef {Geometry} SpatialFilterGeometry
+ * @property {'Polygon'} type - The type of the geometry. Only 'Polygon' supported
  */
 /**
  * @typedef Feature - A adapted [GeoJSON](https://geojson.org/) feature object.
@@ -530,6 +541,7 @@ export class CadenzaClient {
    */
   setFilter(filter) {
     this.#log('CadenzaClient#setFilter', ...arguments);
+    assertValidFilterVariables(filter);
     return this.#postRequest('setFilter', { filter });
   }
 
@@ -1355,6 +1367,46 @@ function assertSupportedDataType(
   assert(supportedTypes.includes(type), `Invalid data type: ${type}`);
 }
 
+function validSpatialFilterValue(/** @type SpatialFilterValue */ $spatial) {
+  if ($spatial === null) {
+    return true;
+  }
+
+  if (typeof $spatial === 'object') {
+    return (
+      validSpatialRelation($spatial.spatialRelation) &&
+      validSpatialFilterGeometry($spatial.geometry)
+    );
+  }
+
+  return false;
+}
+
+function validSpatialRelation(/** @type SpatialRelation */ spatialRelation) {
+  return ['overlaps', 'notOverlaps', 'contains'].includes(spatialRelation);
+}
+
+function validSpatialFilterGeometry(
+  /** @type SpatialFilterGeometry */ geometry,
+) {
+  return typeof geometry === 'object' && geometry.type === 'Polygon';
+}
+
+function assertValidFilterVariables(/** @type {FilterVariables} */ filter) {
+  const { $spatial, ...otherFilter } = filter;
+  assert(
+    $spatial === undefined ||
+      validSpatialFilterValue(/** @type {SpatialFilterValue} */ ($spatial)),
+    'Invalid value for spatial filter value under $spatial property',
+  );
+  Object.keys(otherFilter).forEach((varName) =>
+    assert(
+      validKebabCaseString(varName),
+      `Invalid filter variable name: ${varName}`,
+    ),
+  );
+}
+
 /**
  * @param {object} params
  * @param {string} [params.action]
@@ -1405,12 +1457,7 @@ function createParams({
     );
   }
   if (filter) {
-    Object.keys(filter).forEach((varName) =>
-      assert(
-        validKebabCaseString(varName),
-        `Invalid filter variable name: ${varName}`,
-      ),
-    );
+    assertValidFilterVariables(filter);
   }
   if (geometryType) {
     assertValidGeometryType(geometryType);

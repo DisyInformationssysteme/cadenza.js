@@ -57,6 +57,7 @@ This project uses a version scheme based on the Cadenza main version in the form
 - `LayerDataExtentStrategy`, `LocationFinderExtentStrategy` and `StaticExtentStrategy`
 - "Extent Strategy" also to the sandbox
 - Improved sandbox 'additionalLayers' and 'geometry' examples
+- Support for setting spatial filters define on an embedded target
 
 ### Changed
 - **BREAKING CHANGE** Renamed `zoomTarget` parameter, `ZoomTarget` type and `GeometryZoomTarget` type to `extentStrategy`, `ExtentStrategy` and `GeometryExtentStrategy`
