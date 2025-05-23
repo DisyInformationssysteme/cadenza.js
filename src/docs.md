@@ -106,6 +106,30 @@ cadenzaClient.show('<embeddingTargetId>', {
 });
 ```
 
+If a spatial filter is defined on the embedded target, it can be set with a dedicated variable name '$spatial':
+
+```javascript
+cadenzaClient.show('<embeddingTargetId>', {
+  // ...
+  filter: {
+    '$spatial': {
+      'spatialRelation': 'overlaps', // Also: 'notOverlaps', 'contains'
+      'geometry': { // GeoJSON geometry; Restricted to type 'Polygon'
+        'coordinates': [
+          [
+            [ 9.59, 52.70 ],
+            [ 8.89, 51.72 ],
+            [ 10.90, 51.72 ],
+            [ 9.59, 52.70 ]
+          ]
+        ],
+        'type': "Polygon"
+      }
+    }
+  }
+});
+```
+
 - If the embedding target cannot be resolved, a 404 page is shown to the user.
 - Cadenza JS does not handle user authentication: If the user is not already logged in, the normal authentication flow of Cadenza will run. By default, the login page would be shown to the user.
 
@@ -147,6 +171,29 @@ Set filter variables using a mapping of variable names to values.
 
 ```javascript
 cadenzaClient.setFilter({ '<variableName>': 'value' });
+```
+
+Passing `null` as value removes the assigned filter value.
+
+If a spatial filter is defined on the embedded target, it can be set with a dedicated variable name '$spatial':
+
+```javascript
+cadenzaClient.setFilter({
+  '$spatial': {
+    "spatialRelation": "overlaps", // Also: "notOverlaps", "contains"
+    "geometry": { // GeoJSON geometry; Restricted to type "Polygon"
+      "coordinates": [
+        [
+          [9.59, 52.70],
+          [8.89, 51.72],
+          [10.90, 51.72],
+          [9.59, 52.70]
+        ]
+      ],
+      "type": "Polygon"
+    }
+  }
+});
 ```
 -->
 
