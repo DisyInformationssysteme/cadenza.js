@@ -260,7 +260,7 @@
           types: formData?.getAll('snappingTypes')
         }: undefined,
         useMapSrs: useMapSrs === 'on',
-        layout: layout === 'default' ? undefined : layout
+        layout: layout || undefined,
       };
     }
 
