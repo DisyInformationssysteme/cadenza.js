@@ -6,7 +6,7 @@ This project uses a version scheme based on the Cadenza main version in the form
 
 ## Unreleased
 ### Added
-- `layout` URL parameter to specify the UI layout ('linear' or 'dashboard')
+- `layout` option for `CadenzaClient#show`
 
 ## 10.3.6 - 2025-05-28
 

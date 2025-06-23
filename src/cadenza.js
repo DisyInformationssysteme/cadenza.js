@@ -223,7 +223,11 @@ globalThis.cadenza = Object.assign(
  * @property {('toVertices' | 'toEdges' | 'lineTracing')[]} [types] - Snapping types; Without this option, the Cadenza default snapping types are used.
  */
 
-/** @typedef {'linear'|'dashboard'} Layout - The specified UI layout */
+/**
+ * @typedef {'dashboard'|'linear'} Layout - Layout of a worksheet
+ * - `dashboard`: Views are shown in a two-dimensional dashboard grid.
+ * - `linear`: Views are shown linearly, one after another in one column.
+ */
 
 let hasCadenzaSession = false;
 
@@ -352,7 +356,7 @@ export class CadenzaClient {
    * @param {GlobalId} [__namedParameters.highlightGlobalId] - The ID of an item to highlight / expand in the navigator
    * @param {String} [__namedParameters.labelSet] - The name of a label set defined in the `basicweb-config.xml` (only supported for the welcome page)
    * @param {OperationMode} [__namedParameters.operationMode] - The mode in which a workbook should be operated
-   * @param {Layout} [__namedParameters.layout] - The specified UI layout
+   * @param {Layout} [__namedParameters.layout] - The layout to be used; the dashboard layout is used by default or the linear layout if there is not enough space.
    * @param {AbortSignal} [__namedParameters.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
