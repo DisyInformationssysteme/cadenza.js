@@ -234,6 +234,7 @@
       simplifiedOperationMode,
       snappingLayer,
       useMapSrs,
+      layout,
     }, formData) {
       return {
         additionalLayers: additionalLayers && JSON.parse(additionalLayers),
@@ -259,6 +260,7 @@
           types: formData?.getAll('snappingTypes')
         }: undefined,
         useMapSrs: useMapSrs === 'on',
+        layout: layout === 'default' ? undefined : layout
       };
     }
 
@@ -361,6 +363,14 @@
       <input type="checkbox" name="expandNavigator">
       Expand navigator tree
     </label>
+  </div>
+  <div>
+    <label for="layout">Layout</label>
+    <select id="layout" name="layout">
+      <option value="" selected>Default</option>
+      <option value="linear">Linear</option>
+      <option value="dashboard">Dashboard</option>
+    </select>
   </div>
 </template>
 
