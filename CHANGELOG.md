@@ -6,6 +6,8 @@ This project uses a version scheme based on the Cadenza main version in the form
 
 ## Unreleased
 
+## 10.4.0 - 2025-06-24
+
 ## 10.3.6 - 2025-05-28
 
 ## 10.3.5 - 2025-05-21

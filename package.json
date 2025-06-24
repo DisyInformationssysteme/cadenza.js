@@ -1,6 +1,6 @@
 {
   "name": "@disy/cadenza.js",
-  "version": "10.4.0-dev",
+  "version": "10.4.0",
   "license": "Apache-2.0",
   "repository": "github:DisyInformationssysteme/cadenza.js",
   "type": "module",
