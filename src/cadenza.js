@@ -717,7 +717,7 @@ export class CadenzaClient {
    * Edit a geometry.
    *
    * @param {EmbeddingTargetId} backgroundMapView - The workbook map view in the background
-   * @param {GeometryType | Geometry} geometryContext - The type of geometry the dialog supports. If a geometry is provided, it will be placed it directly onto the edit layer.
+   * @param {GeometryType | Geometry} geometryContext - Specifies either a geometry type for editing or a pre-defined geometry to be loaded directly into the editor.
    * @param {object} [__namedParameters] - Options
    * @param {LayerDefinition[]} [__namedParameters.additionalLayers] - Layer definitions to be imported and shown in the background, as a basis for the drawing. Each is a layer definition, with name, type and content (a Geojson featureCollection).
    * @param {boolean | FeatureCollection} [__namedParameters.batchMode] - Whether the geometry edit dialog should operate in batch mode. If a FeatureCollection is provided, batchMode is enabled, and the Features are directly imported into the batching layer. Default is false
