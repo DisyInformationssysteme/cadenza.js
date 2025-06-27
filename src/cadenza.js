@@ -644,6 +644,9 @@ export class CadenzaClient {
    * _Note:_ Under the hood, creating a geometry is similar to editing a geometry.
    * That's why the events use the `editGeometry` prefix.
    *
+   * @deprecated This method is deprecated since <time>2025-06-27</time> and will eventually be removed.
+   *   Please use {@link editGeometry}.
+   *
    * @param {EmbeddingTargetId} backgroundMapView - The workbook map view in the background
    * @param {GeometryType} geometryType - The geometry type
    * @param {object} [__namedParameters] - Options
@@ -707,15 +710,17 @@ export class CadenzaClient {
       }
     }
     this.#setExtentStrategy(validExtentStrategy);
+    await this.#postRequest('setEditorState', 'READY');
   }
 
   /**
    * Edit a geometry.
    *
    * @param {EmbeddingTargetId} backgroundMapView - The workbook map view in the background
-   * @param {Geometry} geometry - The geometry
+   * @param {GeometryType | Geometry} geometryContext - The type of geometry the dialog supports. If a geometry is provided, it will be placed it directly onto the edit layer.
    * @param {object} [__namedParameters] - Options
    * @param {LayerDefinition[]} [__namedParameters.additionalLayers] - Layer definitions to be imported and shown in the background, as a basis for the drawing. Each is a layer definition, with name, type and content (a Geojson featureCollection).
+   * @param {boolean | FeatureCollection} [__namedParameters.batchMode] - Whether the geometry edit dialog should operate in batch mode. If a FeatureCollection is provided, batchMode is enabled, and the Features are directly imported into the batching layer. Default is false
    * @param {UiFeature[]} [__namedParameters.disabledUiFeatures] - Cadenza UI features to disable
    * @param {ExtentStrategy} [__namedParameters.extentStrategy] - Defines the initial map extent; If not given, Cadenza's default logic is used.
    * @param {FilterVariables} [__namedParameters.filter] - Filter variables
@@ -736,9 +741,10 @@ export class CadenzaClient {
    */
   async editGeometry(
     backgroundMapView,
-    geometry,
+    geometryContext,
     {
       additionalLayers,
+      batchMode,
       disabledUiFeatures,
       extentStrategy,
       filter,
@@ -752,7 +758,10 @@ export class CadenzaClient {
     } = {},
   ) {
     this.#log('CadenzaClient#editGeometry', ...arguments);
-    assertValidGeometryType(geometry.type);
+    const { geometry, geometryType } =
+      getGeometryContextConfiguration(geometryContext);
+    const { batchModeEnabled, batchModeFeatureCollection } =
+      getBatchModeConfiguration(batchMode);
     const validExtentStrategy = sanitizeExtentStrategy({
       extentStrategy,
       geometry,
@@ -762,6 +771,8 @@ export class CadenzaClient {
     const params = createParams({
       action: 'editGeometry',
       disabledUiFeatures,
+      geometryType,
+      batchModeEnabled,
       filter,
       minScale,
       operationMode,
@@ -769,11 +780,17 @@ export class CadenzaClient {
       useMapSrs,
       validExtentStrategy,
     });
+    if (batchModeFeatureCollection) {
+      validateFeatureCollectionOfType(batchModeFeatureCollection, geometryType);
+    }
     await this.#show(resolvePath(backgroundMapView), params, signal);
     if (geometry) {
-      this.#postEvent('setGeometry', {
+      await this.#postRequest('setGeometry', {
         geometry,
       });
+    }
+    if (batchModeFeatureCollection) {
+      await this.#postRequest('addFeatures', batchModeFeatureCollection);
     }
     if (additionalLayers) {
       for (const layer of additionalLayers) {
@@ -781,6 +798,8 @@ export class CadenzaClient {
       }
     }
     this.#setExtentStrategy(validExtentStrategy);
+
+    await this.#postRequest('setEditorState', 'READY');
   }
 
   /**
@@ -1419,6 +1438,60 @@ function assertValidFilterVariables(/** @type {FilterVariables} */ filter) {
 }
 
 /**
+ * Retrieves the geometry context object based on the provided input.
+ *
+ * @param {GeometryType | Geometry} geometryContext - The geometry context which can either be a string representing the geometry type or an object containing geometry details.
+ * @return {{geometry?: Geometry, geometryType: GeometryType}} - Geometry Context Object, containing the geometryType and the optional Geometry
+ */
+function getGeometryContextConfiguration(geometryContext) {
+  if (typeof geometryContext === 'string') {
+    return { geometryType: geometryContext };
+  } else {
+    return { geometry: geometryContext, geometryType: geometryContext.type };
+  }
+}
+
+/**
+ * Creates a batch mode configuration object based on the provided input.
+ *
+ * @param {boolean | FeatureCollection | undefined} batchMode - Controls batch mode:
+ *   - undefined: Batch mode is disabled
+ *   - boolean: If true, batch mode is enabled, false otherwise.
+ *   - FeatureCollection: Batch mode is enabled. The FeatureCollection is initially added to the batching layer.
+ * @return {{batchModeEnabled: boolean, batchModeFeatureCollection?: FeatureCollection}} Configuration object with:
+ *   - batchModeEnabled: Boolean indicating whether batch mode is enabled
+ *   - batchModeFeatureCollection: The collection (when provided)
+ */
+
+function getBatchModeConfiguration(batchMode) {
+  if (batchMode === undefined) {
+    return { batchModeEnabled: false };
+  }
+  if (typeof batchMode === 'boolean') {
+    return { batchModeEnabled: batchMode };
+  }
+  // If a FeatureCollection is provided, batchMode is automatically enabled.
+  return { batchModeEnabled: true, batchModeFeatureCollection: batchMode };
+}
+
+/**
+ * Validates whether the provided feature collection contains features of the specified geometry type.
+ *
+ * @param {FeatureCollection} featureCollection - The feature collection to validate.
+ * @param {GeometryType} geometryType - The geometry type that each feature's geometry in the collection must conform to.
+ */
+function validateFeatureCollectionOfType(featureCollection, geometryType) {
+  assertValidGeometryType(geometryType);
+  featureCollection.features.forEach((feature) => {
+    assert(
+      feature.geometry.type === geometryType,
+      `The feature's geometry type must be of type ${geometryType}. 
+        Found ${feature.geometry.type} instead.`,
+    );
+  });
+}
+
+/**
  * @param {object} params
  * @param {string} [params.action]
  * @param {DataType} [params.dataType]
@@ -1427,6 +1500,7 @@ function assertValidFilterVariables(/** @type {FilterVariables} */ filter) {
  * @param {string} [params.fileName]
  * @param {FilterVariables} [params.filter]
  * @param {GeometryType} [params.geometryType]
+ * @param {boolean} [params.batchModeEnabled]
  * @param {boolean} [params.hideMainHeaderAndFooter]
  * @param {boolean} [params.hideWorkbookToolBar]
  * @param {GlobalId} [params.highlightGlobalId]
@@ -1450,6 +1524,7 @@ function createParams({
   fileName,
   filter,
   geometryType,
+  batchModeEnabled,
   hideMainHeaderAndFooter,
   hideWorkbookToolBar,
   highlightGlobalId,
@@ -1514,6 +1589,7 @@ function createParams({
         ]),
       )),
     ...(geometryType && { geometryType }),
+    ...(batchModeEnabled && { batchModeEnabled: 'true' }),
     ...(hideMainHeaderAndFooter && { hideMainHeaderAndFooter: 'true' }),
     ...(hideWorkbookToolBar && { hideWorkbookToolBar: 'true' }),
     ...(highlightGlobalId && { highlightGlobalId }),
