@@ -10,8 +10,10 @@ This project uses a version scheme based on the Cadenza main version in the form
 - `batchMode` option for `CadenzaClient#editGeometry`
 
 ### Changed
-- Deprecated `CadenzaClient#createGeometry`
-- `geometry` parameter was renamed to `geometryContext` and it's type changed to `Geometry | GeometryType`
+- The second parameter of `CadenzaClient#editGeometry` now accepts either a `Geometry` or a `GeometryType`.
+
+### Deprecated
+- `CadenzaClient#createGeometry`
 
 ## 10.4.0 - 2025-06-24
 

@@ -1441,13 +1441,13 @@ function assertValidFilterVariables(/** @type {FilterVariables} */ filter) {
  * Retrieves the geometry context object based on the provided input.
  *
  * @param {GeometryType | Geometry} geometryContext - The geometry context which can either be a string representing the geometry type or an object containing geometry details.
- * @return {{geometry?: Geometry, geometryType: GeometryType}} - Geometry Context Object, containing the geometryType and the optional Geometry
+ * @return {{geometryType: GeometryType, geometry?: Geometry}} - Geometry Context Object, containing the geometryType and the optional Geometry
  */
 function getGeometryContextConfiguration(geometryContext) {
   if (typeof geometryContext === 'string') {
     return { geometryType: geometryContext };
   } else {
-    return { geometry: geometryContext, geometryType: geometryContext.type };
+    return { geometryType: geometryContext.type, geometry: geometryContext };
   }
 }
 
@@ -1463,10 +1463,7 @@ function getGeometryContextConfiguration(geometryContext) {
  *   - batchModeFeatureCollection: The collection (when provided)
  */
 
-function getBatchModeConfiguration(batchMode) {
-  if (batchMode === undefined) {
-    return { batchModeEnabled: false };
-  }
+function getBatchModeConfiguration(batchMode = false) {
   if (typeof batchMode === 'boolean') {
     return { batchModeEnabled: batchMode };
   }
@@ -1482,13 +1479,13 @@ function getBatchModeConfiguration(batchMode) {
  */
 function validateFeatureCollectionOfType(featureCollection, geometryType) {
   assertValidGeometryType(geometryType);
-  featureCollection.features.forEach((feature) => {
-    assert(
-      feature.geometry.type === geometryType,
-      `The feature's geometry type must be of type ${geometryType}. 
-        Found ${feature.geometry.type} instead.`,
-    );
-  });
+  const invalidFeature = featureCollection.features.find(
+    (feature) => feature.geometry.type !== geometryType,
+  );
+  assert(
+    !invalidFeature,
+    `Expected only features of type ${geometryType}, but found ${invalidFeature?.geometry.type}`,
+  );
 }
 
 /**
