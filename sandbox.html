@@ -165,7 +165,7 @@
       setSelection: data => cadenzaClient.setSelection(JSON.parse(data.layer), JSON.parse(data.objectIds), {extentStrategy: JSON.parse(data.extentStrategy)}),
       addSelection: data => cadenzaClient.addSelection(JSON.parse(data.layer), JSON.parse(data.objectIds), { extentStrategy: JSON.parse(data.extentStrategy) }),
       removeSelection: data => cadenzaClient.removeSelection(JSON.parse(data.layer), JSON.parse(data.objectIds), { extentStrategy: JSON.parse(data.extentStrategy) }),
-      createGeometry: (data, formData) => cadenzaClient.editGeometry(data.embeddingTargetId, data.geometryType, getOptions(data, formData)),
+      createGeometry: (data, formData) => cadenzaClient.createGeometry(data.embeddingTargetId, data.geometryType, getOptions(data, formData)),
       editGeometry: ({ geometry, ...data }, formData) => cadenzaClient.editGeometry(data.embeddingTargetId, JSON.parse(geometry), getOptions(data, formData)),
       selectObjects: data => cadenzaClient.selectObjects(data.embeddingTargetId, getOptions(data)),
       fetchData: data => {
@@ -222,8 +222,6 @@
       fileName,
       filter,
       geometry,
-      batchModeEnabled,
-      batchModeFeatureCollection,
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
       highlightGlobalId,
@@ -249,8 +247,6 @@
         filter: filter && parseFilterVariables(filter),
         fullGeometries: fullGeometries === 'on',
         geometry: geometry && JSON.parse(geometry),
-        batchMode: (batchModeFeatureCollection ? JSON.parse(batchModeFeatureCollection) : undefined)
-          ?? batchModeEnabled === 'on',
         hideMainHeaderAndFooter: (hideMainHeaderAndFooter === 'on'),
         hideWorkbookToolBar: (hideWorkbookToolBar === 'on'),
         highlightGlobalId,
@@ -533,7 +529,7 @@
 
 <template data-action="setFilter" data-common="filter"></template>
 
-<template data-action="createGeometry" data-common="batchMode,additionalLayers,extentStrategy,map,snapping,disabledUiFeatures,filter">
+<template data-action="createGeometry" data-common="additionalLayers,extentStrategy,map,snapping,disabledUiFeatures,filter">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
@@ -561,7 +557,7 @@
   </div>
 </template>
 
-<template data-action="editGeometry" data-common="batchMode,additionalLayers,extentStrategy,map,snapping,disabledUiFeatures,filter">
+<template data-action="editGeometry" data-common="additionalLayers,extentStrategy,map,snapping,disabledUiFeatures,filter">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
@@ -699,43 +695,6 @@
         A JSON value like <code>"&lt;layerPrintName&gt;"</code> or
         <code>["&lt;layerGroupPrintName&gt;","&lt;layerPrintName&gt;"]</code>
       </p>
-    </small>
-  </div>
-</template>
-
-<template id="common-batchMode">
-  <div>
-    <label>
-      <input type="checkbox" name="batchModeEnabled">
-      Enable batch mode
-    </label>
-    <label for="batchMode">FeatureCollection for batch mode</label>
-    <textarea name="batchModeFeatureCollection" id="batchMode" rows="10"></textarea>
-    <small>
-      <strong>Optional</strong> If provided, batch mode is enabled
-      <strong>Example:</strong>
-      <pre>
-{
-  "type":"FeatureCollection",
-  "features":[
-    {
-      "type":"Feature",
-      "properties":{},
-      "geometry":{
-        "coordinates":[
-          [
-            [7.96,47.93],
-            [7.90,47.64],
-            [8.31,47.70],
-            [7.96,47.93]
-          ]
-        ],
-        "type":"Polygon"
-      }
-    }
-  ]
-}
-        </pre>
     </small>
   </div>
 </template>
