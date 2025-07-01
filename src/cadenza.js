@@ -703,19 +703,22 @@ export class CadenzaClient {
       validExtentStrategy,
     });
     await this.#show(resolvePath(backgroundMapView), params, signal);
+    const postRequests = [];
     if (additionalLayers) {
       for (const layer of additionalLayers) {
-        await this.#postRequest('importLayer', layer);
+        postRequests.push(this.#postRequest('importLayer', layer));
       }
     }
-    this.#setExtentStrategy(validExtentStrategy);
+    postRequests.push(this.#setExtentStrategy(validExtentStrategy));
+    await Promise.all(postRequests);
+    await this.#postRequest('setEditorState', 'READY');
   }
 
   /**
    * Edit a geometry.
    *
    * @param {EmbeddingTargetId} backgroundMapView - The workbook map view in the background
-   * @param {Geometry} geometry - The geometry
+   * @param {Geometry} geometry - The geometry to edit
    * @param {CommonEditGeometryOptions} editGeometryOptions - Options for the initialization of the geometry editor.
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
@@ -743,7 +746,8 @@ export class CadenzaClient {
     } = {},
   ) {
     this.#log('CadenzaClient#editGeometry', ...arguments);
-    assertValidGeometryType(geometry.type);
+    const geometryType = geometry.type;
+    assertValidGeometryType(geometryType);
     const validExtentStrategy = sanitizeExtentStrategy({
       extentStrategy,
       geometry,
@@ -754,6 +758,7 @@ export class CadenzaClient {
       action: 'editGeometry',
       disabledUiFeatures,
       filter,
+      geometryType,
       minScale,
       operationMode,
       snapping,
@@ -761,17 +766,164 @@ export class CadenzaClient {
       validExtentStrategy,
     });
     await this.#show(resolvePath(backgroundMapView), params, signal);
+    const postRequests = [];
     if (geometry) {
-      this.#postEvent('setGeometry', {
-        geometry,
-      });
+      postRequests.push(
+        this.#postRequest('setGeometry', {
+          geometry,
+        }),
+      );
     }
     if (additionalLayers) {
       for (const layer of additionalLayers) {
-        await this.#postRequest('importLayer', layer);
+        postRequests.push(this.#postRequest('importLayer', layer));
       }
     }
-    this.#setExtentStrategy(validExtentStrategy);
+    postRequests.push(this.#setExtentStrategy(validExtentStrategy));
+    await Promise.all(postRequests);
+
+    await this.#postRequest('setEditorState', 'READY');
+  }
+
+  /**
+   * Create multiple geometries.
+   *
+   * @param {EmbeddingTargetId} backgroundMapView - The workbook map view in the background
+   * @param {GeometryType} geometryType - The type of geometries to create
+   * @param {CommonEditGeometryOptions} editGeometryOptions - Options for the initialization of the geometry editor.
+   * @return {Promise<void>} A `Promise` for when the iframe is loaded
+   * @throws For invalid arguments
+   * @fires
+   * - {@link CadenzaEditGeometryUpdateEvent}
+   * - {@link CadenzaEditGeometryOkEvent}
+   * - {@link CadenzaEditGeometryCancelEvent}
+   * @embed
+   */
+  async batchCreateGeometry(
+    backgroundMapView,
+    geometryType,
+    {
+      additionalLayers,
+      disabledUiFeatures,
+      extentStrategy,
+      filter,
+      locationFinder,
+      mapExtent,
+      minScale,
+      operationMode,
+      signal,
+      snapping,
+      useMapSrs,
+    } = {},
+  ) {
+    this.#log('CadenzaClient#editGeometry', ...arguments);
+    assertValidGeometryType(geometryType);
+    const validExtentStrategy = sanitizeExtentStrategy({
+      extentStrategy,
+      locationFinder,
+      mapExtent,
+    });
+    const params = createParams({
+      action: 'editGeometry',
+      batchModeEnabled: true,
+      disabledUiFeatures,
+      filter,
+      geometryType,
+      minScale,
+      operationMode,
+      snapping,
+      useMapSrs,
+      validExtentStrategy,
+    });
+    await this.#show(resolvePath(backgroundMapView), params, signal);
+    const postRequests = [];
+    if (additionalLayers) {
+      for (const layer of additionalLayers) {
+        postRequests.push(this.#postRequest('importLayer', layer));
+      }
+    }
+    postRequests.push(this.#setExtentStrategy(validExtentStrategy));
+    await Promise.all(postRequests);
+
+    await this.#postRequest('setEditorState', 'READY');
+  }
+
+  /**
+   * Edit multiple geometries.
+   *
+   * @param {EmbeddingTargetId} backgroundMapView - The workbook map view in the background
+   * @param {FeatureCollection} features - The features to edit
+   * @param {CommonEditGeometryOptions & { initialFeatureIndex?: number }} editGeometryOptions - Options for the initialization of the geometry editor. Allows an initial selection of a feature from the provided collection for editing.
+   * @return {Promise<void>} A `Promise` for when the iframe is loaded
+   * @throws For invalid arguments
+   * @fires
+   * - {@link CadenzaEditGeometryUpdateEvent}
+   * - {@link CadenzaEditGeometryOkEvent}
+   * - {@link CadenzaEditGeometryCancelEvent}
+   * @embed
+   */
+  async batchEditGeometry(
+    backgroundMapView,
+    features,
+    {
+      additionalLayers,
+      disabledUiFeatures,
+      extentStrategy,
+      filter,
+      initialFeatureIndex,
+      locationFinder,
+      mapExtent,
+      minScale,
+      operationMode,
+      signal,
+      snapping,
+      useMapSrs,
+    } = {},
+  ) {
+    this.#log('CadenzaClient#editGeometry', ...arguments);
+    const geometryType = getGeometryTypeFromFeatureCollection(features);
+    const validExtentStrategy = sanitizeExtentStrategy({
+      extentStrategy,
+      locationFinder,
+      mapExtent,
+    });
+    if (initialFeatureIndex !== undefined) {
+      assert(
+        initialFeatureIndex >= 0 &&
+          initialFeatureIndex < features.features.length,
+        'The provided initialFeatureIndex must be greater than or equal to 0 and less than the number of features in the provided FeatureCollection',
+      );
+    }
+    const params = createParams({
+      action: 'editGeometry',
+      batchModeEnabled: true,
+      disabledUiFeatures,
+      filter,
+      geometryType,
+      minScale,
+      operationMode,
+      snapping,
+      useMapSrs,
+      validExtentStrategy,
+    });
+    await this.#show(resolvePath(backgroundMapView), params, signal);
+    const postRequests = [];
+    if (additionalLayers) {
+      for (const layer of additionalLayers) {
+        postRequests.push(this.#postRequest('importLayer', layer));
+      }
+    }
+    postRequests.push(this.#setExtentStrategy(validExtentStrategy));
+    const addFeaturePostRequest = this.#postRequest('addFeatures', features);
+    postRequests.push(addFeaturePostRequest);
+    if (initialFeatureIndex) {
+      await addFeaturePostRequest;
+      postRequests.push(
+        this.#postRequest('editFeatureByIndex', initialFeatureIndex),
+      );
+    }
+    await Promise.all(postRequests);
+    await this.#postRequest('setEditorState', 'READY');
   }
 
   /**
@@ -850,7 +1002,7 @@ export class CadenzaClient {
     const type = extentStrategy?.type;
     // Other extent strategies are handled via URL parameters.
     if (type === 'geometry' || type === 'layerData') {
-      this.#postEvent('setExtentStrategy', extentStrategy);
+      return this.#postRequest('setExtentStrategy', extentStrategy);
     }
   }
 
@@ -1412,6 +1564,7 @@ function assertValidFilterVariables(/** @type {FilterVariables} */ filter) {
 /**
  * @param {object} params
  * @param {string} [params.action]
+ * @param {boolean} [params.batchModeEnabled]
  * @param {DataType} [params.dataType]
  * @param {UiFeature[]} [params.disabledUiFeatures]
  * @param {boolean} [params.expandNavigator]
@@ -1435,6 +1588,7 @@ function assertValidFilterVariables(/** @type {FilterVariables} */ filter) {
  */
 function createParams({
   action,
+  batchModeEnabled,
   dataType,
   disabledUiFeatures,
   expandNavigator,
@@ -1491,6 +1645,7 @@ function createParams({
   }
   return new URLSearchParams({
     ...(action && { action }),
+    ...(batchModeEnabled && { batchModeEnabled: 'true' }),
     ...(dataType && { dataType }),
     ...(disabledUiFeatures && {
       disabledUiFeatures: disabledUiFeatures.join(),
@@ -1582,6 +1737,24 @@ function sanitizeExtentStrategy({
   if (locationFinder) {
     return { type: 'locationFinder', query: locationFinder };
   }
+}
+
+/**
+ * Retrieves the {@link GeometryType} of the provided feature collection.
+ * All provided features must have geometries of the same type.
+ *
+ * @param {FeatureCollection} featureCollection - The feature collection to validate.
+ */
+function getGeometryTypeFromFeatureCollection(featureCollection) {
+  const features = featureCollection.features;
+  assert(features.length > 0, 'Feature collection is empty');
+  const geometryType = features[0].geometry.type;
+  assertValidGeometryType(geometryType);
+  assert(
+    features.every((feature) => feature.geometry.type === geometryType),
+    'Geometries are not of the same type',
+  );
+  return geometryType;
 }
 
 // Please do not add internal event types like 'ready' here.
