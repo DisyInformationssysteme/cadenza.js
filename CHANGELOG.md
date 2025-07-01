@@ -6,7 +6,7 @@ This project uses a version scheme based on the Cadenza main version in the form
 
 ## Unreleased
 ### Added
-- `width`, `height` and `withScale` option for `CadenzaClient#getData`
+- `width`, `height` and `withScale` options for `CadenzaClient#getData`
 - `layout` option for `CadenzaClient#show`
 
 ## 10.4.0 - 2025-06-24

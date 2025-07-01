@@ -250,7 +250,7 @@ You may pass the desired `width` and `height` in px and whether the resulting im
 
 ```javascript
 const canvas = document.querySelector('canvas');
-const data = await cadenzaClient.getData({ dataType: 'png', width: 1200, height: 800, withScale: true});
+const data = await cadenzaClient.getData('png', { width: 1200, height: 800, withScale: true });
 canvas.drawImage(await createImageBitmap(data), 0, 0);
 ```
 

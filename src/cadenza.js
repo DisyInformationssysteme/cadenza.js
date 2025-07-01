@@ -529,19 +529,15 @@ export class CadenzaClient {
    * Currently, only map views are supported.
    *
    * @template {DataType} T
-   * @param {object} __namedParameters - Options
-   * @param {DataType} __namedParameters.dataType - The requested data type. Currently, only `"png"` is supported.
-   * @param {number} [__namedParameters.width] - The width of the resulting map image.
-   * @param {number} [__namedParameters.height] - The height of the resulting map image.
+   * @param {DataType} dataType - The requested data type. Currently, only `"png"` is
+   * @param {object} [__namedParameters] - Options
+   * @param {number} [__namedParameters.width] - The width of the resulting map image in px.
+   * @param {number} [__namedParameters.height] - The height of the resulting map image in px.
    * @param {boolean} [__namedParameters.withScale] - Whether to show the scale line and the scale on the map image.
    * @return {Promise<T extends 'png' ? Blob : never>}
    * @postMessage
    */
-  async getData(
-    { dataType, width, height, withScale } = {
-      dataType: 'png',
-    },
-  ) {
+  async getData(dataType, { width, height, withScale } = {}) {
     this.#log('CadenzaClient#getData', ...arguments);
     assertSupportedDataType(dataType, ['png']);
     return this.#postRequest('getData', { dataType, width, height, withScale });
