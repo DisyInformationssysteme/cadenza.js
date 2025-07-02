@@ -660,7 +660,7 @@ export class CadenzaClient {
    *
    * @param {EmbeddingTargetId} backgroundMapView - The workbook map view in the background
    * @param {GeometryType} geometryType - The geometry type
-   * @param {CommonEditGeometryOptions} editGeometryOptions - Options for the initialization of the geometry editor.
+   * @param {CommonEditGeometryOptions} [editGeometryOptions] - Options for the initialization of the geometry editor.
    * @throws For invalid arguments
    * @fires
    * - {@link CadenzaEditGeometryUpdateEvent}
@@ -719,7 +719,7 @@ export class CadenzaClient {
    *
    * @param {EmbeddingTargetId} backgroundMapView - The workbook map view in the background
    * @param {Geometry} geometry - The geometry to edit
-   * @param {CommonEditGeometryOptions} editGeometryOptions - Options for the initialization of the geometry editor.
+   * @param {CommonEditGeometryOptions} [editGeometryOptions] - Options for the initialization of the geometry editor.
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires
@@ -790,7 +790,7 @@ export class CadenzaClient {
    *
    * @param {EmbeddingTargetId} backgroundMapView - The workbook map view in the background
    * @param {GeometryType} geometryType - The type of geometries to create
-   * @param {CommonEditGeometryOptions} editGeometryOptions - Options for the initialization of the geometry editor.
+   * @param {CommonEditGeometryOptions} [editGeometryOptions] - Options for the initialization of the geometry editor.
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires
@@ -853,7 +853,7 @@ export class CadenzaClient {
    *
    * @param {EmbeddingTargetId} backgroundMapView - The workbook map view in the background
    * @param {FeatureCollection} features - The features to edit. The last feature in this collection is directly set up for editing.
-   * @param {CommonEditGeometryOptions} editGeometryOptions - Options for the initialization of the geometry editor.
+   * @param {CommonEditGeometryOptions} [editGeometryOptions] - Options for the initialization of the geometry editor.
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires
