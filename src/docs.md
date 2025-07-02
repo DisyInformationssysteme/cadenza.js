@@ -241,19 +241,18 @@ cadenzaClient.setLayerVisibility('<layerPrintName>', false);
 ```
 -->
 
-<!--
 ### Get the Image of the Currently Shown Workbook Map View
 
 <small>API: [CadenzaClient#getData](./classes/CadenzaClient.html#getData)</small>
 
 The method may support multiple data types in the future. Currently, only `"png"` is supported to get the image of a workbook map view.
+You may pass the desired `width` and `height` in px and whether the resulting image should include the scale.
 
 ```javascript
 const canvas = document.querySelector('canvas');
-const data = await cadenzaClient.getData('png');
+const data = await cadenzaClient.getData('png', { width: 1200, height: 800, withScale: true });
 canvas.drawImage(await createImageBitmap(data), 0, 0);
 ```
--->
 
 ### Edit an Existing Geometry
 

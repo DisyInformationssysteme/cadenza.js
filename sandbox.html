@@ -39,7 +39,7 @@
       display: flex;
       flex-direction: column;
       gap: var(--gap);
-      overflow: scroll;
+      overflow: hidden auto;
     }
     fieldset > div {
       display: flex;
@@ -153,7 +153,8 @@
       closeMe: () => cadenzaClient.closeMe(),
       getData: async data => {
         const dataType = data.dataType;
-        const result = await cadenzaClient.getData(dataType);
+        const options = getOptions(data);
+        const result = await cadenzaClient.getData(dataType, options);
         if (dataType === 'png') {
           const url = URL.createObjectURL(result);
           iframe.src = url;
@@ -215,6 +216,7 @@
     function getOptions ({
       additionalLayers,
       disabledUiFeatures,
+      dataType,
       distance,
       expandNavigator,
       extentStrategy,
@@ -222,6 +224,7 @@
       fileName,
       filter,
       geometry,
+      height,
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
       highlightGlobalId,
@@ -235,11 +238,14 @@
       snappingLayer,
       useMapSrs,
       layout,
+      width,
+      withScale,
     }, formData) {
       return {
         additionalLayers: additionalLayers && JSON.parse(additionalLayers),
         buffer: distance ? { value: Number(distance), lengthUnit: lengthUnit ? lengthUnit : 'm' } : undefined,
         ...(requestAsPdf === 'on' && { dataType: 'pdf' }),
+        dataType: dataType,
         disabledUiFeatures: disabledUiFeatures && disabledUiFeatures.split(','),
         expandNavigator: (expandNavigator === 'on'),
         extentStrategy: extentStrategy && JSON.parse(extentStrategy),
@@ -247,6 +253,7 @@
         filter: filter && parseFilterVariables(filter),
         fullGeometries: fullGeometries === 'on',
         geometry: geometry && JSON.parse(geometry),
+        height: Number(height),
         hideMainHeaderAndFooter: (hideMainHeaderAndFooter === 'on'),
         hideWorkbookToolBar: (hideWorkbookToolBar === 'on'),
         highlightGlobalId,
@@ -261,6 +268,8 @@
         }: undefined,
         useMapSrs: useMapSrs === 'on',
         layout: layout || undefined,
+        width: Number(width),
+        withScale: Boolean(withScale),
       };
     }
 
@@ -292,7 +301,7 @@
           </optgroup>
           <optgroup label="Interact With Shown Content">
             <option value="expandNavigator">Expand Navigator</option>
-            <option value="getData" class="unpublished">Get Data (Get Map Image)</option>
+            <option value="getData">Get Data (Get Map Image)</option>
             <option value="setFilter" class="unpublished">Set Filter</option>
             <option value="setLayerVisibility" class="unpublished">Set Layer Visibility</option>
             <option value="setSelection" class="unpublished">Set Selection</option>
@@ -898,6 +907,16 @@
     <small>
       <p>Currently, only <code>dataType=png</code> is supported to get the image of the currently shown workbook map view.</p>
     </small>
+    <hr>
+    <label for="width">Width</label>
+    <input name="width" id="width" type="number" min="0">
+    <label for="height">Height</label>
+    <input name="height" id="height" type="number" min="0">
+    <hr>
+    <label for="withScale">
+      <input name="withScale" id="withScale" type="checkbox" >
+      Include scale
+    </label>
   </div>
 </template>
 
