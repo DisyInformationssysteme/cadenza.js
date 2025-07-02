@@ -703,15 +703,11 @@ export class CadenzaClient {
       validExtentStrategy,
     });
     await this.#show(resolvePath(backgroundMapView), params, signal);
-    const postRequests = [];
-    if (additionalLayers) {
-      for (const layer of additionalLayers) {
-        postRequests.push(this.#postRequest('importLayer', layer));
-      }
-    }
-    postRequests.push(this.#setExtentStrategy(validExtentStrategy));
-    await Promise.all(postRequests);
-    await this.#postRequest('setEditorState', 'READY');
+    await this.#setupEditorViaPostRequests({
+      additionalLayers,
+      validExtentStrategy,
+    });
+    await this.#setEditorStateToReady();
   }
 
   /**
@@ -766,23 +762,12 @@ export class CadenzaClient {
       validExtentStrategy,
     });
     await this.#show(resolvePath(backgroundMapView), params, signal);
-    const postRequests = [];
-    if (geometry) {
-      postRequests.push(
-        this.#postRequest('setGeometry', {
-          geometry,
-        }),
-      );
-    }
-    if (additionalLayers) {
-      for (const layer of additionalLayers) {
-        postRequests.push(this.#postRequest('importLayer', layer));
-      }
-    }
-    postRequests.push(this.#setExtentStrategy(validExtentStrategy));
-    await Promise.all(postRequests);
-
-    await this.#postRequest('setEditorState', 'READY');
+    await this.#setupEditorViaPostRequests({
+      additionalLayers,
+      validExtentStrategy,
+      geometry,
+    });
+    await this.#setEditorStateToReady();
   }
 
   /**
@@ -836,16 +821,11 @@ export class CadenzaClient {
       validExtentStrategy,
     });
     await this.#show(resolvePath(backgroundMapView), params, signal);
-    const postRequests = [];
-    if (additionalLayers) {
-      for (const layer of additionalLayers) {
-        postRequests.push(this.#postRequest('importLayer', layer));
-      }
-    }
-    postRequests.push(this.#setExtentStrategy(validExtentStrategy));
-    await Promise.all(postRequests);
-
-    await this.#postRequest('setEditorState', 'READY');
+    await this.#setupEditorViaPostRequests({
+      additionalLayers,
+      validExtentStrategy,
+    });
+    await this.#setEditorStateToReady();
   }
 
   /**
@@ -900,16 +880,50 @@ export class CadenzaClient {
       validExtentStrategy,
     });
     await this.#show(resolvePath(backgroundMapView), params, signal);
+    await this.#setupEditorViaPostRequests({
+      additionalLayers,
+      validExtentStrategy,
+      features,
+    });
+    await this.#setEditorStateToReady();
+  }
+
+  /**
+   * @param {object} __namedParameters - Options
+   * @param [__namedParameters.geometry] {Geometry} - The geometry to edit
+   * @param [__namedParameters.additionalLayers] {LayerDefinition[]} - Layer definitions to be imported and shown in the background, as a basis for the drawing.
+   * @param [__namedParameters.validExtentStrategy] {ExtentStrategy} - Defines the initial map extent; If not given, Cadenza's default logic is used.
+   * @param [__namedParameters.features] {FeatureCollection} - The features to edit. The last feature in this collection is directly set up for editing.
+   * @returns {Promise<Awaited<unknown>[]>}
+   */
+  #setupEditorViaPostRequests({
+    geometry,
+    additionalLayers,
+    validExtentStrategy,
+    features,
+  }) {
     const postRequests = [];
+    postRequests.push(this.#setExtentStrategy(validExtentStrategy));
+    if (geometry) {
+      postRequests.push(
+        this.#postRequest('setGeometry', {
+          geometry,
+        }),
+      );
+    }
     if (additionalLayers) {
       for (const layer of additionalLayers) {
         postRequests.push(this.#postRequest('importLayer', layer));
       }
     }
-    postRequests.push(this.#setExtentStrategy(validExtentStrategy));
-    postRequests.push(this.#postRequest('addFeatures', features));
-    await Promise.all(postRequests);
-    await this.#postRequest('setEditorState', 'READY');
+    if (features) {
+      postRequests.push(this.#postRequest('addFeatures', features));
+    }
+    return Promise.all(postRequests);
+  }
+
+  #setEditorStateToReady() {
+    return this.#postRequest('setEditorState', 'READY');
   }
 
   /**
