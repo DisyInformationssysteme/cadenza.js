@@ -227,7 +227,6 @@
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
       highlightGlobalId,
-      initialFeatureIndex,
       labelSet,
       layers,
       lengthUnit,
@@ -253,7 +252,6 @@
         hideMainHeaderAndFooter: (hideMainHeaderAndFooter === 'on'),
         hideWorkbookToolBar: (hideWorkbookToolBar === 'on'),
         highlightGlobalId,
-        initialFeatureIndex: initialFeatureIndex && Number(initialFeatureIndex),
         labelSet,
         layers: layers ? JSON.parse(layers) : undefined,
         minScale: minScale && Number(minScale),
@@ -608,8 +606,6 @@
 }
         </pre>
     </small>
-    <label for="initialFeatureIndex">Initial Feature Index</label>
-    <input type="text" name="initialFeatureIndex" id="initialFeatureIndex">
   </div>
 </template>
 

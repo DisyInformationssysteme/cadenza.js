@@ -852,8 +852,8 @@ export class CadenzaClient {
    * Edit multiple geometries.
    *
    * @param {EmbeddingTargetId} backgroundMapView - The workbook map view in the background
-   * @param {FeatureCollection} features - The features to edit
-   * @param {CommonEditGeometryOptions & { initialFeatureIndex?: number }} editGeometryOptions - Options for the initialization of the geometry editor. Allows an initial selection of a feature from the provided collection for editing.
+   * @param {FeatureCollection} features - The features to edit. The last feature in this collection is directly set up for editing.
+   * @param {CommonEditGeometryOptions} editGeometryOptions - Options for the initialization of the geometry editor.
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires
@@ -870,7 +870,6 @@ export class CadenzaClient {
       disabledUiFeatures,
       extentStrategy,
       filter,
-      initialFeatureIndex,
       locationFinder,
       mapExtent,
       minScale,
@@ -887,13 +886,6 @@ export class CadenzaClient {
       locationFinder,
       mapExtent,
     });
-    if (initialFeatureIndex !== undefined) {
-      assert(
-        initialFeatureIndex >= 0 &&
-          initialFeatureIndex < features.features.length,
-        'The provided initialFeatureIndex must be greater than or equal to 0 and less than the number of features in the provided FeatureCollection',
-      );
-    }
     const params = createParams({
       action: 'editGeometry',
       batchModeEnabled: true,
@@ -914,14 +906,7 @@ export class CadenzaClient {
       }
     }
     postRequests.push(this.#setExtentStrategy(validExtentStrategy));
-    const addFeaturePostRequest = this.#postRequest('addFeatures', features);
-    postRequests.push(addFeaturePostRequest);
-    if (initialFeatureIndex) {
-      await addFeaturePostRequest;
-      postRequests.push(
-        this.#postRequest('editFeatureByIndex', initialFeatureIndex),
-      );
-    }
+    postRequests.push(this.#postRequest('addFeatures', features));
     await Promise.all(postRequests);
     await this.#postRequest('setEditorState', 'READY');
   }
