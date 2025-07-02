@@ -11,7 +11,7 @@ This project uses a version scheme based on the Cadenza main version in the form
 - `CadenzaClient#batchCreateGeometry`
 
 ### Changed
-- Improved the options type for geometry edit functions
+- Extracted `CommonGeometryEditOptions` for reuse.
 
 ## 10.4.0 - 2025-06-24
 
