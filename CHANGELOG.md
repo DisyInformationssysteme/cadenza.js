@@ -9,7 +9,6 @@ This project uses a version scheme based on the Cadenza main version in the form
 - `layout` option for `CadenzaClient#show`
 - `CadenzaClient#batchEditGeometry`
 - `CadenzaClient#batchCreateGeometry`
-- New Sandbox actions for batch editing
 
 ### Changed
 - Improved the options type for geometry edit functions
