@@ -883,6 +883,7 @@ export class CadenzaClient {
     const geometryType = getGeometryTypeFromFeatureCollection(features);
     const validExtentStrategy = sanitizeExtentStrategy({
       extentStrategy,
+      geometry: features.features[features.features.length - 1].geometry,
       locationFinder,
       mapExtent,
     });
