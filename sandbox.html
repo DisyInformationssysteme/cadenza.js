@@ -167,7 +167,9 @@
       addSelection: data => cadenzaClient.addSelection(JSON.parse(data.layer), JSON.parse(data.objectIds), { extentStrategy: JSON.parse(data.extentStrategy) }),
       removeSelection: data => cadenzaClient.removeSelection(JSON.parse(data.layer), JSON.parse(data.objectIds), { extentStrategy: JSON.parse(data.extentStrategy) }),
       createGeometry: (data, formData) => cadenzaClient.createGeometry(data.embeddingTargetId, data.geometryType, getOptions(data, formData)),
-      editGeometry: ({ geometry, ...data }, formData) => cadenzaClient.editGeometry(data.embeddingTargetId, JSON.parse(geometry), getOptions(data, formData)),
+      editGeometry: (data, formData) => cadenzaClient.editGeometry(data.embeddingTargetId, JSON.parse(data.geometry), getOptions(data, formData)),
+      batchCreateGeometry: (data , formData) => cadenzaClient.batchCreateGeometry(data.embeddingTargetId, data.geometryType, getOptions(data, formData)),
+      batchEditGeometry: (data, formData) => cadenzaClient.batchEditGeometry(data.embeddingTargetId, JSON.parse(data.features), getOptions(data, formData)),
       selectObjects: data => cadenzaClient.selectObjects(data.embeddingTargetId, getOptions(data)),
       fetchData: data => {
         console.log('Inspect the fetchData() request in the devtools.');
@@ -313,6 +315,8 @@
           <optgroup label="Map Dialogs">
             <option value="createGeometry">Create Geometry</option>
             <option value="editGeometry">Edit Geometry</option>
+            <option value="batchCreateGeometry">Batch Create Geometry</option>
+            <option value="batchEditGeometry">Batch Edit Geometry</option>
             <option value="selectObjects">Select Objects</option>
             <option value="setCustomValidity">Set Custom Validity</option>
           </optgroup>
@@ -538,35 +542,14 @@
 
 <template data-action="setFilter" data-common="filter"></template>
 
-<template data-action="createGeometry" data-common="additionalLayers,extentStrategy,map,snapping,disabledUiFeatures,filter">
+<template data-action="createGeometry" data-common="geometryType,simplifiedOperationMode,minimumScale,additionalLayers,extentStrategy,map,snapping,disabledUiFeatures,filter">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
   </div>
-  <div>
-    <label for="geometryType">Geometry type</label>
-    <select name="geometryType" id="geometryType">
-      <option>Point</option>
-      <option>MultiPoint</option>
-      <option>LineString</option>
-      <option>MultiLineString</option>
-      <option>Polygon</option>
-      <option>MultiPolygon</option>
-    </select>
-  </div>
-  <div>
-    <label>
-      <input type="checkbox" name="simplifiedOperationMode">
-      Simplified operation mode
-    </label>
-  </div>
-  <div>
-    <label for="minScale">Minimum Scale</label>
-    <input type="number" name="minScale" id="minScale">
-  </div>
 </template>
 
-<template data-action="editGeometry" data-common="additionalLayers,extentStrategy,map,snapping,disabledUiFeatures,filter">
+<template data-action="editGeometry" data-common="simplifiedOperationMode,minimumScale,additionalLayers,extentStrategy,map,snapping,disabledUiFeatures,filter">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
@@ -591,15 +574,47 @@
       </pre>
     </small>
   </div>
+</template>
+
+<template data-action="batchCreateGeometry" data-common="geometryType,simplifiedOperationMode,minimumScale,additionalLayers,extentStrategy,map,snapping,disabledUiFeatures,filter">
   <div>
-    <label>
-      <input type="checkbox" name="simplifiedOperationMode">
-      Simplified operation mode
-    </label>
+    <label for="embeddingTargetId">Embedding target ID of the map view *</label>
+    <input name="embeddingTargetId" id="embeddingTargetId" required>
+  </div>
+</template>
+
+<template data-action="batchEditGeometry" data-common="simplifiedOperationMode,minimumScale,additionalLayers,extentStrategy,map,snapping,disabledUiFeatures,filter">
+  <div>
+    <label for="embeddingTargetId">Embedding target ID of the map view *</label>
+    <input name="embeddingTargetId" id="embeddingTargetId" required>
   </div>
   <div>
-    <label for="minScale">Minimum Scale</label>
-    <input type="number" name="minScale" id="minScale">
+    <label for="features">Features (GeoJSON)</label>
+    <textarea name="features" id="features" rows="10" required></textarea>
+    <small>
+      <strong>Example:</strong>
+      <pre>
+{
+  "type":"FeatureCollection",
+  "features":[
+    {
+      "type":"Feature",
+      "geometry":{
+        "coordinates":[
+          [
+            [7.96,47.93],
+            [7.90,47.64],
+            [8.31,47.70],
+            [7.96,47.93]
+          ]
+        ],
+        "type":"Polygon"
+      }
+    }
+  ]
+}
+        </pre>
+    </small>
   </div>
 </template>
 
@@ -639,16 +654,10 @@
   </div>
 </template>
 
-<template data-action="selectObjects" data-common="extentStrategy,map,filter">
+<template data-action="selectObjects" data-common="simplifiedOperationMode,extentStrategy,map,filter">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
-  </div>
-  <div>
-    <label>
-      <input type="checkbox" name="simplifiedOperationMode">
-      Simplified operation mode
-    </label>
   </div>
   <div>
     <label for="layers">Layers</label>
@@ -684,6 +693,36 @@
   </div>
 </template>
 <template data-action="closeMe">No Parameters needed.</template>
+
+<template id="common-geometryType">
+  <div>
+    <label for="geometryType">Geometry type</label>
+    <select name="geometryType" id="geometryType">
+      <option>Point</option>
+      <option>MultiPoint</option>
+      <option>LineString</option>
+      <option>MultiLineString</option>
+      <option>Polygon</option>
+      <option>MultiPolygon</option>
+    </select>
+  </div>
+</template>
+
+<template id="common-simplifiedOperationMode">
+  <div>
+    <label>
+      <input type="checkbox" name="simplifiedOperationMode">
+      Simplified operation mode
+    </label>
+  </div>
+</template>
+
+<template id="common-minimumScale">
+  <div>
+    <label for="minScale">Minimum Scale</label>
+    <input type="number" name="minScale" id="minScale">
+  </div>
+</template>
 
 <template id="common-object-ids">
   <div>

@@ -8,6 +8,11 @@ This project uses a version scheme based on the Cadenza main version in the form
 ### Added
 - `width`, `height` and `withScale` options for `CadenzaClient#getData`
 - `layout` option for `CadenzaClient#show`
+- `CadenzaClient#batchEditGeometry`
+- `CadenzaClient#batchCreateGeometry`
+
+### Changed
+- Extracted `CommonGeometryEditOptions` for reuse.
 
 ## 10.4.0 - 2025-06-24
 
