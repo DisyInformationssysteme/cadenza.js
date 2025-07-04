@@ -13,7 +13,9 @@ This project uses a version scheme based on the Cadenza main version in the form
 
 ### Changed
 - Extracted `CommonGeometryEditOptions` for reuse.
-- **BREAKING CHANGE** `locationFinder` and `mapExtent` have been removed from the options for the functions `showMap`, `createGeometry`, `editGeometry`, `selectObjects`.
+
+### Removed
+- **BREAKING CHANGE** The deprecated parameters `locationFinder` and `mapExtent` have been removed from the options of the methods `showMap`, `createGeometry`, `editGeometry`, `selectObjects`. 
 
 ## 10.4.0 - 2025-06-24
 
