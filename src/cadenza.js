@@ -181,8 +181,6 @@ globalThis.cadenza = Object.assign(
  * @property {UiFeature[]} [disabledUiFeatures] - Cadenza UI features to disable
  * @property {ExtentStrategy} [extentStrategy] - Defines the initial map extent; If not given, Cadenza's default logic is used.
  * @property {FilterVariables} [filter] - Filter variables
- * @property {string} [locationFinder] - A search query for the location finder - _Deprecated_: Use {@link LocationFinderExtentStrategy} instead.
- * @property {Extent} [mapExtent] - A map extent to set - _Deprecated_: Use {@link StaticExtentStrategy} instead.
  * @property {number} [minScale] - The minimum scale where the user should work on. A warning is shown when the map is zoomed out above the threshold.
  * @property {OperationMode} [operationMode] - The mode in which a workbook should be operated
  * @property {AbortSignal} [signal] - A signal to abort the iframe loading
@@ -259,8 +257,6 @@ let firstEmbeddingTargetShown;
  *   When aborted, the result Promise is rejected with an {@link AbortError}.
  * * If there's another error, the result Promise is rejected with a {@link CadenzaError}.
  * * For methods that support the `hideMainHeaderAndFooter` and `hideWorkbookToolBar` parameters - the parameters cannot override the configuration of an embedding target.
- * * For methods that support the _deprecated_ `locationFinder` and `mapExtent` parameters - when both are given, the `mapExtent` takes precedence.
- *   * Both `locationFinder` and `mapExtent` parameters are _deprecated_ - Use {@link LocationFinderExtentStrategy} or {@link StaticExtentStrategy} instead.
  */
 // Must be exported to be included in the docs.
 export class CadenzaClient {
@@ -459,8 +455,6 @@ export class CadenzaClient {
    * @param {boolean} [__namedParameters.hideMainHeaderAndFooter] - Whether to hide the main Cadenza header and footer
    * @param {boolean} [__namedParameters.hideWorkbookToolBar] - Whether to hide the workbook toolbar
    * @param {GlobalId} [__namedParameters.highlightGlobalId] - The ID of an item to highlight / expand in the navigator
-   * @param {string} [__namedParameters.locationFinder] - A search query for the location finder - _Deprecated_: Use {@link LocationFinderExtentStrategy} instead.
-   * @param {Extent} [__namedParameters.mapExtent] - A map extent to set - _Deprecated_: Use {@link StaticExtentStrategy} instead.
    * @param {OperationMode} [__namedParameters.operationMode] - The mode in which a workbook should be operated
    * @param {AbortSignal} [__namedParameters.signal] - A signal to abort the iframe loading
    * @param {boolean} [__namedParameters.useMapSrs] - Whether the coordinates specified in other parameters are specified in the map's SRS (otherwise EPSG:4326 is assumed)
@@ -483,8 +477,6 @@ export class CadenzaClient {
       hideMainHeaderAndFooter,
       hideWorkbookToolBar,
       highlightGlobalId,
-      locationFinder,
-      mapExtent,
       operationMode,
       useMapSrs,
       signal,
@@ -497,8 +489,6 @@ export class CadenzaClient {
     const validExtentStrategy = sanitizeExtentStrategy({
       extentStrategy,
       geometry,
-      locationFinder,
-      mapExtent,
     });
     const params = createParams({
       disabledUiFeatures,
@@ -679,8 +669,6 @@ export class CadenzaClient {
       disabledUiFeatures,
       extentStrategy,
       filter,
-      locationFinder,
-      mapExtent,
       minScale,
       useMapSrs,
       operationMode,
@@ -691,8 +679,6 @@ export class CadenzaClient {
     this.#log('CadenzaClient#createGeometry', ...arguments);
     const validExtentStrategy = sanitizeExtentStrategy({
       extentStrategy,
-      locationFinder,
-      mapExtent,
     });
     const params = createParams({
       action: 'editGeometry',
@@ -735,8 +721,6 @@ export class CadenzaClient {
       disabledUiFeatures,
       extentStrategy,
       filter,
-      locationFinder,
-      mapExtent,
       minScale,
       operationMode,
       signal,
@@ -750,8 +734,6 @@ export class CadenzaClient {
     const validExtentStrategy = sanitizeExtentStrategy({
       extentStrategy,
       geometry,
-      locationFinder,
-      mapExtent,
     });
     const params = createParams({
       action: 'editGeometry',
@@ -795,8 +777,6 @@ export class CadenzaClient {
       disabledUiFeatures,
       extentStrategy,
       filter,
-      locationFinder,
-      mapExtent,
       minScale,
       operationMode,
       signal,
@@ -808,8 +788,6 @@ export class CadenzaClient {
     assertValidGeometryType(geometryType);
     const validExtentStrategy = sanitizeExtentStrategy({
       extentStrategy,
-      locationFinder,
-      mapExtent,
     });
     const params = createParams({
       action: 'editGeometry',
@@ -853,8 +831,6 @@ export class CadenzaClient {
       disabledUiFeatures,
       extentStrategy,
       filter,
-      locationFinder,
-      mapExtent,
       minScale,
       operationMode,
       signal,
@@ -867,8 +843,6 @@ export class CadenzaClient {
     const validExtentStrategy = sanitizeExtentStrategy({
       extentStrategy,
       geometry: features.features[features.features.length - 1].geometry,
-      locationFinder,
-      mapExtent,
     });
     const params = createParams({
       action: 'editGeometry',
@@ -955,8 +929,6 @@ export class CadenzaClient {
    * @param {FilterVariables} [__namedParameters.filter] - Filter variables
    * @param {(WorkbookLayerPath | string)[]} [__namedParameters.layers] - Layers to restrict the selection to
    *  (identified using layer paths or print names)
-   * @param {string} [__namedParameters.locationFinder] - A search query for the location finder - _Deprecated_: Use {@link LocationFinderExtentStrategy} instead.
-   * @param {Extent} [__namedParameters.mapExtent] - A map extent to set - _Deprecated_: Use {@link StaticExtentStrategy} instead.
    * @param {boolean} [__namedParameters.useMapSrs] - Whether the coordinates specified in other parameters are specified in the map's SRS (otherwise EPSG:4326 is assumed)
    * @param {OperationMode} [__namedParameters.operationMode] - The mode in which a workbook should be operated
    * @param {AbortSignal} [__namedParameters.signal] - A signal to abort the iframe loading
@@ -971,22 +943,10 @@ export class CadenzaClient {
    */
   async selectObjects(
     backgroundMapView,
-    {
-      extentStrategy,
-      filter,
-      layers,
-      locationFinder,
-      mapExtent,
-      useMapSrs,
-      operationMode,
-      signal,
-    } = {},
+    { extentStrategy, filter, layers, useMapSrs, operationMode, signal } = {},
   ) {
     this.#log('CadenzaClient#selectObjects', ...arguments);
     const validExtentStrategy = sanitizeExtentStrategy({
-      geometry: undefined,
-      locationFinder,
-      mapExtent,
       extentStrategy,
     });
     const params = createParams({
@@ -1687,36 +1647,27 @@ function array(/** @type unknown */ value) {
 
 /**
  * Creates a valid extent strategy based on these rules:
- * - `extentStrategy` trumps `geometry`, `geometry` trumps `mapExtent`, `mapExtent` trumps `locationFinder`.
- * - `mapExtent`, `locationFinder`, and `geometry` are used as fallback for
- *   {@link StaticExtentStrategy#extent}, {@link LocationFinderExtentStrategy#query},
- *   and {@link GeometryExtentStrategy#geometry} respectively.
+ * - `extentStrategy` trumps `geometry`.
+ * - `geometry` is used as fallback for {@link GeometryExtentStrategy#geometry}.
  *
  * If the result is not a valid extent strategy, the return value is undefined.
  *
  * @param {object} __namedParameters
  * @param {Geometry} [__namedParameters.geometry]
- * @param {string} [__namedParameters.locationFinder]
- * @param {Extent} [__namedParameters.mapExtent]
  * @param {ExtentStrategy} [__namedParameters.extentStrategy]
  * @return {ExtentStrategy | undefined}
  */
-function sanitizeExtentStrategy({
-  extentStrategy,
-  mapExtent,
-  locationFinder,
-  geometry,
-} = {}) {
+function sanitizeExtentStrategy({ extentStrategy, geometry } = {}) {
   if (extentStrategy) {
     switch (extentStrategy.type) {
       case 'static':
-        const extent = extentStrategy.extent ?? mapExtent;
+        const extent = extentStrategy.extent;
         if (extent) {
           return { type: 'static', extent };
         }
         break;
       case 'locationFinder':
-        const query = extentStrategy.query ?? locationFinder;
+        const query = extentStrategy.query;
         if (query) {
           return { type: 'locationFinder', query };
         }
@@ -1733,12 +1684,6 @@ function sanitizeExtentStrategy({
   }
   if (geometry) {
     return { type: 'geometry', geometry };
-  }
-  if (mapExtent) {
-    return { type: 'static', extent: mapExtent };
-  }
-  if (locationFinder) {
-    return { type: 'locationFinder', query: locationFinder };
   }
 }
 
