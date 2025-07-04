@@ -211,9 +211,15 @@ The coordinates of extent and geometry are in the map's SRS (`useMapSrs: true`).
 ```javascript
 cadenzaClient.showMap('<embeddingTargetId>', {
   useMapSrs: true,
-  mapExtent: [
-    -572_513.341856, 5_211_017.966314, 916_327.095083, 6_636_950.728974,
-  ],
+  extentStrategy: {
+    type: 'static',
+    extent: [ 
+      -572_513.341856, 
+      5_211_017.966314, 
+      916_327.095083, 
+      6_636_950.728974,
+    ]
+  },
   geometry: {
     type: 'Point',
     coordinates: [328_627.563458, 5_921_296.662223],
@@ -225,7 +231,10 @@ cadenzaClient.showMap('<embeddingTargetId>', {
 
 ```javascript
 cadenzaClient.showMap('<embeddingTargetId>', {
-  locationFinder: 'Karlsruhe',
+  extentStrategy: {
+    type: 'locationFinder',
+    query: 'Karlsruhe',
+  }
 });
 ```
 
