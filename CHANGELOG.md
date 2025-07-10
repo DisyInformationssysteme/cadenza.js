@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project uses a version scheme based on the Cadenza main version in the format x.x.y, where x.x is the Cadenza main version and y a functional change or bugfix.
 
 ## Unreleased
+
+## 10.4.2 - 2025-07-10
 ### Added
 - `width`, `height` and `withScale` options for `CadenzaClient#getData`
 - `layout` option for `CadenzaClient#show`
@@ -15,7 +17,7 @@ This project uses a version scheme based on the Cadenza main version in the form
 - Extracted `CommonGeometryEditOptions` for reuse.
 
 ### Removed
-- **BREAKING CHANGE** The deprecated parameters `locationFinder` and `mapExtent` have been removed from the options of the methods `showMap`, `createGeometry`, `editGeometry`, `selectObjects`. 
+- **BREAKING CHANGE** The deprecated parameters `locationFinder` and `mapExtent` have been removed from the options of the methods `showMap`, `createGeometry`, `editGeometry`, `selectObjects`.
 
 ## 10.4.0 - 2025-06-24
 
