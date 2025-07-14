@@ -212,6 +212,12 @@ globalThis.cadenza = Object.assign(
  * @property {('toVertices' | 'toEdges' | 'lineTracing')[]} [types] - Snapping types; Without this option, the Cadenza default snapping types are used.
  */
 
+/**
+ * @typedef {'dashboard'|'linear'} Layout - Layout of a worksheet
+ * - `dashboard`: Views are shown in a two-dimensional dashboard grid.
+ * - `linear`: Views are shown linearly, one after another in one column.
+ */
+
 let hasCadenzaSession = false;
 
 /** @type {Promise<void> | undefined} */
@@ -339,6 +345,7 @@ export class CadenzaClient {
    * @param {GlobalId} [__namedParameters.highlightGlobalId] - The ID of an item to highlight / expand in the navigator
    * @param {String} [__namedParameters.labelSet] - The name of a label set defined in the `basicweb-config.xml` (only supported for the welcome page)
    * @param {OperationMode} [__namedParameters.operationMode] - The mode in which a workbook should be operated
+   * @param {Layout} [__namedParameters.layout] - The layout to be used; the dashboard layout is used by default or the linear layout if there is not enough space.
    * @param {AbortSignal} [__namedParameters.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
@@ -359,6 +366,7 @@ export class CadenzaClient {
       highlightGlobalId,
       labelSet,
       operationMode,
+      layout,
       signal,
     } = {},
   ) {
@@ -384,6 +392,7 @@ export class CadenzaClient {
       highlightGlobalId,
       labelSet,
       operationMode,
+      layout,
     });
     return this.#show(resolvePath(source), params, signal);
   }
@@ -1340,6 +1349,10 @@ function validOperationMode(/** @type string */ value) {
   return ['normal', 'simplified'].includes(value);
 }
 
+function validLayout(/** @type string */ value) {
+  return ['linear', 'dashboard'].includes(value);
+}
+
 function validUiFeature(/** @type string */ value) {
   return [
     'workbook-design',
@@ -1376,6 +1389,7 @@ function assertSupportedDataType(
  * @param {SnappingOptions} [params.snapping]
  * @param {boolean} [params.useMapSrs]
  * @param {ExtentStrategy | undefined} [params.validExtentStrategy]
+ * @param {Layout | undefined} [params.layout]
  * @return {URLSearchParams}
  */
 function createParams({
@@ -1398,6 +1412,7 @@ function createParams({
   snapping,
   useMapSrs,
   validExtentStrategy,
+  layout,
 }) {
   if (disabledUiFeatures) {
     disabledUiFeatures.forEach((feature) =>
@@ -1420,6 +1435,9 @@ function createParams({
       validOperationMode(operationMode),
       `Invalid operation mode: ${operationMode}`,
     );
+  }
+  if (layout) {
+    assert(validLayout(layout), `Invalid layout: ${layout}`);
   }
   if (parts) {
     parts.forEach((part) =>
@@ -1465,6 +1483,7 @@ function createParams({
     ...(snapping?.types?.length && { snappingTypes: snapping.types.join() }),
     ...(targetType && { targetType }),
     ...(useMapSrs && { useMapSrs: 'true' }),
+    ...(layout && { layout }),
   });
 }
 
