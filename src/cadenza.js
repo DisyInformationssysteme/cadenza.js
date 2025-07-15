@@ -108,13 +108,15 @@ globalThis.cadenza = Object.assign(
 
 /** @typedef {'normal'|'simplified'} OperationMode - The mode in which a workbook should be operated */
 /**
- * @typedef {'workbook-design'|'workbook-map-add-layer'|'workbook-view-management'|'embedded-view-dialog-footer-buttons'} UiFeature - The name of a Cadenza UI feature
+ * @typedef {'workbook-design'|'workbook-map-add-layer'|'workbook-view-management'|'embedded-dialog-footer-buttons'|'embedded-dialog-apply-button'|'embedded-dialog-cancel-button'} UiFeature - The name of a Cadenza UI feature
  *
  * _Note:_ Supported features are:
  * * `"workbook-design"` - The workbook designer
  * * `"workbook-map-add-layer"`- Add layers to the map
  * * `"workbook-view-management"` - Add/Edit/Remove workbook views (Is included in 'workbook-design'.)
- * * `"embedded-view-dialog-footer-buttons"` - Apply and Cancel buttons for Create/Edit Geometries and Select Objects dialogs
+ * * `"embedded-dialog-footer-buttons"` - All footer buttons for Create/Edit Geometries and Select Objects dialogs
+ * * `"embedded-dialog-apply-button"` - Apply button for Create/Edit Geometries and Select Objects dialogs
+ * * `"embedded-dialog-cancel-button"` - Cancel button for Create/Edit Geometries and Select Objects dialogs
  * */
 
 /**
@@ -1487,7 +1489,9 @@ function validUiFeature(/** @type string */ value) {
     'workbook-design',
     'workbook-map-add-layer',
     'workbook-view-management',
-    'embedded-view-dialog-footer-buttons',
+    'embedded-dialog-footer-buttons',
+    'embedded-dialog-apply-button',
+    'embedded-dialog-cancel-button',
   ].includes(value);
 }
 
