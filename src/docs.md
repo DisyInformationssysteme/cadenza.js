@@ -162,7 +162,6 @@ cancelButton.onclick = () => abortController.abort();
 
 _Tip:_ You can use the same `AbortController` to abort multiple requests, e.g. when embedding Cadenza in multiple iframes.
 
-<!--
 ### Set Filters in the Currently Shown Embedding Target
 
 <small>API: [CadenzaClient#setFilter](./classes/CadenzaClient.html#setFilter)</small>
@@ -195,7 +194,6 @@ cadenzaClient.setFilter({
   }
 });
 ```
--->
 
 ### Show a Workbook Map View
 
@@ -238,7 +236,6 @@ cadenzaClient.showMap('<embeddingTargetId>', {
 });
 ```
 
-<!--
 ### Set the Visibility of a Layer in the Currently Shown Workbook Map View
 
 <small>API: [CadenzaClient#setLayerVisibility](./classes/CadenzaClient.html#setLayerVisibility)</small>
@@ -248,7 +245,6 @@ To set the visibility of a layer in the currently shown map, pass the layer path
 ```javascript
 cadenzaClient.setLayerVisibility('<layerPrintName>', false);
 ```
--->
 
 ### Get the Image of the Currently Shown Workbook Map View
 
@@ -350,7 +346,6 @@ cadenzaClient.on('selectObjects:ok', (event) => {
 });
 ```
 
-<!--
 #### _Programmatically_ Set the Selection in the Currently Shown Workbook Map View
 
 <small>API: [CadenzaClient#setSelection](./classes/CadenzaClient.html#setSelection)</small>
@@ -367,7 +362,6 @@ cadenzaClient.setSelection(
 You can also add to or remove from the current selection:
 * <small>API: [CadenzaClient#addSelection](./classes/CadenzaClient.html#addSelection)</small>
 * <small>API: [CadenzaClient#removeSelection](./classes/CadenzaClient.html#removeSelection)</small>
--->
 
 ### Highlight an Item in the Navigator
 
