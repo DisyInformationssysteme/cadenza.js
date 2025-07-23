@@ -285,6 +285,53 @@ cadenzaClient.on('editGeometry:cancel', (event) => {
 });
 ```
 
+### Edit multiple Geometries
+
+<small>API: [CadenzaClient#batchEditGeometry](./classes/CadenzaClient.html#batchEditGeometry), [CadenzaClient#on](./classes/CadenzaClient.html#on)</small>
+
+Edit a collection of geometries with a workbook map view in the background. The geometry coordinates are in the map's SRS (`useMapSrs: true`).
+The editor will create an additional layer where editable geometries are stored and selectable for editing. Additional geometries can also be created from within the editor once it has been initialized.
+When finished, all geometries are collected and returned in a single collection.
+
+_Note:_ The last geometry in the provided collection is initially selected for editing. At least one geometry must be provided.
+
+```javascript
+const feature1 = {
+    type: 'Feature',
+    geometry: {
+      type: 'Point',
+      coordinates: [328_627.563458, 5_921_296.662223],
+    }
+  };
+
+const feature2 = {
+    type: 'Feature',
+    geometry: {
+      type: 'Point',
+      coordinates: [916_327.095083, 6_636_950.728974],
+    }
+  };
+
+const featureCollection = {
+  type: 'FeatureCollection',
+  features: [feature1 , feature2]
+}
+
+cadenzaClient.batchEditGeometry('<embeddingTargetId>', featureCollection, {
+  useMapSrs: true,
+});
+
+cadenzaClient.on('editGeometry:update', (event) => {
+  console.log('Geometry was updated', event.detail.geometry);
+});
+cadenzaClient.on('editGeometry:ok', (event) => {
+  console.log('Geometry editing was completed', event.detail.features.forEach(feature => ...));
+});
+cadenzaClient.on('editGeometry:cancel', (event) => {
+  console.log('Geometry editing was cancelled');
+});
+```
+
 ### Unsubscribe From an Event
 
 The `on()` method returns an unsubscribe function.
@@ -313,6 +360,31 @@ cadenzaClient.on('editGeometry:ok', (event) => {
 
 _Note:_ Under the hood, creating a geometry is similar to editing a geometry.
 That's why the events use the `editGeometry` prefix.
+
+### Create multiple Geometries
+
+<small>API: [CadenzaClient#batchCreateGeometry](./classes/CadenzaClient.html#batchCreateGeometry), [CadenzaClient#on](./classes/CadenzaClient.html#on)</small>
+
+Create multiple geometries with a workbook map view in the background. The geometry coordinates are in the map's SRS (`useMapSrs: true`).
+The editor will create an additional layer where created geometries are stored and selectable for editing.
+When finished, all geometries are collected and returned in a single collection.
+
+```javascript
+
+cadenzaClient.batchCreateGeometry('<embeddingTargetId>', 'Point', {
+  useMapSrs: true,
+});
+
+cadenzaClient.on('editGeometry:update', (event) => {
+  console.log('Geometry was updated', event.detail.geometry);
+});
+cadenzaClient.on('editGeometry:ok', (event) => {
+  console.log('Geometry editing was completed', event.detail.features.forEach(feature => ...));
+});
+cadenzaClient.on('editGeometry:cancel', (event) => {
+  console.log('Geometry editing was cancelled');
+});
+```
 
 #### Additional Background Layers
 
