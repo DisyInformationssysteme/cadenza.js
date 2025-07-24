@@ -1782,7 +1782,7 @@ function getGeometryTypeFromFeatureCollection(featureCollection) {
  * See also: <a href="../index.html#md:json-representation-of-cadenza-object-data">JSON Representation of Cadenza Object Data</a>
  */
 /** @typedef {CadenzaEvent<'editGeometry:update', FeatureCollection | Feature | undefined>} CadenzaEditGeometryUpdateEvent - When the user changed the geometry. `FeatureCollection` if multiple features are present on the edit layer, but the original defined type is not multi-geometry. This is also the case if the dialog was instantiated from a geometry and the original defined type is inherited. `undefined` if no feature is present on the edit layer. */
-/** @typedef {CadenzaEvent<'editGeometry:ok', Feature>} CadenzaEditGeometryOkEvent - When the user submitted the geometry. */
+/** @typedef {CadenzaEvent<'editGeometry:ok', FeatureCollection | Feature>} CadenzaEditGeometryOkEvent - When the user submitted the geometry. `FeatureCollection` if batch editing is enabled. */
 /** @typedef {CadenzaEvent<'editGeometry:cancel'>} CadenzaEditGeometryCancelEvent - When the user cancelled the geometry editing. */
 /** @typedef {CadenzaEvent<'error', {type: string, message?: string}>} CadenzaErrorEvent - An error event that is mapped to a {@link CadenzaError} */
 /** @typedef {CadenzaEvent<'objectInfo', {layer: WorkbookLayerPath, objectInfos: {selectionIndex: number, elements: {attributePrintName: string, formattedValue: string}[]}}>} CadenzaObjectInfoEvent - When the user opened the object info flyout. */
