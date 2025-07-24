@@ -7,6 +7,8 @@ This project uses a version scheme based on the Cadenza main version in the form
 ## Unreleased
 ### Changed
 - `CadenzaEditGeometryOkEvent#detail` is now typed as `FeatureCollection | Feature`.
+### Added
+- Documentation for `CadenzaClient#batchEditGeometry` and `CadenzaClient#batchCreateGeometry`
 
 ## 10.4.2 - 2025-07-10
 ### Added
