@@ -293,11 +293,11 @@
           <optgroup label="Interact With Shown Content">
             <option value="expandNavigator">Expand Navigator</option>
             <option value="getData" class="unpublished">Get Data (Get Map Image)</option>
-            <option value="setFilter" class="unpublished">Set Filter</option>
-            <option value="setLayerVisibility" class="unpublished">Set Layer Visibility</option>
-            <option value="setSelection" class="unpublished">Set Selection</option>
-            <option value="addSelection" class="unpublished">Add Selection</option>
-            <option value="removeSelection" class="unpublished">Remove Selection</option>
+            <option value="setFilter">Set Filter</option>
+            <option value="setLayerVisibility">Set Layer Visibility</option>
+            <option value="setSelection">Set Selection</option>
+            <option value="addSelection">Add Selection</option>
+            <option value="removeSelection">Remove Selection</option>
             <option value="reload">Reload worksheet views</option>
             <option value="closeMe">Close me</option>
           </optgroup>
@@ -387,6 +387,9 @@
         <li>workbook-design</li>
         <li>workbook-map-add-layer</li>
         <li>workbook-view-management</li>
+        <li>embedded-dialog-footer-buttons</li>
+        <li>embedded-dialog-apply-button</li>
+        <li>embedded-dialog-cancel-button</li>
       </ul>
     </small>
   </div>
@@ -630,7 +633,7 @@
   </div>
 </template>
 
-<template data-action="selectObjects" data-common="extentStrategy,map,filter">
+<template data-action="selectObjects" data-common="extentStrategy,map,disabledUiFeatures,filter">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
