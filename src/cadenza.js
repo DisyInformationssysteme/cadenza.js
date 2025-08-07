@@ -9,6 +9,7 @@
  *   This is required if Cadenza and your application are not running on the same origin.
  *   Please ensure that the user has view privilege for that link!
  * @property {boolean} [options.debug] - Whether to enable debug logging
+ * @property {boolean} [options.skipGuest] - Whether a configured guest authenticator should be ignored
  */
 
 // This placeholder is replaced when Cadenza JS is released,
@@ -281,6 +282,9 @@ export class CadenzaClient {
   /** @readonly */
   #debug;
 
+  /** @readonly */
+  #skipGuest;
+
   /** @type {[ CadenzaEventType | string, (event: CadenzaEvent<never>) => void ][]} */
   #subscriptions = [];
 
@@ -289,7 +293,13 @@ export class CadenzaClient {
    * @hidden
    * @param {CadenzaClientOptions} [__namedParameters]
    */
-  constructor({ baseUrl, debug = false, iframe, webApplication } = {}) {
+  constructor({
+    baseUrl,
+    debug = false,
+    skipGuest = false,
+    iframe,
+    webApplication,
+  } = {}) {
     if (webApplication) {
       assert(
         validExternalLinkKey(webApplication),
@@ -312,6 +322,7 @@ export class CadenzaClient {
       this.#log('Create Cadenza client for parent Cadenza');
     }
     this.#debug = debug;
+    this.#skipGuest = skipGuest;
     this.#webApplication = webApplication;
   }
 
@@ -406,7 +417,7 @@ export class CadenzaClient {
         'labelSet is only supported on the welcome page',
       );
     }
-    const params = createParams({
+    const params = this.#createParams({
       dataType,
       disabledUiFeatures,
       expandNavigator,
@@ -493,7 +504,7 @@ export class CadenzaClient {
       extentStrategy,
       geometry,
     });
-    const params = createParams({
+    const params = this.#createParams({
       disabledUiFeatures,
       expandNavigator,
       filter,
@@ -683,7 +694,7 @@ export class CadenzaClient {
     const validExtentStrategy = sanitizeExtentStrategy({
       extentStrategy,
     });
-    const params = createParams({
+    const params = this.#createParams({
       action: 'editGeometry',
       disabledUiFeatures,
       filter,
@@ -738,7 +749,7 @@ export class CadenzaClient {
       extentStrategy,
       geometry,
     });
-    const params = createParams({
+    const params = this.#createParams({
       action: 'editGeometry',
       disabledUiFeatures,
       filter,
@@ -792,7 +803,7 @@ export class CadenzaClient {
     const validExtentStrategy = sanitizeExtentStrategy({
       extentStrategy,
     });
-    const params = createParams({
+    const params = this.#createParams({
       action: 'editGeometry',
       batchModeEnabled: true,
       disabledUiFeatures,
@@ -847,7 +858,7 @@ export class CadenzaClient {
       extentStrategy,
       geometry: features.features[features.features.length - 1].geometry,
     });
-    const params = createParams({
+    const params = this.#createParams({
       action: 'editGeometry',
       batchModeEnabled: true,
       disabledUiFeatures,
@@ -961,7 +972,7 @@ export class CadenzaClient {
     const validExtentStrategy = sanitizeExtentStrategy({
       extentStrategy,
     });
-    const params = createParams({
+    const params = this.#createParams({
       action: 'selectObjects',
       disabledUiFeatures,
       filter,
@@ -1214,7 +1225,7 @@ export class CadenzaClient {
   fetchData(source, dataType, { filter, parts, signal } = {}) {
     this.#log('CadenzaClient#fetchData', ...arguments);
     assertSupportedDataType(dataType, ['csv', 'excel', 'json', 'pdf']);
-    const params = createParams({ dataType, filter, parts });
+    const params = this.#createParams({ dataType, filter, parts });
     return this.#fetch(resolvePath(source), params, signal);
   }
 
@@ -1240,7 +1251,7 @@ export class CadenzaClient {
     { filter, signal, fullGeometries, useMapSrs } = {},
   ) {
     this.#log('CadenzaClient#fetchObjectInfo', ...arguments);
-    const params = createParams({
+    const params = this.#createParams({
       filter,
     });
     return this.#fetch(
@@ -1277,7 +1288,7 @@ export class CadenzaClient {
     { buffer, signal, useMapSrs } = {},
   ) {
     this.#log('CadenzaClient#areaIntersections', ...arguments);
-    const params = createParams({});
+    const params = this.#createParams({});
     return this.#fetch(
       resolvePath(source) + '/area-intersections',
       params,
@@ -1343,7 +1354,7 @@ export class CadenzaClient {
   downloadData(source, dataType, { fileName, filter, parts } = {}) {
     this.#log('CadenzaClient#downloadData', ...arguments);
     assertSupportedDataType(dataType, ['csv', 'excel', 'json', 'pdf']);
-    const params = createParams({ dataType, fileName, filter, parts });
+    const params = this.#createParams({ dataType, fileName, filter, parts });
     this.#download(resolvePath(source), params);
   }
 
@@ -1368,6 +1379,124 @@ export class CadenzaClient {
       }
     }
     return url;
+  }
+
+  /**
+   * @param {object} params
+   * @param {string} [params.action]
+   * @param {boolean} [params.batchModeEnabled]
+   * @param {DataType} [params.dataType]
+   * @param {UiFeature[]} [params.disabledUiFeatures]
+   * @param {boolean} [params.expandNavigator]
+   * @param {string} [params.fileName]
+   * @param {FilterVariables} [params.filter]
+   * @param {GeometryType} [params.geometryType]
+   * @param {boolean} [params.hideMainHeaderAndFooter]
+   * @param {boolean} [params.hideWorkbookToolBar]
+   * @param {GlobalId} [params.highlightGlobalId]
+   * @param {string} [params.labelSet]
+   * @param {WorkbookLayerPath[]} [params.layers]
+   * @param {number} [params.minScale]
+   * @param {OperationMode} [params.operationMode]
+   * @param {TablePart[]} [params.parts]
+   * @param {'MAP'} [params.targetType]
+   * @param {SnappingOptions} [params.snapping]
+   * @param {boolean} [params.useMapSrs]
+   * @param {ExtentStrategy} [params.validExtentStrategy]
+   * @param {Layout} [params.layout]
+   * @return {URLSearchParams}
+   */
+  #createParams({
+    action,
+    batchModeEnabled,
+    dataType,
+    disabledUiFeatures,
+    expandNavigator,
+    fileName,
+    filter,
+    geometryType,
+    hideMainHeaderAndFooter,
+    hideWorkbookToolBar,
+    highlightGlobalId,
+    labelSet,
+    layers,
+    minScale,
+    operationMode,
+    parts,
+    targetType,
+    snapping,
+    useMapSrs,
+    validExtentStrategy,
+    layout,
+  }) {
+    if (disabledUiFeatures) {
+      disabledUiFeatures.forEach((feature) =>
+        assert(validUiFeature(feature), `Invalid UI feature: ${feature}`),
+      );
+    }
+    if (filter) {
+      assertValidFilterVariables(filter);
+    }
+    if (geometryType) {
+      assertValidGeometryType(geometryType);
+    }
+    if (operationMode) {
+      assert(
+        validOperationMode(operationMode),
+        `Invalid operation mode: ${operationMode}`,
+      );
+    }
+    if (layout) {
+      assert(validLayout(layout), `Invalid layout: ${layout}`);
+    }
+    if (parts) {
+      parts.forEach((part) =>
+        assert(validTablePart(part), `Invalid table part: ${part}`),
+      );
+    }
+    let locationFinder;
+    let mapExtent;
+    if (validExtentStrategy) {
+      if (validExtentStrategy.type === 'static') {
+        mapExtent = validExtentStrategy.extent;
+      } else if (validExtentStrategy.type === 'locationFinder') {
+        locationFinder = validExtentStrategy.query;
+      }
+    }
+    return new URLSearchParams({
+      ...(action && { action }),
+      ...(batchModeEnabled && { batchModeEnabled: 'true' }),
+      ...(dataType && { dataType }),
+      ...(disabledUiFeatures && {
+        disabledUiFeatures: disabledUiFeatures.join(),
+      }),
+      ...(expandNavigator && { expandNavigator: 'true' }),
+      ...(fileName && { fileName }),
+      ...(filter &&
+        Object.fromEntries(
+          Object.entries(filter).map(([variable, value]) => [
+            `filter.${variable}`,
+            JSON.stringify(value instanceof Date ? value.toISOString() : value),
+          ]),
+        )),
+      ...(geometryType && { geometryType }),
+      ...(hideMainHeaderAndFooter && { hideMainHeaderAndFooter: 'true' }),
+      ...(hideWorkbookToolBar && { hideWorkbookToolBar: 'true' }),
+      ...(highlightGlobalId && { highlightGlobalId }),
+      ...(labelSet && { labelSet }),
+      ...(layers?.length && { layers: JSON.stringify(layers) }),
+      ...(locationFinder && { locationFinder }),
+      ...(mapExtent && { mapExtent: mapExtent.join() }),
+      ...(minScale && { minScale: String(minScale) }),
+      ...(operationMode && { operationMode }),
+      ...(parts && { parts: parts.join() }),
+      ...(snapping && { snappingLayer: JSON.stringify(array(snapping.layer)) }),
+      ...(snapping?.types?.length && { snappingTypes: snapping.types.join() }),
+      ...(targetType && { targetType }),
+      ...(useMapSrs && { useMapSrs: 'true' }),
+      ...(layout && { layout }),
+      ...(this.#skipGuest && { skipGuestAccess: 'true' }),
+    });
   }
 
   #log(/** @type unknown[] */ ...args) {
@@ -1538,123 +1667,6 @@ function assertValidFilterVariables(/** @type {FilterVariables} */ filter) {
       `Invalid filter variable name: ${varName}`,
     ),
   );
-}
-
-/**
- * @param {object} params
- * @param {string} [params.action]
- * @param {boolean} [params.batchModeEnabled]
- * @param {DataType} [params.dataType]
- * @param {UiFeature[]} [params.disabledUiFeatures]
- * @param {boolean} [params.expandNavigator]
- * @param {string} [params.fileName]
- * @param {FilterVariables} [params.filter]
- * @param {GeometryType} [params.geometryType]
- * @param {boolean} [params.hideMainHeaderAndFooter]
- * @param {boolean} [params.hideWorkbookToolBar]
- * @param {GlobalId} [params.highlightGlobalId]
- * @param {string} [params.labelSet]
- * @param {WorkbookLayerPath[]} [params.layers]
- * @param {number} [params.minScale]
- * @param {OperationMode} [params.operationMode]
- * @param {TablePart[]} [params.parts]
- * @param {'MAP'} [params.targetType]
- * @param {SnappingOptions} [params.snapping]
- * @param {boolean} [params.useMapSrs]
- * @param {ExtentStrategy | undefined} [params.validExtentStrategy]
- * @param {Layout | undefined} [params.layout]
- * @return {URLSearchParams}
- */
-function createParams({
-  action,
-  batchModeEnabled,
-  dataType,
-  disabledUiFeatures,
-  expandNavigator,
-  fileName,
-  filter,
-  geometryType,
-  hideMainHeaderAndFooter,
-  hideWorkbookToolBar,
-  highlightGlobalId,
-  labelSet,
-  layers,
-  minScale,
-  operationMode,
-  parts,
-  targetType,
-  snapping,
-  useMapSrs,
-  validExtentStrategy,
-  layout,
-}) {
-  if (disabledUiFeatures) {
-    disabledUiFeatures.forEach((feature) =>
-      assert(validUiFeature(feature), `Invalid UI feature: ${feature}`),
-    );
-  }
-  if (filter) {
-    assertValidFilterVariables(filter);
-  }
-  if (geometryType) {
-    assertValidGeometryType(geometryType);
-  }
-  if (operationMode) {
-    assert(
-      validOperationMode(operationMode),
-      `Invalid operation mode: ${operationMode}`,
-    );
-  }
-  if (layout) {
-    assert(validLayout(layout), `Invalid layout: ${layout}`);
-  }
-  if (parts) {
-    parts.forEach((part) =>
-      assert(validTablePart(part), `Invalid table part: ${part}`),
-    );
-  }
-  let locationFinder;
-  let mapExtent;
-  if (validExtentStrategy) {
-    if (validExtentStrategy.type === 'static') {
-      mapExtent = validExtentStrategy.extent;
-    } else if (validExtentStrategy.type === 'locationFinder') {
-      locationFinder = validExtentStrategy.query;
-    }
-  }
-  return new URLSearchParams({
-    ...(action && { action }),
-    ...(batchModeEnabled && { batchModeEnabled: 'true' }),
-    ...(dataType && { dataType }),
-    ...(disabledUiFeatures && {
-      disabledUiFeatures: disabledUiFeatures.join(),
-    }),
-    ...(expandNavigator && { expandNavigator: 'true' }),
-    ...(fileName && { fileName }),
-    ...(filter &&
-      Object.fromEntries(
-        Object.entries(filter).map(([variable, value]) => [
-          `filter.${variable}`,
-          JSON.stringify(value instanceof Date ? value.toISOString() : value),
-        ]),
-      )),
-    ...(geometryType && { geometryType }),
-    ...(hideMainHeaderAndFooter && { hideMainHeaderAndFooter: 'true' }),
-    ...(hideWorkbookToolBar && { hideWorkbookToolBar: 'true' }),
-    ...(highlightGlobalId && { highlightGlobalId }),
-    ...(labelSet && { labelSet }),
-    ...(layers?.length && { layers: JSON.stringify(layers) }),
-    ...(locationFinder && { locationFinder }),
-    ...(mapExtent && { mapExtent: mapExtent.join() }),
-    ...(minScale && { minScale: String(minScale) }),
-    ...(operationMode && { operationMode }),
-    ...(parts && { parts: parts.join() }),
-    ...(snapping && { snappingLayer: JSON.stringify(array(snapping.layer)) }),
-    ...(snapping?.types?.length && { snappingTypes: snapping.types.join() }),
-    ...(targetType && { targetType }),
-    ...(useMapSrs && { useMapSrs: 'true' }),
-    ...(layout && { layout }),
-  });
 }
 
 function array(/** @type unknown */ value) {
