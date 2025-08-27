@@ -6,6 +6,9 @@ This project uses a version scheme based on the Cadenza main version in the form
 
 ## Unreleased
 
+### Removed
+- `CadenzaObjectInfoEvent`
+
 ## 10.4.4 - 2025-08-07
 ### Added
 - Constructor option `skipGuest`

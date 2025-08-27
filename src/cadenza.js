@@ -951,7 +951,6 @@ export class CadenzaClient {
    * @throws For invalid arguments
    * @fires
    * - {@link CadenzaChangeSelectionEvent}
-   * - {@link CadenzaObjectInfoEvent}
    * - {@link CadenzaSelectObjectsOkEvent}
    * - {@link CadenzaSelectObjectsCancelEvent}
    * @embed
@@ -1741,7 +1740,6 @@ function getGeometryTypeFromFeatureCollection(featureCollection) {
  * | 'editGeometry:ok'
  * | 'editGeometry:update'
  * | 'editGeometry:cancel'
- * | 'objectInfo'
  * | 'reload'
  * | 'selectObjects:ok'
  * | 'selectObjects:cancel'
@@ -1756,7 +1754,6 @@ function getGeometryTypeFromFeatureCollection(featureCollection) {
  *  : T extends 'editGeometry:update' ? CadenzaEditGeometryUpdateEvent
  *  : T extends 'editGeometry:ok' ? CadenzaEditGeometryOkEvent
  *  : T extends 'editGeometry:cancel' ? CadenzaEditGeometryCancelEvent
- *  : T extends 'objectInfo' ? CadenzaObjectInfoEvent
  *  : T extends 'reload' ? CadenzaReloadEvent
  *  : T extends 'selectObjects:ok' ? CadenzaSelectObjectsOkEvent
  *  : T extends 'selectObjects:cancel' ? CadenzaSelectObjectsCancelEvent
@@ -1797,7 +1794,6 @@ function getGeometryTypeFromFeatureCollection(featureCollection) {
 /** @typedef {CadenzaEvent<'editGeometry:ok', FeatureCollection | Feature>} CadenzaEditGeometryOkEvent - When the user submitted the geometry. `FeatureCollection` if batch editing is enabled. */
 /** @typedef {CadenzaEvent<'editGeometry:cancel'>} CadenzaEditGeometryCancelEvent - When the user cancelled the geometry editing. */
 /** @typedef {CadenzaEvent<'error', {type: string, message?: string}>} CadenzaErrorEvent - An error event that is mapped to a {@link CadenzaError} */
-/** @typedef {CadenzaEvent<'objectInfo', {layer: WorkbookLayerPath, objectInfos: {selectionIndex: number, elements: {attributePrintName: string, formattedValue: string}[]}}>} CadenzaObjectInfoEvent - When the user opened the object info flyout. */
 /**
  * @typedef {CadenzaEvent<'selectObjects:ok', undefined | {layer: WorkbookLayerPath, values: unknown[][]}>} CadenzaSelectObjectsOkEvent - When the user submitted the selection. `undefined` if no objects were selected.
  *
