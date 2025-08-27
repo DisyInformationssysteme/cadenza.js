@@ -7,7 +7,7 @@ This project uses a version scheme based on the Cadenza main version in the form
 ## Unreleased
 
 ### Removed
-- `CadenzaObjectInfoEvent`
+- Unused `CadenzaObjectInfoEvent`, which is also redundant with the `CadenzaChangeSelectionEvent`
 
 ## 10.4.4 - 2025-08-07
 ### Added
