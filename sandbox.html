@@ -163,7 +163,7 @@
       },
       setFilter: data => cadenzaClient.setFilter(parseFilterVariables(data.filter)),
       setLayerVisibility: data => cadenzaClient.setLayerVisibility(JSON.parse(data.layer), data.visibility === 'on'),
-      setSelection: data => cadenzaClient.setSelection(JSON.parse(data.layer), JSON.parse(data.objectIds), {extentStrategy: JSON.parse(data.extentStrategy)}),
+      setSelection: data => cadenzaClient.setSelection(JSON.parse(data.layer), JSON.parse(data.objectIds), data.extentStrategy ? {extentStrategy: JSON.parse(data.extentStrategy) } : {}),
       addSelection: data => cadenzaClient.addSelection(JSON.parse(data.layer), JSON.parse(data.objectIds), { extentStrategy: JSON.parse(data.extentStrategy) }),
       removeSelection: data => cadenzaClient.removeSelection(JSON.parse(data.layer), JSON.parse(data.objectIds), { extentStrategy: JSON.parse(data.extentStrategy) }),
       createGeometry: (data, formData) => cadenzaClient.createGeometry(data.embeddingTargetId, data.geometryType, getOptions(data, formData)),
