@@ -232,6 +232,21 @@ globalThis.cadenza = Object.assign(
  * @property {'FeatureCollection'} type - The object's type
  * @property {Feature[]} features - The features within this collection
  */
+
+/**
+ * @typedef AreaIntersectionsResult - Result object of function fetchAreaIntersections
+ * @property {FeatureCollection} results - Results of the geometry intersection
+ * @property {FeatureCollection} errors - Optional listing of corrected geometries including error description
+ */
+
+/**
+ * @typedef ProblemDetails - A adapted [JSOn] IETF RFC 9457 Problem Details for HTTP APIs object
+ * @property {string} httpStatus - http status message
+ * @property {string} type - The primary identifier for the experienced problem type
+ * @property {string} key - Short version of the type
+ * @property {string} title - Summary of the problem
+ */
+
 /** @typedef {'error'|'warning'|'info'|'success'} CustomValidityType - The type of custom validity used for disclose on visual presentation and form submission behavior */
 /**
  * @typedef SnappingOptions
@@ -1274,17 +1289,25 @@ export class CadenzaClient {
    *  (identified using layer paths or print names)
    * @param {Geometry} geometry - The intersection geometry
    * @param {object} [__namedParameters] - Options
+   * @param {boolean} [__namedParameters.autoCorrection] - Enables the automatic correction of invalid geometries
    * @param {Distance} [__namedParameters.buffer] - Buffer size for geometry of the transition
+   * @param {boolean} [__namedParameters.geometryValidationReport] - Enables the list of corrected geometries, including error descriptions
    * @param {AbortSignal} [__namedParameters.signal] - A signal to abort the data fetching
    * @param {boolean} [__namedParameters.useMapSrs]  - The intersection geometry and the result geometries are in the map's SRS (otherwise EPSG:4326 is assumed)
-   * @return {Promise<FeatureCollection>} A `Promise` for the fetch response
+   * @return {Promise<AreaIntersectionsResult | ProblemDetails>} A `Promise` for the fetch response
    * @server
    */
   fetchAreaIntersections(
     source,
     layerPath,
     geometry,
-    { buffer, signal, useMapSrs } = {},
+    {
+      autoCorrection,
+      buffer,
+      geometryValidationReport,
+      signal,
+      useMapSrs,
+    } = {},
   ) {
     this.#log('CadenzaClient#areaIntersections', ...arguments);
     const params = this.#createParams({});
@@ -1297,6 +1320,8 @@ export class CadenzaClient {
         layerPath: array(layerPath),
         geometry,
         useMapSrs,
+        autoCorrection,
+        geometryValidationReport,
       }),
     ).then((response) => response.json());
   }
@@ -1322,6 +1347,11 @@ export class CadenzaClient {
       body,
     });
     if (!res.ok) {
+      const contentType = res.headers.get('content-type');
+      if (contentType === 'application/problem+json') {
+        return res;
+      }
+
       const errorType =
         {
           400: 'bad-request',

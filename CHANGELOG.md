@@ -9,6 +9,13 @@ This project uses a version scheme based on the Cadenza main version in the form
 ### Removed
 - Unused `CadenzaObjectInfoEvent`, which is also redundant with the `CadenzaChangeSelectionEvent`
 
+## 10.4.5 - 2025-09-02
+### **BREAKING CHANGE**
+- Return value of `CadenzaClient#fetchAreaIntersections` is now from type `AreaIntersectionsResult` or `ProblemDetail`  
+
+### Added
+- `autoCorrection` and `geometryValidationReport` options for `CadenzaClient#fetchAreaIntersections`
+
 ## 10.4.4 - 2025-08-07
 ### Added
 - Constructor option `skipGuest`

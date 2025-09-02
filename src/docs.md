@@ -510,6 +510,8 @@ const objectInfo = await cadenzaClient.fetchObjectInfo('embeddingTargetId', 'lay
 
 Fetch the intersection area from a workbook map view layer in JSON format for a given area. The result contains all intersecting objects of the layer, their object ID, if defined the object name and a geometry representing the intersection area, with area size and area perimeter.
 
+If the geometry intersection fails because a geometry is invalid, a problem detail object is returned. In all other error cases, an exception is thrown.
+
 ```javascript
 const geometry = {
   type: 'Point',
@@ -520,7 +522,7 @@ const bufferSize = {
   lengthUnit: 'm'
 }
 
-const featureCollection = await cadenzaClient.fetchAreaIntersections('embeddingTargetId', 'layerPrintName', geometry, {
+const areaIntersectionsResult = await cadenzaClient.fetchAreaIntersections('embeddingTargetId', 'layerPrintName', geometry, {
   useMapSrs: true,
   bufferSize: bufferSize
 });
