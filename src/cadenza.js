@@ -1322,7 +1322,7 @@ export class CadenzaClient {
         geometry,
         useAutoCorrection,
         useMapSrs,
-        true,
+        isForwardProblemDetailsEnabled: true,
       }),
     ).then((response) => response.json());
   }
