@@ -1289,9 +1289,9 @@ export class CadenzaClient {
    *  (identified using layer paths or print names)
    * @param {Geometry} geometry - The intersection geometry
    * @param {object} [__namedParameters] - Options
-   * @param {boolean} [__namedParameters.autoCorrection] - Enables the automatic correction of invalid geometries
+   * @param {boolean} [__namedParameters.useAutoCorrection] - Enables the automatic correction of invalid geometries
    * @param {Distance} [__namedParameters.buffer] - Buffer size for geometry of the transition
-   * @param {boolean} [__namedParameters.geometryValidationReport] - Enables the list of corrected geometries, including error descriptions
+   * @param {boolean} [__namedParameters.includeGeometryValidationReport] - Enables the list of corrected geometries, including error descriptions
    * @param {AbortSignal} [__namedParameters.signal] - A signal to abort the data fetching
    * @param {boolean} [__namedParameters.useMapSrs]  - The intersection geometry and the result geometries are in the map's SRS (otherwise EPSG:4326 is assumed)
    * @return {Promise<AreaIntersectionsResult | ProblemDetails>} A `Promise` for the fetch response
@@ -1302,10 +1302,10 @@ export class CadenzaClient {
     layerPath,
     geometry,
     {
-      autoCorrection,
       buffer,
-      geometryValidationReport,
+      includeGeometryValidationReport,
       signal,
+      useAutoCorrection,
       useMapSrs,
     } = {},
   ) {
@@ -1317,11 +1317,12 @@ export class CadenzaClient {
       signal,
       JSON.stringify({
         buffer,
+        includeGeometryValidationReport,
         layerPath: array(layerPath),
         geometry,
+        useAutoCorrection,
         useMapSrs,
-        autoCorrection,
-        geometryValidationReport,
+        true,
       }),
     ).then((response) => response.json());
   }
@@ -1331,6 +1332,7 @@ export class CadenzaClient {
     /** @type URLSearchParams */ params,
     /** @type AbortSignal | undefined */ signal,
     /** @type String | undefined If body is set, the fetch will be a post.*/ body,
+    /** @type boolean */ isForwardProblemDetailsEnabled = false,
   ) {
     const url = this.#createUrl(path, params);
     this.#log('Fetch', url.toString());
@@ -1348,7 +1350,10 @@ export class CadenzaClient {
     });
     if (!res.ok) {
       const contentType = res.headers.get('content-type');
-      if (contentType === 'application/problem+json') {
+      if (
+        isForwardProblemDetailsEnabled &&
+        contentType === 'application/problem+json'
+      ) {
         return res;
       }
 

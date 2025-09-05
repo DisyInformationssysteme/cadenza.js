@@ -7,7 +7,7 @@ This project uses a version scheme based on the Cadenza main version in the form
 ## Unreleased
 
 ### Added
-- `autoCorrection` and `geometryValidationReport` options for `CadenzaClient#fetchAreaIntersections`
+- `isAutoCorrection` and `includeGeometryValidationReport` options for `CadenzaClient#fetchAreaIntersections`
 
 ### Changed
 - **BREAKING CHANGE** Return value of `CadenzaClient#fetchAreaIntersections` is now from type `AreaIntersectionsResult` or `ProblemDetail`  
