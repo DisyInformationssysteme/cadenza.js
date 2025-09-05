@@ -524,8 +524,46 @@ const bufferSize = {
 
 const areaIntersectionsResult = await cadenzaClient.fetchAreaIntersections('embeddingTargetId', 'layerPrintName', geometry, {
   useMapSrs: true,
-  bufferSize: bufferSize
+  bufferSize: bufferSize,
+  useAutoCorrection: true,
+  includeGeometryValidationReport: true
 });
+```
+Response with activated autocorrection and  geometry validation report
+```json
+{
+  "results": {
+    "features": [
+      {
+        "objectId": [ 333 ],
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [<coordinates>]
+        },
+        "area": 5209.274047788233,
+        "type": "Feature"
+      }
+    ],
+    "type": "FeatureCollection"
+  },
+  "errors": {
+    "features": [
+      {
+        "objectId": [ 333 ],
+        "geometry": {
+          "type": "Point",
+          "coordinates": [ 457172.35, 5427744.68]
+        },
+        "properties": {
+          "category": "Ring Self-intersection",
+          "message": "Ring Self-intersection at or near point (457172.35, 5427744.68, NaN)"
+        },
+        "type": "Feature"
+      }
+    ],
+    "type": "FeatureCollection"
+  }
+}
 ```
 
 ### Download Data From a Workbook View
