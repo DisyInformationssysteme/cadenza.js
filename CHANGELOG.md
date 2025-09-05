@@ -6,8 +6,15 @@ This project uses a version scheme based on the Cadenza main version in the form
 
 ## Unreleased
 
+### Added
+- `isAutoCorrection` and `includeGeometryValidationReport` options for `CadenzaClient#fetchAreaIntersections`
+
+### Changed
+- **BREAKING CHANGE** Return value of `CadenzaClient#fetchAreaIntersections` is now from type `AreaIntersectionsResult` or `ProblemDetail`  
+
 ### Removed
 - Unused `CadenzaObjectInfoEvent`, which is also redundant with the `CadenzaChangeSelectionEvent`
+
 
 ## 10.4.4 - 2025-08-07
 ### Added
