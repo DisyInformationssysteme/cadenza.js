@@ -8,7 +8,12 @@
  *   [target origin](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage#targetorigin) when posting events.
  *   This is required if Cadenza and your application are not running on the same origin.
  *   Please ensure that the user has view privilege for that link!
- * @property {boolean} [options.debug] - Whether to enable debug logging
+ * @property {boolean} [options.debug] - Whether to enable debug logging;
+ *   It can also be enabled/disabled at runtime via the devtools console:
+ *   ```js
+ *   localStorage.setItem('cadenzajs.debug', 'true'); // or 'false'
+ *   ```
+ *   Then you need to reload the page.
  * @property {boolean} [options.skipGuest] - Whether a configured guest authenticator should be ignored
  */
 
@@ -1534,7 +1539,9 @@ export class CadenzaClient {
   }
 
   #log(/** @type unknown[] */ ...args) {
-    if (this.#debug) {
+    const debugString = localStorage.getItem('cadenzajs.debug');
+    const debug = debugString != null ? debugString === 'true' : this.#debug;
+    if (debug) {
       /** @type {unknown[]} */
       const redundantValues = [undefined, '', false];
       /** @type {(value: unknown) => value is object} */
