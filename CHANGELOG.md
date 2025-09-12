@@ -11,7 +11,6 @@ This project uses a version scheme based on the Cadenza main version in the form
 ### Added
 - `isAutoCorrection` and `includeGeometryValidationReport` options for `CadenzaClient#fetchAreaIntersections`
 - Possibility to enable/disable debug logging at runtime.
-- - https://github.com/DisyInformationssysteme/cadenza.js/pull/118
 
 ### Changed
 - **BREAKING CHANGE** Return value of `CadenzaClient#fetchAreaIntersections` is now from type `AreaIntersectionsResult` or `ProblemDetail`  
