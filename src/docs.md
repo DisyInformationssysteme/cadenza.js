@@ -42,7 +42,8 @@ Create an instance of the Cadenza client by calling `cadenza()` with the base UR
 ```javascript
 import { cadenza } from '@disy/cadenza.js';
 
-const cadenzaClient = cadenza('<baseUrl>', {
+const cadenzaClient = cadenza({
+  baseUrl: '<baseUrl>',
   iframe: 'cadenza-iframe',
 });
 ```
@@ -56,7 +57,7 @@ _Tip:_ If you develop your application in TypeScript - Cadenza JS is typed using
 ```
 
 ```javascript
-const cadenzaClient = window.cadenza('<baseUrl>', ...);
+const cadenzaClient = window.cadenza(...);
 ```
 
 The `type="module"` has the effect that script execution is [deferred](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script#defer). You might need to wait for the `DOMContentLoaded` event in order to use Cadenza JS.
