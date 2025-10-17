@@ -190,15 +190,17 @@
     };
 
     const form = document.getElementById('form');
+    const submitButton = document.getElementById('submit');
     form.onsubmit = async (event) => {
       event.preventDefault();
-      const goButton = form.querySelector('button[type="submit"], button:not([type])');
-      if (goButton) goButton.disabled = true;
       const formData = new FormData(form);
       const { action, ...data } = Object.fromEntries(formData);
-      Promise.resolve(actionHandlers[action](data, formData)).finally(() => {
-        if (goButton) goButton.disabled = false;
-      });
+      try {
+        submitButton.disabled = true;
+        await actionHandlers[action](data, formData);
+      } finally {
+        submitButton.disabled = false;
+      }
       localStorage.setItem(`cadenzajs-sandbox-${action}`, JSON.stringify(data));
     };
 
@@ -337,7 +339,7 @@
         </select>
       </div>
 
-      <button>Go!</button>
+      <button id="submit">Go!</button>
     </div>
 
     <fieldset id="settings"></fieldset>
