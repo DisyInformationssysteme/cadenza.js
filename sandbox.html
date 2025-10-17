@@ -190,11 +190,17 @@
     };
 
     const form = document.getElementById('form');
-    form.onsubmit = (event) => {
+    const submitButton = document.getElementById('submit');
+    form.onsubmit = async (event) => {
       event.preventDefault();
       const formData = new FormData(form);
       const { action, ...data } = Object.fromEntries(formData);
-      actionHandlers[action](data, formData);
+      try {
+        submitButton.disabled = true;
+        await actionHandlers[action](data, formData);
+      } finally {
+        submitButton.disabled = false;
+      }
       localStorage.setItem(`cadenzajs-sandbox-${action}`, JSON.stringify(data));
     };
 
@@ -333,7 +339,7 @@
         </select>
       </div>
 
-      <button>Go!</button>
+      <button id="submit">Go!</button>
     </div>
 
     <fieldset id="settings"></fieldset>
