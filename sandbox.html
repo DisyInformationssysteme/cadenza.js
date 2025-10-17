@@ -190,11 +190,15 @@
     };
 
     const form = document.getElementById('form');
-    form.onsubmit = (event) => {
+    form.onsubmit = async (event) => {
       event.preventDefault();
+      const goButton = form.querySelector('button[type="submit"], button:not([type])');
+      if (goButton) goButton.disabled = true;
       const formData = new FormData(form);
       const { action, ...data } = Object.fromEntries(formData);
-      actionHandlers[action](data, formData);
+      Promise.resolve(actionHandlers[action](data, formData)).finally(() => {
+        if (goButton) goButton.disabled = false;
+      });
       localStorage.setItem(`cadenzajs-sandbox-${action}`, JSON.stringify(data));
     };
 
