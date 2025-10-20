@@ -276,10 +276,10 @@ cadenzaClient.editGeometry('<embeddingTargetId>', geometry, {
 });
 
 cadenzaClient.on('editGeometry:update', (event) => {
-  console.log('Geometry was updated', event.detail.geometry);
+  console.log('Geometry was updated', event.detail);
 });
 cadenzaClient.on('editGeometry:ok', (event) => {
-  console.log('Geometry editing was completed', event.detail.geometry);
+  console.log('Geometry editing was completed', event.detail);
 });
 cadenzaClient.on('editGeometry:cancel', (event) => {
   console.log('Geometry editing was cancelled');
@@ -323,7 +323,7 @@ cadenzaClient.batchEditGeometry('<embeddingTargetId>', featureCollection, {
 });
 
 cadenzaClient.on('editGeometry:update', (event) => {
-  console.log('Geometry was updated', event.detail.geometry);
+  console.log('Geometry was updated', event.detail);
 });
 cadenzaClient.on('editGeometry:created', (event) => {
   console.log('At least one geometry feature was created', event.detail);
@@ -336,7 +336,7 @@ cadenzaClient.on('editGeometry:deleted', (event) => {
   ...
 });
 cadenzaClient.on('editGeometry:ok', (event) => {
-  console.log('Geometry editing was completed', event.detail.features.forEach(feature => ...));
+  console.log('Geometry editing was completed', event.detail);
 });
 cadenzaClient.on('editGeometry:cancel', (event) => {
   console.log('Geometry editing was cancelled');
@@ -365,7 +365,7 @@ cadenzaClient.createGeometry('<embeddingTargetId>', 'Point', {
 });
 
 cadenzaClient.on('editGeometry:ok', (event) => {
-  console.log('Geometry creation was completed', event.detail.geometry);
+  console.log('Geometry editing was completed', event.detail);
 });
 ```
 
@@ -387,7 +387,7 @@ cadenzaClient.batchCreateGeometry('<embeddingTargetId>', 'Point', {
 });
 
 cadenzaClient.on('editGeometry:update', (event) => {
-  console.log('Geometry was updated', event.detail.geometry);
+  console.log('Geometry was updated', event.detail);
 });
 cadenzaClient.on('editGeometry:created', (event) => {
   console.log('At least one geometry feature was created', event.detail);
@@ -400,7 +400,7 @@ cadenzaClient.on('editGeometry:deleted', (event) => {
   ...
 });
 cadenzaClient.on('editGeometry:ok', (event) => {
-  console.log('Geometry editing was completed', event.detail.features.forEach(feature => ...));
+  console.log('Geometry editing was completed', event.detail);
 });
 cadenzaClient.on('editGeometry:cancel', (event) => {
   console.log('Geometry editing was cancelled');
