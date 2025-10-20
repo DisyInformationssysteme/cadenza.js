@@ -325,6 +325,12 @@ cadenzaClient.batchEditGeometry('<embeddingTargetId>', featureCollection, {
 cadenzaClient.on('editGeometry:update', (event) => {
   console.log('Geometry was updated', event.detail.geometry);
 });
+cadenzaClient.on('editGeometry:created', (event) => {
+  console.log('At least one geometry feature was created', event.detail);
+});
+cadenzaClient.on('editGeometry:edited', (event) => {
+  console.log('Geometry feature was edited', event.detail);
+});
 cadenzaClient.on('editGeometry:ok', (event) => {
   console.log('Geometry editing was completed', event.detail.features.forEach(feature => ...));
 });
@@ -378,6 +384,12 @@ cadenzaClient.batchCreateGeometry('<embeddingTargetId>', 'Point', {
 
 cadenzaClient.on('editGeometry:update', (event) => {
   console.log('Geometry was updated', event.detail.geometry);
+});
+cadenzaClient.on('editGeometry:created', (event) => {
+  console.log('At least one geometry feature was created', event.detail);
+});
+cadenzaClient.on('editGeometry:edited', (event) => {
+  console.log('Geometry feature was edited', event.detail);
 });
 cadenzaClient.on('editGeometry:ok', (event) => {
   console.log('Geometry editing was completed', event.detail.features.forEach(feature => ...));
