@@ -291,7 +291,9 @@ cadenzaClient.on('editGeometry:cancel', (event) => {
 <small>API: [CadenzaClient#batchEditGeometry](./classes/CadenzaClient.html#batchEditGeometry), [CadenzaClient#on](./classes/CadenzaClient.html#on)</small>
 
 Edit a collection of geometries with a workbook map view in the background. The geometry coordinates are in the map's SRS (`useMapSrs: true`).
-The editor will create an additional layer where editable geometries are stored and selectable for editing. Additional geometries can also be created from within the editor once it has been initialized.
+The editor will create an additional layer where editable geometries are stored and selectable for editing. 
+The layer's printName is 'Editor Layer' and can be used by other api actions. 
+Additional geometries can also be created from within the editor once it has been initialized.
 When finished, all geometries are collected and returned in a single collection.
 
 _Note:_ The last geometry in the provided collection is initially selected for editing. At least one geometry must be provided.
@@ -377,7 +379,8 @@ That's why the events use the `editGeometry` prefix.
 <small>API: [CadenzaClient#batchCreateGeometry](./classes/CadenzaClient.html#batchCreateGeometry), [CadenzaClient#on](./classes/CadenzaClient.html#on)</small>
 
 Create multiple geometries with a workbook map view in the background. The geometry coordinates are in the map's SRS (`useMapSrs: true`).
-The editor will create an additional layer where created geometries are stored and selectable for editing.
+The editor will create an additional layer where created geometries are stored and selectable for editing. 
+The layer's printName is 'Editor Layer' and can be used by other api actions.
 When finished, all geometries are collected and returned in a single collection.
 
 ```javascript
