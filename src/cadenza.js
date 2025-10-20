@@ -802,6 +802,7 @@ export class CadenzaClient {
    * - {@link CadenzaEditGeometryOkEvent}
    * - {@link CadenzaEditGeometryCreatedEvent}
    * - {@link CadenzaEditGeometryEditedEvent}
+   * - {@link CadenzaEditGeometryDeletedEvent}
    * - {@link CadenzaEditGeometryCancelEvent}
    * @embed
    */
@@ -858,6 +859,7 @@ export class CadenzaClient {
    * - {@link CadenzaEditGeometryOkEvent}
    * - {@link CadenzaEditGeometryCreatedEvent}
    * - {@link CadenzaEditGeometryEditedEvent}
+   * - {@link CadenzaEditGeometryDeletedEvent}
    * - {@link CadenzaEditGeometryCancelEvent}
    * @embed
    */
@@ -1801,6 +1803,7 @@ function getGeometryTypeFromFeatureCollection(featureCollection) {
  *  : T extends 'editGeometry:ok' ? CadenzaEditGeometryOkEvent
  *  : T extends 'editGeometry:created' ? CadenzaEditGeometryCreatedEvent
  *  : T extends 'editGeometry:edited' ? CadenzaEditGeometryEditedEvent
+ *  : T extends 'editGeometry:deleted' ? CadenzaEditGeometryDeletedEvent
  *  : T extends 'editGeometry:cancel' ? CadenzaEditGeometryCancelEvent
  *  : T extends 'reload' ? CadenzaReloadEvent
  *  : T extends 'selectObjects:ok' ? CadenzaSelectObjectsOkEvent
@@ -1842,6 +1845,7 @@ function getGeometryTypeFromFeatureCollection(featureCollection) {
 /** @typedef {CadenzaEvent<'editGeometry:ok', FeatureCollection | Feature>} CadenzaEditGeometryOkEvent - When the user submitted the geometry. `FeatureCollection` if batch editing is enabled. */
 /** @typedef {CadenzaEvent<'editGeometry:created', FeatureCollection | Feature>} CadenzaEditGeometryCreatedEvent - Whenever new geometry features were created. `Feature` if only one feature was created. Only available in batch mode */
 /** @typedef {CadenzaEvent<'editGeometry:edited', Feature>} CadenzaEditGeometryEditedEvent - Whenever a geometry feature was edited. Only available in batch mode */
+/** @typedef {CadenzaEvent<'editGeometry:deleted', {featureIds: any[][]}>} CadenzaEditGeometryDeletedEvent - Whenever geometry features were deleted. Only available in batch mode */
 /** @typedef {CadenzaEvent<'editGeometry:cancel'>} CadenzaEditGeometryCancelEvent - When the user cancelled the geometry editing. */
 /** @typedef {CadenzaEvent<'error', {type: string, message?: string}>} CadenzaErrorEvent - An error event that is mapped to a {@link CadenzaError} */
 /**

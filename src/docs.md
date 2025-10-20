@@ -331,6 +331,10 @@ cadenzaClient.on('editGeometry:created', (event) => {
 cadenzaClient.on('editGeometry:edited', (event) => {
   console.log('Geometry feature was edited', event.detail);
 });
+cadenzaClient.on('editGeometry:deleted', (event) => {
+  const deletedFeatures = event.details.featureIds;
+  ...
+});
 cadenzaClient.on('editGeometry:ok', (event) => {
   console.log('Geometry editing was completed', event.detail.features.forEach(feature => ...));
 });
@@ -390,6 +394,10 @@ cadenzaClient.on('editGeometry:created', (event) => {
 });
 cadenzaClient.on('editGeometry:edited', (event) => {
   console.log('Geometry feature was edited', event.detail);
+});
+cadenzaClient.on('editGeometry:deleted', (event) => {
+  const deletedFeatures = event.details.featureIds;
+  ...
 });
 cadenzaClient.on('editGeometry:ok', (event) => {
   console.log('Geometry editing was completed', event.detail.features.forEach(feature => ...));
