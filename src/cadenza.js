@@ -186,7 +186,7 @@ globalThis.cadenza = Object.assign(
  */
 /**
  * @typedef CommonEditGeometryOptions - Common options for the initialization of the geometry editor.
- * @property {LayerDefinition[]} [additionalLayers] - Layer definitions to be imported and shown in the background, as a basis for the drawing.
+ * @property {LayerDefinition[]} [additionalLayers] - Layer definitions to be imported and shown in the background, as a basis for the drawing. IMPORTANT: The Cadenza referenced with `cadenzaClient` must be configured to support the import of GeoJSON, and the (system) privileges of the corresponding user must also be set in such a way that the import of GeoJSON is possible.
  * @property {UiFeature[]} [disabledUiFeatures] - Cadenza UI features to disable
  * @property {ExtentStrategy} [extentStrategy] - Defines the initial map extent; If not given, Cadenza's default logic is used.
  * @property {FilterVariables} [filter] - Filter variables
@@ -483,7 +483,7 @@ export class CadenzaClient {
    *
    * @param {EmbeddingTargetId} mapView - The workbook map view to show
    * @param {object} [__namedParameters] - Options
-   * @param {LayerDefinition[]} [__namedParameters.additionalLayers] - Layer definitions to be imported and shown in the background, as a basis for the drawing.
+   * @param {LayerDefinition[]} [__namedParameters.additionalLayers] - Layer definitions to be imported and shown in the background, as a basis for the drawing. IMPORTANT: The Cadenza referenced with `cadenzaClient` must be configured to support the import of GeoJSON, and the (system) privileges of the corresponding user must also be set in such a way that the import of GeoJSON is possible.
    * @param {UiFeature[]} [__namedParameters.disabledUiFeatures] - Cadenza UI features to disable
    * @param {boolean} [__namedParameters.expandNavigator] - Indicates if the navigator should be expanded.
    * @param {ExtentStrategy} [__namedParameters.extentStrategy] - Defines the initial map extent; If not given, Cadenza's default logic is used.
@@ -803,6 +803,9 @@ export class CadenzaClient {
    * @fires
    * - {@link CadenzaEditGeometryUpdateEvent}
    * - {@link CadenzaEditGeometryOkEvent}
+   * - {@link CadenzaEditGeometryCreateEvent}
+   * - {@link CadenzaEditGeometryEditEvent}
+   * - {@link CadenzaEditGeometryDeleteEvent}
    * - {@link CadenzaEditGeometryCancelEvent}
    * @embed
    */
@@ -857,6 +860,9 @@ export class CadenzaClient {
    * @fires
    * - {@link CadenzaEditGeometryUpdateEvent}
    * - {@link CadenzaEditGeometryOkEvent}
+   * - {@link CadenzaEditGeometryCreateEvent}
+   * - {@link CadenzaEditGeometryEditEvent}
+   * - {@link CadenzaEditGeometryDeleteEvent}
    * - {@link CadenzaEditGeometryCancelEvent}
    * @embed
    */
@@ -905,7 +911,7 @@ export class CadenzaClient {
   /**
    * @param {object} __namedParameters - Options
    * @param [__namedParameters.geometry] {Geometry} - The geometry to edit
-   * @param [__namedParameters.additionalLayers] {LayerDefinition[]} - Layer definitions to be imported and shown in the background, as a basis for the drawing.
+   * @param [__namedParameters.additionalLayers] {LayerDefinition[]} - Layer definitions to be imported and shown in the background, as a basis for the drawing. IMPORTANT: The Cadenza referenced with `cadenzaClient` must be configured to support the import of GeoJSON, and the (system) privileges of the corresponding user must also be set in such a way that the import of GeoJSON is possible.
    * @param [__namedParameters.validExtentStrategy] {ExtentStrategy} - Defines the initial map extent; If not given, Cadenza's default logic is used.
    * @param [__namedParameters.features] {FeatureCollection} - The features to edit. The last feature in this collection is directly set up for editing.
    * @returns {Promise<Awaited<unknown>[]>}
@@ -1809,6 +1815,9 @@ function getGeometryTypeFromFeatureCollection(featureCollection) {
  *  : T extends 'drillThrough' ? CadenzaDrillThroughEvent
  *  : T extends 'editGeometry:update' ? CadenzaEditGeometryUpdateEvent
  *  : T extends 'editGeometry:ok' ? CadenzaEditGeometryOkEvent
+ *  : T extends 'editGeometry:create' ? CadenzaEditGeometryCreateEvent
+ *  : T extends 'editGeometry:edit' ? CadenzaEditGeometryEditEvent
+ *  : T extends 'editGeometry:delete' ? CadenzaEditGeometryDeleteEvent
  *  : T extends 'editGeometry:cancel' ? CadenzaEditGeometryCancelEvent
  *  : T extends 'reload' ? CadenzaReloadEvent
  *  : T extends 'selectObjects:ok' ? CadenzaSelectObjectsOkEvent
@@ -1848,6 +1857,9 @@ function getGeometryTypeFromFeatureCollection(featureCollection) {
  */
 /** @typedef {CadenzaEvent<'editGeometry:update', FeatureCollection | Feature | undefined>} CadenzaEditGeometryUpdateEvent - When the user changed the geometry. `FeatureCollection` if multiple features are present on the edit layer, but the original defined type is not multi-geometry. This is also the case if the dialog was instantiated from a geometry and the original defined type is inherited. `undefined` if no feature is present on the edit layer. */
 /** @typedef {CadenzaEvent<'editGeometry:ok', FeatureCollection | Feature>} CadenzaEditGeometryOkEvent - When the user submitted the geometry. `FeatureCollection` if batch editing is enabled. */
+/** @typedef {CadenzaEvent<'editGeometry:create', FeatureCollection | Feature>} CadenzaEditGeometryCreateEvent - Whenever new geometry features were created. `Feature` if only one feature was created. Only available in batch mode */
+/** @typedef {CadenzaEvent<'editGeometry:edit', Feature>} CadenzaEditGeometryEditEvent - Whenever a geometry feature was edited. Only available in batch mode */
+/** @typedef {CadenzaEvent<'editGeometry:delete', {featureIds: any[][]}>} CadenzaEditGeometryDeleteEvent - Whenever geometry features were deleted. Only available in batch mode */
 /** @typedef {CadenzaEvent<'editGeometry:cancel'>} CadenzaEditGeometryCancelEvent - When the user cancelled the geometry editing. */
 /** @typedef {CadenzaEvent<'error', {type: string, message?: string}>} CadenzaErrorEvent - An error event that is mapped to a {@link CadenzaError} */
 /**

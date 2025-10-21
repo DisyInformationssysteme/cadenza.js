@@ -290,10 +290,10 @@ cadenzaClient.editGeometry('<embeddingTargetId>', geometry, {
 });
 
 cadenzaClient.on('editGeometry:update', (event) => {
-  console.log('Geometry was updated', event.detail.geometry);
+  console.log('Geometry was updated', event.detail);
 });
 cadenzaClient.on('editGeometry:ok', (event) => {
-  console.log('Geometry editing was completed', event.detail.geometry);
+  console.log('Geometry editing was completed', event.detail);
 });
 cadenzaClient.on('editGeometry:cancel', (event) => {
   console.log('Geometry editing was cancelled');
@@ -305,7 +305,9 @@ cadenzaClient.on('editGeometry:cancel', (event) => {
 <small>API: [CadenzaClient#batchEditGeometry](./classes/CadenzaClient.html#batchEditGeometry), [CadenzaClient#on](./classes/CadenzaClient.html#on)</small>
 
 Edit a collection of geometries with a workbook map view in the background. The geometry coordinates are in the map's SRS (`useMapSrs: true`).
-The editor will create an additional layer where editable geometries are stored and selectable for editing. Additional geometries can also be created from within the editor once it has been initialized.
+The editor will create an additional layer where editable geometries are stored and selectable for editing. 
+The layer's print name is 'Editor Layer' and can be used by other API actions. 
+Additional geometries can also be created from within the editor once it has been initialized.
 When finished, all geometries are collected and returned in a single collection.
 
 _Note:_ The last geometry in the provided collection is initially selected for editing. At least one geometry must be provided.
@@ -337,10 +339,20 @@ cadenzaClient.batchEditGeometry('<embeddingTargetId>', featureCollection, {
 });
 
 cadenzaClient.on('editGeometry:update', (event) => {
-  console.log('Geometry was updated', event.detail.geometry);
+  console.log('Geometry was updated', event.detail);
+});
+cadenzaClient.on('editGeometry:create', (event) => {
+  console.log('At least one geometry feature was created', event.detail);
+});
+cadenzaClient.on('editGeometry:edit', (event) => {
+  console.log('Geometry feature was edited', event.detail);
+});
+cadenzaClient.on('editGeometry:delete', (event) => {
+  const deletedFeatures = event.details.featureIds;
+  ...
 });
 cadenzaClient.on('editGeometry:ok', (event) => {
-  console.log('Geometry editing was completed', event.detail.features.forEach(feature => ...));
+  console.log('Geometry editing was completed', event.detail);
 });
 cadenzaClient.on('editGeometry:cancel', (event) => {
   console.log('Geometry editing was cancelled');
@@ -369,7 +381,7 @@ cadenzaClient.createGeometry('<embeddingTargetId>', 'Point', {
 });
 
 cadenzaClient.on('editGeometry:ok', (event) => {
-  console.log('Geometry creation was completed', event.detail.geometry);
+  console.log('Geometry editing was completed', event.detail);
 });
 ```
 
@@ -381,7 +393,8 @@ That's why the events use the `editGeometry` prefix.
 <small>API: [CadenzaClient#batchCreateGeometry](./classes/CadenzaClient.html#batchCreateGeometry), [CadenzaClient#on](./classes/CadenzaClient.html#on)</small>
 
 Create multiple geometries with a workbook map view in the background. The geometry coordinates are in the map's SRS (`useMapSrs: true`).
-The editor will create an additional layer where created geometries are stored and selectable for editing.
+The editor will create an additional layer where created geometries are stored and selectable for editing. 
+The layer's print name is 'Editor Layer' and can be used by other API actions.
 When finished, all geometries are collected and returned in a single collection.
 
 ```javascript
@@ -391,10 +404,20 @@ cadenzaClient.batchCreateGeometry('<embeddingTargetId>', 'Point', {
 });
 
 cadenzaClient.on('editGeometry:update', (event) => {
-  console.log('Geometry was updated', event.detail.geometry);
+  console.log('Geometry was updated', event.detail);
+});
+cadenzaClient.on('editGeometry:create', (event) => {
+  console.log('At least one geometry feature was created', event.detail);
+});
+cadenzaClient.on('editGeometry:edit', (event) => {
+  console.log('Geometry feature was edited', event.detail);
+});
+cadenzaClient.on('editGeometry:delete', (event) => {
+  const deletedFeatures = event.details.featureIds;
+  ...
 });
 cadenzaClient.on('editGeometry:ok', (event) => {
-  console.log('Geometry editing was completed', event.detail.features.forEach(feature => ...));
+  console.log('Geometry editing was completed', event.detail);
 });
 cadenzaClient.on('editGeometry:cancel', (event) => {
   console.log('Geometry editing was cancelled');
@@ -404,6 +427,8 @@ cadenzaClient.on('editGeometry:cancel', (event) => {
 #### Additional Background Layers
 
 Create a GeoJSON polygon geometry with a workbook map view and some additional background layers.
+
+IMPORTANT: The Cadenza referenced with `cadenzaClient` must be configured to support the import of GeoJSON, and the (system) privileges of the corresponding user must also be set in such a way that the import of GeoJSON is possible.
 
 ```javascript
 cadenzaClient.createGeometry('<embeddingTargetId>', 'Polygon', {
