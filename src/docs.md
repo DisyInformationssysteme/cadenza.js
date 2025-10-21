@@ -292,7 +292,7 @@ cadenzaClient.on('editGeometry:cancel', (event) => {
 
 Edit a collection of geometries with a workbook map view in the background. The geometry coordinates are in the map's SRS (`useMapSrs: true`).
 The editor will create an additional layer where editable geometries are stored and selectable for editing. 
-The layer's printName is 'Editor Layer' and can be used by other api actions. 
+The layer's print name is 'Editor Layer' and can be used by other API actions. 
 Additional geometries can also be created from within the editor once it has been initialized.
 When finished, all geometries are collected and returned in a single collection.
 
@@ -380,7 +380,7 @@ That's why the events use the `editGeometry` prefix.
 
 Create multiple geometries with a workbook map view in the background. The geometry coordinates are in the map's SRS (`useMapSrs: true`).
 The editor will create an additional layer where created geometries are stored and selectable for editing. 
-The layer's printName is 'Editor Layer' and can be used by other api actions.
+The layer's print name is 'Editor Layer' and can be used by other API actions.
 When finished, all geometries are collected and returned in a single collection.
 
 ```javascript
