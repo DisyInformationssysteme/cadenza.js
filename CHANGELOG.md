@@ -7,6 +7,7 @@ This project uses a version scheme based on the Cadenza main version in the form
 ## Unreleased
 ### Added
 - `layout` option for `CadenzaClient#show`
+- The description of the `additionalLayers` property and the code example have now been expanded to include notes on the correct configuration of Cadenza.
 
 ## 10.2.13 - 2025-05-19
 ### Added
