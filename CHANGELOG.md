@@ -6,7 +6,7 @@ This project uses a version scheme based on the Cadenza main version in the form
 
 ## Unreleased
 ### Added
-- `CadenzaEditGeometryCreatedEvent`, `CadenzaEditGeometryEditedEvent`, `CadenzaEditGeometryDeletedEvent`
+- `CadenzaEditGeometryCreateEvent`, `CadenzaEditGeometryEditEvent`, `CadenzaEditGeometryDeleteEvent`
 
 ## 10.5.1 - 2025-10-20
 ### Fixed
