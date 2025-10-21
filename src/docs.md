@@ -327,13 +327,13 @@ cadenzaClient.batchEditGeometry('<embeddingTargetId>', featureCollection, {
 cadenzaClient.on('editGeometry:update', (event) => {
   console.log('Geometry was updated', event.detail);
 });
-cadenzaClient.on('editGeometry:created', (event) => {
+cadenzaClient.on('editGeometry:create', (event) => {
   console.log('At least one geometry feature was created', event.detail);
 });
-cadenzaClient.on('editGeometry:edited', (event) => {
+cadenzaClient.on('editGeometry:edit', (event) => {
   console.log('Geometry feature was edited', event.detail);
 });
-cadenzaClient.on('editGeometry:deleted', (event) => {
+cadenzaClient.on('editGeometry:delete', (event) => {
   const deletedFeatures = event.details.featureIds;
   ...
 });
@@ -392,13 +392,13 @@ cadenzaClient.batchCreateGeometry('<embeddingTargetId>', 'Point', {
 cadenzaClient.on('editGeometry:update', (event) => {
   console.log('Geometry was updated', event.detail);
 });
-cadenzaClient.on('editGeometry:created', (event) => {
+cadenzaClient.on('editGeometry:create', (event) => {
   console.log('At least one geometry feature was created', event.detail);
 });
-cadenzaClient.on('editGeometry:edited', (event) => {
+cadenzaClient.on('editGeometry:edit', (event) => {
   console.log('Geometry feature was edited', event.detail);
 });
-cadenzaClient.on('editGeometry:deleted', (event) => {
+cadenzaClient.on('editGeometry:delete', (event) => {
   const deletedFeatures = event.details.featureIds;
   ...
 });
