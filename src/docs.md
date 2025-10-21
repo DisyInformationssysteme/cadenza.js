@@ -310,6 +310,8 @@ That's why the events use the `editGeometry` prefix.
 
 Create a GeoJSON polygon geometry with a workbook map view and some additional background layers.
 
+IMPORTANT: The Cadenza referenced with `cadenzaClient` must be configured to support the import of GeoJSON, and the (system) privileges of the corresponding user must also be set in such a way that the import of GeoJSON is possible.
+
 ```javascript
 cadenzaClient.createGeometry('<embeddingTargetId>', 'Polygon', {
   additionalLayers: [
