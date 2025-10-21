@@ -250,12 +250,12 @@
       layout,
       width,
       withScale,
+      worksheetPlaceholders
     }, formData) {
       return {
         additionalLayers: additionalLayers && JSON.parse(additionalLayers),
         buffer: distance ? { value: Number(distance), lengthUnit: lengthUnit ? lengthUnit : 'm' } : undefined,
-        ...(requestAsPdf === 'on' && { dataType: 'pdf' }),
-        dataType: dataType,
+        dataType: dataType ?? (requestAsPdf === 'on' ? 'pdf' : undefined),
         disabledUiFeatures: disabledUiFeatures && disabledUiFeatures.split(','),
         expandNavigator: (expandNavigator === 'on'),
         extentStrategy: extentStrategy && JSON.parse(extentStrategy),
@@ -282,6 +282,7 @@
         layout: layout || undefined,
         width: Number(width),
         withScale: Boolean(withScale),
+        worksheetPlaceholders: (worksheetPlaceholders && JSON.parse(worksheetPlaceholders.trim())) || undefined,
       };
     }
 
@@ -418,6 +419,26 @@
   </div>
 </template>
 
+<template id="common-worksheetPlaceholders">
+  <div>
+    <label for="worksheetPlaceholders">Worksheet placeholder IDs</label>
+    <textarea name="worksheetPlaceholders" id="worksheetPlaceholders" rows="5"></textarea>
+    <small>
+      <p>A JSON object with a mapping of (placeholderId -> worksheetPrintName).
+        Placeholder ID is defined in the worksheet placeholder element in the report template.
+        The placeholders are then replaced with worksheet elements.</p>
+      <p>Example:</p>
+      <pre>
+{
+  "first": "Informationen zur Arbeitsmappe",
+  "second": "Häufigkeit der Messungen"
+}
+      </pre>
+    </small>
+
+  </div>
+</template>
+
 <template id="common-filter">
   <div>
     <label for="filter">Filter</label>
@@ -496,7 +517,7 @@
   </div>
 </template>
 
-<template data-action="show" data-common="showWorkbook,disabledUiFeatures,filter,show">
+<template data-action="show" data-common="showWorkbook,disabledUiFeatures,worksheetPlaceholders,filter,show">
   <div>
     <label for="embeddingTargetId">Embedding target ID *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>

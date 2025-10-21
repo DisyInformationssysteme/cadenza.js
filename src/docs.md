@@ -144,6 +144,20 @@ cadenzaClient.show('<embeddingTargetId>', {
 });
 ```
 
+#### Set the worksheets for worksheet placeholders in reports
+Embedding targets of type report are shown as PDF. Additionally, if the report template of the embedding target contains 
+worksheet placeholder elements, they will be replaced by the worksheets according to `worksheetPlaceholders` parameter. 
+In the example below, the worksheet placeholder with placeholderId="placeholder1" will be replaced with a worksheet 
+"First worksheet" from the workbook of the embedding target.
+```javascript
+cadenzaClient.show('<embeddingTargetId>', {
+  worksheetPlaceholders: {
+    placeholder1: 'First worksheet',
+    placeholder2: 'My second worksheet'
+  }
+});
+```
+
 ### Abort (Iframe) Loading
 
 Cadenza JS uses the [AbortController Web API](https://developer.mozilla.org/en-US/docs/Web/API/AbortController) for aborting requests. This is supported by most of the public methods.
