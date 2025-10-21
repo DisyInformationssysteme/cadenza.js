@@ -400,6 +400,7 @@ export class CadenzaClient {
    * @param {GlobalId} [__namedParameters.highlightGlobalId] - The ID of an item to highlight / expand in the navigator
    * @param {String} [__namedParameters.labelSet] - The name of a label set defined in the `basicweb-config.xml` (only supported for the welcome page)
    * @param {OperationMode} [__namedParameters.operationMode] - The mode in which a workbook should be operated
+   * @param {Record<string, string>} [__namedParameters.worksheetPlaceholders] - For a report - print names of worksheets for placeholder IDs
    * @param {Layout} [__namedParameters.layout] - The layout to be used; the dashboard layout is used by default or the linear layout if there is not enough space.
    * @param {AbortSignal} [__namedParameters.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
@@ -421,6 +422,7 @@ export class CadenzaClient {
       highlightGlobalId,
       labelSet,
       operationMode,
+      worksheetPlaceholders,
       layout,
       signal,
     } = {},
@@ -448,6 +450,7 @@ export class CadenzaClient {
       labelSet,
       operationMode,
       layout,
+      worksheetPlaceholders,
     });
     return this.#show(resolvePath(source), params, signal);
   }
@@ -1443,6 +1446,7 @@ export class CadenzaClient {
    * @param {WorkbookLayerPath[]} [params.layers]
    * @param {number} [params.minScale]
    * @param {OperationMode} [params.operationMode]
+   * @param {Record<string, string>} [params.worksheetPlaceholders]
    * @param {TablePart[]} [params.parts]
    * @param {'MAP'} [params.targetType]
    * @param {SnappingOptions} [params.snapping]
@@ -1467,6 +1471,7 @@ export class CadenzaClient {
     layers,
     minScale,
     operationMode,
+    worksheetPlaceholders,
     parts,
     targetType,
     snapping,
@@ -1523,6 +1528,15 @@ export class CadenzaClient {
             `filter.${variable}`,
             JSON.stringify(value instanceof Date ? value.toISOString() : value),
           ]),
+        )),
+      ...(worksheetPlaceholders &&
+        Object.fromEntries(
+          Object.entries(worksheetPlaceholders).map(
+            ([placeholderId, worksheetPrintName]) => [
+              `worksheetPlaceholder.${placeholderId}`,
+              JSON.stringify(worksheetPrintName),
+            ],
+          ),
         )),
       ...(geometryType && { geometryType }),
       ...(hideMainHeaderAndFooter && { hideMainHeaderAndFooter: 'true' }),

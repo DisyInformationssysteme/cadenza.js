@@ -6,6 +6,7 @@ This project uses a version scheme based on the Cadenza main version in the form
 
 ## Unreleased
 ### Added
+- `worksheetPlaceholders` option for `CadenzaClient#show` method.
 - `CadenzaEditGeometryCreateEvent`, `CadenzaEditGeometryEditEvent`, `CadenzaEditGeometryDeleteEvent`
 - The description of the `additionalLayers` property and the code example have now been expanded to include notes on the correct configuration of Cadenza.
 
