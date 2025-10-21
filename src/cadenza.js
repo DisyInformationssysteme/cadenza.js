@@ -186,7 +186,7 @@ globalThis.cadenza = Object.assign(
  */
 /**
  * @typedef CommonEditGeometryOptions - Common options for the initialization of the geometry editor.
- * @property {LayerDefinition[]} [additionalLayers] - Layer definitions to be imported and shown in the background, as a basis for the drawing.
+ * @property {LayerDefinition[]} [additionalLayers] - Layer definitions to be imported and shown in the background, as a basis for the drawing. IMPORTANT: The Cadenza referenced with `cadenzaClient` must be configured to support the import of GeoJSON, and the (system) privileges of the corresponding user must also be set in such a way that the import of GeoJSON is possible.
  * @property {UiFeature[]} [disabledUiFeatures] - Cadenza UI features to disable
  * @property {ExtentStrategy} [extentStrategy] - Defines the initial map extent; If not given, Cadenza's default logic is used.
  * @property {FilterVariables} [filter] - Filter variables
@@ -480,7 +480,7 @@ export class CadenzaClient {
    *
    * @param {EmbeddingTargetId} mapView - The workbook map view to show
    * @param {object} [__namedParameters] - Options
-   * @param {LayerDefinition[]} [__namedParameters.additionalLayers] - Layer definitions to be imported and shown in the background, as a basis for the drawing.
+   * @param {LayerDefinition[]} [__namedParameters.additionalLayers] - Layer definitions to be imported and shown in the background, as a basis for the drawing. IMPORTANT: The Cadenza referenced with `cadenzaClient` must be configured to support the import of GeoJSON, and the (system) privileges of the corresponding user must also be set in such a way that the import of GeoJSON is possible.
    * @param {UiFeature[]} [__namedParameters.disabledUiFeatures] - Cadenza UI features to disable
    * @param {boolean} [__namedParameters.expandNavigator] - Indicates if the navigator should be expanded.
    * @param {ExtentStrategy} [__namedParameters.extentStrategy] - Defines the initial map extent; If not given, Cadenza's default logic is used.
@@ -908,7 +908,7 @@ export class CadenzaClient {
   /**
    * @param {object} __namedParameters - Options
    * @param [__namedParameters.geometry] {Geometry} - The geometry to edit
-   * @param [__namedParameters.additionalLayers] {LayerDefinition[]} - Layer definitions to be imported and shown in the background, as a basis for the drawing.
+   * @param [__namedParameters.additionalLayers] {LayerDefinition[]} - Layer definitions to be imported and shown in the background, as a basis for the drawing. IMPORTANT: The Cadenza referenced with `cadenzaClient` must be configured to support the import of GeoJSON, and the (system) privileges of the corresponding user must also be set in such a way that the import of GeoJSON is possible.
    * @param [__namedParameters.validExtentStrategy] {ExtentStrategy} - Defines the initial map extent; If not given, Cadenza's default logic is used.
    * @param [__namedParameters.features] {FeatureCollection} - The features to edit. The last feature in this collection is directly set up for editing.
    * @returns {Promise<Awaited<unknown>[]>}
