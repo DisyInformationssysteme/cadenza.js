@@ -7,8 +7,9 @@ This project uses a version scheme based on the Cadenza main version in the form
 ## Unreleased
 ### Changed
 - Changed documentation because the sandbox feature toggle was replaced by a system/environment property.
-### Added
-- CadenzaEventType `editGeometry:create`, `editGeometry:edit`, `editGeometry:delete`
+
+### Fixed
+- `CadenzaEventType` correctly contains `editGeometry:create`,  `editGeometry:edit` and `editGeometry:delete`
 
 ## 10.5.2 - 2025-10-22
 ### Added
