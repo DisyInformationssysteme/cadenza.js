@@ -240,7 +240,7 @@ When finished, all geometries are collected and returned in a single collection.
 <p>The command starts a proxy server that serves the <code>sandbox.html</code> and <code>cadenza.js</code> files and proxies all other requests to the Cadenza server. Since that way the sandbox and Cadenza run on the same origin, embedding and <code>postMessage</code> communication just work.</p>
 <p>Alternatively ...</p>
 <ul>
-<li>Set the system variable <code>&quot;net.disy.cadenza.sandbox&quot;</code> in Cadenza to enable the sandbox.</li>
+<li>Set system property or environment variable <code>&quot;CADENZA_ENABLE_EMBEDDING_SANDBOX&quot;</code> in Cadenza to enable the sandbox.</li>
 <li>Now, <code>sandbox.html</code> is served on <a href="http://localhost:8080/cadenza/sandbox">http://localhost:8080/cadenza/sandbox</a> (replace with custom Cadenza url <code>/sandbox</code> as needed).</li>
 </ul>
 <p><code>cadenza.js</code> is automatically served when Cadenza starts.</p>
