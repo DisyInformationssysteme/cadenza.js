@@ -661,7 +661,7 @@ The command starts a proxy server that serves the `sandbox.html` and `cadenza.js
 
 Alternatively ...
 
-* Set the system variable `"net.disy.cadenza.sandbox"` in Cadenza to enable the sandbox.
+* Set system property or environment variable `"CADENZA_ENABLE_EMBEDDING_SANDBOX"` in Cadenza to enable the sandbox.
 * Now, `sandbox.html` is served on http://localhost:8080/cadenza/sandbox (replace with custom Cadenza url `/sandbox` as needed).
 
 `cadenza.js` is automatically served when Cadenza starts.
