@@ -114,6 +114,19 @@ describe('Given a Cadenza JS client instance', () => {
       );
     });
 
+    it('Includes worksheetPlaceholders in URL', () => {
+      cadenza(BASE_URL, { iframe }).show(EMBEDDING_TARGET_ID, {
+        dataType: 'pdf',
+        worksheetPlaceholders: {
+          placeholder1: 'Worksheet 1 ü ß',
+          placeholder2: 'Worksheet 2',
+        },
+      });
+      expect(cad.iframe!.src).toBe(
+        `${BASE_URL}/w/${EMBEDDING_TARGET_ID}?dataType=pdf&worksheetPlaceholder.placeholder1=%22Worksheet+1+%C3%BC+%C3%9F%22&worksheetPlaceholder.placeholder2=%22Worksheet+2%22`,
+      );
+    });
+
     describe('When the iframe is loaded and the ready event is received', () => {
       beforeEach(() => {
         cad.iframe!.dispatchEvent(new Event('load'));

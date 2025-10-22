@@ -237,7 +237,9 @@ globalThis.cadenza = Object.assign(
  * @property {'FeatureCollection'} type - The object's type
  * @property {Feature[]} features - The features within this collection
  */
-
+/**
+ * @typedef {Record<string, string>} WorksheetPlaceholders - Maps the worksheet placeholder IDs in report embeddings to the print names of the worksheets to replace them with.
+ */
 /**
  * @typedef AreaIntersectionsResult - Result object of function fetchAreaIntersections
  * @property {FeatureCollection} results - Results of the geometry intersection
@@ -400,6 +402,7 @@ export class CadenzaClient {
    * @param {GlobalId} [__namedParameters.highlightGlobalId] - The ID of an item to highlight / expand in the navigator
    * @param {String} [__namedParameters.labelSet] - The name of a label set defined in the `basicweb-config.xml` (only supported for the welcome page)
    * @param {OperationMode} [__namedParameters.operationMode] - The mode in which a workbook should be operated
+   * @param {WorksheetPlaceholders} [__namedParameters.worksheetPlaceholders] - Maps the worksheet placeholder IDs in report embeddings to the print names of the worksheets to replace them with.
    * @param {Layout} [__namedParameters.layout] - The layout to be used; the dashboard layout is used by default or the linear layout if there is not enough space.
    * @param {AbortSignal} [__namedParameters.signal] - A signal to abort the iframe loading
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
@@ -421,6 +424,7 @@ export class CadenzaClient {
       highlightGlobalId,
       labelSet,
       operationMode,
+      worksheetPlaceholders,
       layout,
       signal,
     } = {},
@@ -448,6 +452,7 @@ export class CadenzaClient {
       labelSet,
       operationMode,
       layout,
+      worksheetPlaceholders,
     });
     return this.#show(resolvePath(source), params, signal);
   }
@@ -1443,6 +1448,7 @@ export class CadenzaClient {
    * @param {WorkbookLayerPath[]} [params.layers]
    * @param {number} [params.minScale]
    * @param {OperationMode} [params.operationMode]
+   * @param {WorksheetPlaceholders} [params.worksheetPlaceholders]
    * @param {TablePart[]} [params.parts]
    * @param {'MAP'} [params.targetType]
    * @param {SnappingOptions} [params.snapping]
@@ -1467,6 +1473,7 @@ export class CadenzaClient {
     layers,
     minScale,
     operationMode,
+    worksheetPlaceholders,
     parts,
     targetType,
     snapping,
@@ -1499,6 +1506,9 @@ export class CadenzaClient {
         assert(validTablePart(part), `Invalid table part: ${part}`),
       );
     }
+    if (worksheetPlaceholders) {
+      assertValidWorksheetPlaceholdersValues(worksheetPlaceholders);
+    }
     let locationFinder;
     let mapExtent;
     if (validExtentStrategy) {
@@ -1523,6 +1533,15 @@ export class CadenzaClient {
             `filter.${variable}`,
             JSON.stringify(value instanceof Date ? value.toISOString() : value),
           ]),
+        )),
+      ...(worksheetPlaceholders &&
+        Object.fromEntries(
+          Object.entries(worksheetPlaceholders).map(
+            ([placeholderId, worksheetPrintName]) => [
+              `worksheetPlaceholder.${placeholderId}`,
+              JSON.stringify(worksheetPrintName),
+            ],
+          ),
         )),
       ...(geometryType && { geometryType }),
       ...(hideMainHeaderAndFooter && { hideMainHeaderAndFooter: 'true' }),
@@ -1714,6 +1733,17 @@ function assertValidFilterVariables(/** @type {FilterVariables} */ filter) {
       `Invalid filter variable name: ${varName}`,
     ),
   );
+}
+
+function assertValidWorksheetPlaceholdersValues(
+  /** @type {WorksheetPlaceholders} */ worksheetPlaceholders,
+) {
+  Object.keys(worksheetPlaceholders).forEach((placeholderId) => {
+    assert(
+      validKebabCaseString(placeholderId),
+      `Invalid worksheeet placeholderId value: ${placeholderId}`,
+    );
+  });
 }
 
 function array(/** @type unknown */ value) {
