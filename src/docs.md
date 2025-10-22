@@ -144,16 +144,15 @@ cadenzaClient.show('<embeddingTargetId>', {
 });
 ```
 
-#### Set the worksheets for worksheet placeholders in reports
+#### Fill Worksheet Placeholders in Reports
 Embedding targets of type report are shown as PDF. Additionally, if the report template of the embedding target contains 
 worksheet placeholder elements, they will be replaced by the worksheets according to `worksheetPlaceholders` parameter. 
-In the example below, the worksheet placeholder with placeholderId="placeholder1" will be replaced with a worksheet 
+In the example below, the worksheet placeholder with the ID "placeholder1" will be replaced with a worksheet 
 "First worksheet" from the workbook of the embedding target.
 ```javascript
 cadenzaClient.show('<embeddingTargetId>', {
   worksheetPlaceholders: {
-    placeholder1: 'First worksheet',
-    placeholder2: 'My second worksheet'
+    placeholder1: 'First worksheet'
   }
 });
 ```
