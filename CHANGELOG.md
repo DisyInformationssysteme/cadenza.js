@@ -27,7 +27,7 @@ This project uses a version scheme based on the Cadenza main version in the form
 
 ## 10.4.5 - 2025-09-12
 ### Added
-- `isAutoCorrection` and `includeGeometryValidationReport` options for `CadenzaClient#fetchAreaIntersections`
+- `useAutoCorrection` and `includeGeometryValidationReport` options for `CadenzaClient#fetchAreaIntersections`
 - Possibility to enable/disable debug logging at runtime.
 
 ### Changed
