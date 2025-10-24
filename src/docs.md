@@ -333,7 +333,7 @@ cadenzaClient.on('editGeometry:edit', (event) => {
   console.log('Geometry feature was edited', event.detail);
 });
 cadenzaClient.on('editGeometry:delete', (event) => {
-  const deletedFeatures = event.details.featureIds;
+  const deletedFeatures = event.details.objectIds;
   ...
 });
 cadenzaClient.on('editGeometry:ok', (event) => {
@@ -398,7 +398,7 @@ cadenzaClient.on('editGeometry:edit', (event) => {
   console.log('Geometry feature was edited', event.detail);
 });
 cadenzaClient.on('editGeometry:delete', (event) => {
-  const deletedFeatures = event.details.featureIds;
+  const deletedFeatures = event.details.objectIds;
   ...
 });
 cadenzaClient.on('editGeometry:ok', (event) => {
