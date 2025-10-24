@@ -6,7 +6,7 @@ This project uses a version scheme based on the Cadenza main version in the form
 
 ## Unreleased
 ### Changed
-- **BREAKING CHANGE** `CadenzaEditGeometryDeleteEvent#detail` is now typed as { objectIds: any[][] }
+- **BREAKING CHANGE** `CadenzaEditGeometryDeleteEvent#detail` is now typed as `{ objectIds: any[][] }`.
 
 ## 10.5.3 - 2025-10-22
 ### Changed
