@@ -1878,7 +1878,7 @@ function getGeometryTypeFromFeatureCollection(featureCollection) {
 /** @typedef {CadenzaEvent<'editGeometry:ok', FeatureCollection | Feature>} CadenzaEditGeometryOkEvent - When the user submitted the geometry. `FeatureCollection` if batch editing is enabled. */
 /** @typedef {CadenzaEvent<'editGeometry:create', FeatureCollection | Feature>} CadenzaEditGeometryCreateEvent - Whenever new geometry features were created. `Feature` if only one feature was created. Only available in batch mode */
 /** @typedef {CadenzaEvent<'editGeometry:edit', Feature>} CadenzaEditGeometryEditEvent - Whenever a geometry feature was edited. Only available in batch mode */
-/** @typedef {CadenzaEvent<'editGeometry:delete', {featureIds: any[][]}>} CadenzaEditGeometryDeleteEvent - Whenever geometry features were deleted. Only available in batch mode */
+/** @typedef {CadenzaEvent<'editGeometry:delete', {objectIds: any[][]}>} CadenzaEditGeometryDeleteEvent - Whenever geometry features were deleted. Only available in batch mode */
 /** @typedef {CadenzaEvent<'editGeometry:cancel'>} CadenzaEditGeometryCancelEvent - When the user cancelled the geometry editing. */
 /** @typedef {CadenzaEvent<'error', {type: string, message?: string}>} CadenzaErrorEvent - An error event that is mapped to a {@link CadenzaError} */
 /**
