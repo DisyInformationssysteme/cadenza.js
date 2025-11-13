@@ -1818,6 +1818,7 @@ function getGeometryTypeFromFeatureCollection(featureCollection) {
 // Please do not add internal event types like 'ready' here.
 /**
  * @typedef {'action'
+ * | 'change:extent'
  * | 'change:selection'
  * | 'drillThrough'
  * | 'editGeometry:ok'
@@ -1835,6 +1836,7 @@ function getGeometryTypeFromFeatureCollection(featureCollection) {
 /**
  * @template {CadenzaEventType} T
  * @typedef {T extends 'action' ? CadenzaActionEvent
+ *  : T extends 'change:extent' ? CadenzaChangeExtentEvent
  *  : T extends 'change:selection' ? CadenzaChangeSelectionEvent
  *  : T extends 'drillThrough' ? CadenzaDrillThroughEvent
  *  : T extends 'editGeometry:update' ? CadenzaEditGeometryUpdateEvent
