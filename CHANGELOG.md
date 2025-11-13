@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project uses a version scheme based on the Cadenza main version in the format x.x.y, where x.x is the Cadenza main version and y a functional change or bugfix.
 
 ## Unreleased
+### Added
+- `CadenzaClient#setLayerVisibility`
+- `CadenzaClient#setFilter`
+- `CadenzaClient#setSelection`
+- `CadenzaClient#addSelection`
+- `CadenzaClient#removeSelection`
+- `CadenzaChangeExtentEvent`
+
+### Fixed
+- `CadenzaClient#showMap` now correctly declares `CadenzaChangeSelectionEvent` as a fired event.
 
 ## 10.4.8 - 2025-10-28
 ### Changed

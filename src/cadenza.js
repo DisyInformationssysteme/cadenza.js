@@ -495,6 +495,8 @@ export class CadenzaClient {
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires
+   * - {@link CadenzaChangeExtentEvent}
+   * - {@link CadenzaChangeSelectionEvent}
    * - {@link CadenzaDrillThroughEvent}
    * - {@link CadenzaActionEvent}
    * @embed
@@ -584,7 +586,6 @@ export class CadenzaClient {
   /**
    * Set filter variables in the currently shown workbook.
    *
-   * @hidden
    * @param {FilterVariables} filter - The variable values
    * @return {Promise<void>} A `Promise` for when the filter variables were set.
    * @postMessage
@@ -601,7 +602,6 @@ export class CadenzaClient {
    * When making a layer visible, its ancestors will be made visible, too.
    * When hiding a layer, the ancestors are not affected.
    *
-   * @hidden
    * @param {WorkbookLayerPath | string} layer - The layer to show or hide
    *   (identified using a layer path or a print name)
    * @param {boolean} visible - The visibility state of the layer
@@ -619,7 +619,6 @@ export class CadenzaClient {
   /**
    * Set the selection in the currently shown workbook map view.
    *
-   * @hidden
    * @param {WorkbookLayerPath | string} layer - The data view layer to set the selection in
    * @param {unknown[][]} values - The IDs of the objects to select
    * @param {object} [__namedParameters]
@@ -640,7 +639,6 @@ export class CadenzaClient {
   /**
    * Add to the selection in the currently shown workbook map view.
    *
-   * @hidden
    * @param {WorkbookLayerPath | string} layer - The data view layer to change the selection in
    * @param {unknown[][]} values - The IDs of the objects to select
    * @param {object} [__namedParameters]
@@ -661,7 +659,6 @@ export class CadenzaClient {
   /**
    * Remove from the selection in the currently shown workbook map view.
    *
-   * @hidden
    * @param {WorkbookLayerPath | string} layer - The data view layer to change the selection in
    * @param {unknown[][]} values - The IDs of the objects to unselect
    * @param {object} [__namedParameters]
@@ -690,6 +687,8 @@ export class CadenzaClient {
    * @param {CommonEditGeometryOptions} [editGeometryOptions] - Options for the initialization of the geometry editor.
    * @throws For invalid arguments
    * @fires
+   * - {@link CadenzaChangeExtentEvent}
+   * - {@link CadenzaChangeSelectionEvent}
    * - {@link CadenzaEditGeometryUpdateEvent}
    * - {@link CadenzaEditGeometryOkEvent}
    * - {@link CadenzaEditGeometryCancelEvent}
@@ -742,6 +741,8 @@ export class CadenzaClient {
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires
+   * - {@link CadenzaChangeExtentEvent}
+   * - {@link CadenzaChangeSelectionEvent}
    * - {@link CadenzaEditGeometryUpdateEvent}
    * - {@link CadenzaEditGeometryOkEvent}
    * - {@link CadenzaEditGeometryCancelEvent}
@@ -798,6 +799,8 @@ export class CadenzaClient {
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires
+   * - {@link CadenzaChangeExtentEvent}
+   * - {@link CadenzaChangeSelectionEvent}
    * - {@link CadenzaEditGeometryUpdateEvent}
    * - {@link CadenzaEditGeometryOkEvent}
    * - {@link CadenzaEditGeometryCreateEvent}
@@ -855,6 +858,8 @@ export class CadenzaClient {
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires
+   * - {@link CadenzaChangeExtentEvent}
+   * - {@link CadenzaChangeSelectionEvent}
    * - {@link CadenzaEditGeometryUpdateEvent}
    * - {@link CadenzaEditGeometryOkEvent}
    * - {@link CadenzaEditGeometryCreateEvent}
@@ -1825,8 +1830,7 @@ function getGeometryTypeFromFeatureCollection(featureCollection) {
 /**
  * @typedef {CadenzaEvent<'action', {context: string}>} CadenzaActionEvent - When the user executed a POST message action, which is defined on an external link in the Cadenza management center.
  */
-/*
- * @hidden
+/**
  * @typedef {CadenzaEvent<'change:extent', {extent: Extent}>} CadenzaChangeExtentEvent - When the user moved the map.
  *   The extent is transformed according to the `useMapSrs` option.
  */
