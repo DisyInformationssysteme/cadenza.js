@@ -12,6 +12,7 @@ This project uses a version scheme based on the Cadenza main version in the form
 - `CadenzaClient#addSelection`
 - `CadenzaClient#removeSelection`
 - `CadenzaChangeExtentEvent`
+- `CadenzaChangeSelectionEvent` is now emitted on `CadenzaClient#createGeometry`, `CadenzaClient#editGeometry`, `CadenzaClient#batchCreateGeometry` and `CadenzaClient#batchEditGeometry`
 
 ### Fixed
 - `CadenzaClient#showMap` now correctly declares `CadenzaChangeSelectionEvent` as a fired event.
