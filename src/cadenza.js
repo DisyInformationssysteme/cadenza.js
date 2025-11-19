@@ -1160,6 +1160,21 @@ export class CadenzaClient {
     };
   }
 
+  /**
+   * @template {CadenzaEventType | string} TYPE
+   * @template [DETAIL=unknown]
+   * @param {TYPE} type
+   * @param {(event: CadenzaEvent<TYPE, DETAIL>) => void} subscriber
+   * @return {() => void} An unsubscribe function
+   */
+  #once(type, subscriber) {
+    const unsubscribe = this.#on(type, (event) => {
+      subscriber(/** @type {CadenzaEvent<TYPE, DETAIL>} */ (event));
+      unsubscribe();
+    });
+    return unsubscribe;
+  }
+
   // Use arrow function so that it's bound to this.
   #onMessage = (
     /** @type MessageEvent<CadenzaEvent<never, never>> */ event,
