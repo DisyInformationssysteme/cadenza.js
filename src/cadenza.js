@@ -906,7 +906,7 @@ export class CadenzaClient {
       additionalLayers,
       validExtentStrategy,
     });
-    await this.#createFeaturesAndEditLastAddedFeature(features);
+    await this.#createFeaturesAndEditLastCreatedFeature(features);
     await this.#setEditorStateToReady();
   }
 
@@ -942,7 +942,7 @@ export class CadenzaClient {
   /**
    * @param {FeatureCollection} features - The features to edit.
    */
-  async #createFeaturesAndEditLastAddedFeature(features) {
+  async #createFeaturesAndEditLastCreatedFeature(features) {
     const editFeaturePromise = new Promise((resolve) => {
       this.#once(
         'editGeometry:create',
