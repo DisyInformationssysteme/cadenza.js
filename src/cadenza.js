@@ -910,8 +910,8 @@ export class CadenzaClient {
     await this.#setupEditorViaPostRequests({
       additionalLayers,
       validExtentStrategy,
-      features,
     });
+    await this.#createFeaturesAndEditLastCreatedFeature(features);
     await this.#setEditorStateToReady();
   }
 
@@ -920,14 +920,12 @@ export class CadenzaClient {
    * @param [__namedParameters.geometry] {Geometry} - The geometry to edit
    * @param [__namedParameters.additionalLayers] {LayerDefinition[]} - Layer definitions to be imported and shown in the background, as a basis for the drawing. IMPORTANT: The Cadenza referenced with `cadenzaClient` must be configured to support the import of GeoJSON, and the (system) privileges of the corresponding user must also be set in such a way that the import of GeoJSON is possible.
    * @param [__namedParameters.validExtentStrategy] {ExtentStrategy} - Defines the initial map extent; If not given, Cadenza's default logic is used.
-   * @param [__namedParameters.features] {FeatureCollection} - The features to edit. The last feature in this collection is directly set up for editing.
    * @returns {Promise<Awaited<unknown>[]>}
    */
   #setupEditorViaPostRequests({
     geometry,
     additionalLayers,
     validExtentStrategy,
-    features,
   }) {
     const postRequests = [];
     postRequests.push(this.#setExtentStrategy(validExtentStrategy));
@@ -943,10 +941,43 @@ export class CadenzaClient {
         postRequests.push(this.#postRequest('importLayer', layer));
       }
     }
-    if (features) {
-      postRequests.push(this.#postRequest('addFeatures', features));
-    }
     return Promise.all(postRequests);
+  }
+
+  /**
+   * @param {FeatureCollection} features - The features to edit.
+   */
+  async #createFeaturesAndEditLastCreatedFeature(features) {
+    const editFeaturePromise = new Promise((resolve) => {
+      this.#once(
+        'editGeometry:create',
+        /** @param {CadenzaEditGeometryCreateEvent} event */ async (event) => {
+          const featureOrCollection = event.detail;
+          let lastAddedFeature;
+          if (featureOrCollection.type === 'Feature') {
+            lastAddedFeature = featureOrCollection;
+          } else {
+            const addedFeatures = featureOrCollection.features;
+            lastAddedFeature = addedFeatures[addedFeatures.length - 1];
+          }
+          await this.#setEditFeature(lastAddedFeature.objectId);
+          resolve(undefined);
+        },
+      );
+    });
+    await this.#postRequest('createFeatures', features);
+    return editFeaturePromise;
+  }
+
+  /**
+   * Send a request to the geometry editor to edit the feature with the given ID.
+   * If another feature is currently being edited or created,
+   * the user is prompted to save (if possible), discard the current changes, or to abort the request.
+   *
+   * @param {any[]} objectId - The id of the feature
+   */
+  #setEditFeature(objectId) {
+    return this.#postRequest('requestEditFeature', objectId);
   }
 
   #setEditorStateToReady() {
@@ -1168,6 +1199,21 @@ export class CadenzaClient {
         window.removeEventListener('message', this.#onMessage);
       }
     };
+  }
+
+  /**
+   * @template {CadenzaEventType | string} TYPE
+   * @template [DETAIL=unknown]
+   * @param {TYPE} type
+   * @param {(event: CadenzaEvent<TYPE, DETAIL>) => void} subscriber
+   * @return {() => void} An unsubscribe function
+   */
+  #once(type, subscriber) {
+    const unsubscribe = this.#on(type, (event) => {
+      subscriber(/** @type {CadenzaEvent<TYPE, DETAIL>} */ (event));
+      unsubscribe();
+    });
+    return unsubscribe;
   }
 
   // Use arrow function so that it's bound to this.
