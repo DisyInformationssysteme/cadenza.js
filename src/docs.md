@@ -19,7 +19,7 @@ npm install @disy/cadenza.js@~10.2.0 # For latest version for Cadenza 10.2
 The Cadenza main version is reflected in the corresponding major and minor version of Cadenza JS (e.g. 10.2.0 for Cadenza 10.2), while the last version segment is increased for both, bugfixes and functional changes.
 
 ### Cadenza 10.1 and earlier
-For Cadenza 10.1 and earlier versions Cadenza JS used did use genuine semantic versioning. Please consult the Cadenza Documentation for the corresponding major and minor version of cadenza.js.
+For Cadenza 10.1 and earlier versions Cadenza JS did use genuine semantic versioning. Please consult the Cadenza Documentation for the corresponding major and minor version of cadenza.js.
 
 ## Usage Examples
 
