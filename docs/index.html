@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Cadenza JS API Documentation</title>
+
+  <style>
+    :root, body {
+      height: 100%;
+    }
+    :root {
+      font-family: Titillium Web, Arial, sans-serif;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      margin: 0;
+    }
+    header {
+      align-items: center;
+      background-color: #ddd;
+      border-bottom: 1px black solid;
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 32px;
+    }
+    main {
+      flex: 1;
+      position: relative;
+    }
+    iframe {
+      border: none;
+      height: 100%;
+      inset: 0;
+      position: absolute;
+      width: 100%;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <label>Show documentation for <code>Cadenza JS</code> version
+      <select id="branchSelect">
+        <!-- Branch options will be populated here. -->
+      </select>
+    </label>
+    <a href="https://github.com/DisyInformationssysteme/cadenza.js" target="_blank">Cadenza JS on GitHub</a>
+  </header>
+  <main>
+    <iframe id="branchIframe"></iframe>
+  </main>
+
+  <script type="module">
+    const select = document.getElementById('branchSelect');
+    const iframe = document.getElementById('branchIframe');
+    const update = () => { iframe.src = `./${select.value}/index.html`; };
+    select.addEventListener('change', update);
+    update();
+  </script>
+</body>
+</html>

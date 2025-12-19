@@ -1,8 +1,10 @@
 node_modules
 
 /apidoc
+/docs_output
 /cadenza.js
 /cadenza.d.ts
+/tmp.*
 
 .idea/
 *.iml

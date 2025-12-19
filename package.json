@@ -26,13 +26,11 @@
     "start:ts": "npm run build:ts -- --watch",
     "start:reformat": "onchange \"src/**/*\" -- prettier {{changed}} --write",
     "test": "cross-env NODE_OPTIONS=--unhandled-rejections=warn jest",
-    "deploy:docs": "gh-pages --dist apidoc",
     "sandbox": "node ./sandbox.cjs"
   },
   "devDependencies": {
     "@types/jest": "29.5.14",
     "cross-env": "7.0.3",
-    "gh-pages": "6.3.0",
     "http-server": "14.1.1",
     "jest": "29.7.0",
     "jest-environment-jsdom": "29.7.0",

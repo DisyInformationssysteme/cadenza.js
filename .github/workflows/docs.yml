@@ -1,0 +1,49 @@
+name: Build and deploy docs
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+# Security: Restrict permissions for CI jobs.
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Needed to access all version branches.
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+
+      - name: Generate documentation
+        run: |
+          chmod +x ./build_docs.sh
+          ./build_docs.sh
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs_output/
+
+  # Deploy in a separate job so that only actions/deploy-pages has write permissions.
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
