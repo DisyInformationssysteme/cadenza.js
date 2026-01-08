@@ -330,6 +330,7 @@ const feature2 = {
 
 const featureCollection = {
   type: 'FeatureCollection',
+  srs: 'EPSG:4326',
   features: [feature1 , feature2]
 }
 
@@ -583,7 +584,8 @@ Response with activated autocorrection and  geometry validation report
         "type": "Feature"
       }
     ],
-    "type": "FeatureCollection"
+    "type": "FeatureCollection",
+    "srs": "EPSG:3857"
   },
   "errors": {
     "features": [
@@ -600,7 +602,8 @@ Response with activated autocorrection and  geometry validation report
         "type": "Feature"
       }
     ],
-    "type": "FeatureCollection"
+    "type": "FeatureCollection",
+    "srs": "EPSG:3857"
   }
 }
 ```
