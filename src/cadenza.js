@@ -145,6 +145,7 @@ globalThis.cadenza = Object.assign(
 /**
  * @typedef Geometry - A [GeoJSON](https://geojson.org/) geometry object
  * @property {GeometryType} type - The type of the geometry
+ * @property {string} [srs] - The authority of the used spatial reference system
  * @property {Coordinate | Coordinate[] | Coordinate[][] | Coordinate[][][]} coordinates - The coordinates of the geometry
  */
 /**
