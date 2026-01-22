@@ -9,11 +9,9 @@ This project uses a version scheme based on the Cadenza main version in the form
 ## 10.5.6 - 2026-01-21
 ### Added
 - added srs authority, to FeatureCollection for responses of `CadenzaClient#fetchAreaIntersections` and `CadenzaClient#fetchObjectInfo`
-### Added
 - added srs authority, to FeatureCollection or Geometry at the post events `CadenzaEditGeometryEditEvent`,`CadenzaEditGeometryCreateEvent`, `CadenzaEditGeometryUpdateEvent`, `CadenzaEditGeometryOkEvent`, `CadenzaChangeSelectionEvent` and `CadenzaSelectObjectsOkEvent`, if the flag `useMapSrs` is `true` and the coordinate reference system is not `EPSG:4326`
 
 ## 10.5.5 - 2025-11-21
-
 ### Added
 - `CadenzaClient#setLayerVisibility`
 - `CadenzaClient#setFilter`
