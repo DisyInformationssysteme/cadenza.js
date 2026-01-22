@@ -236,7 +236,7 @@ globalThis.cadenza = Object.assign(
 /**
  * @typedef FeatureCollection - A adapted [GeoJSON](https://geojson.org/) feature collection object
  * @property {'FeatureCollection'} type - The object's type
- * @property {string} srs - The authority of the used spatial reference system
+ * @property {string} [srs] - The authority of the used spatial reference system
  * @property {Feature[]} features - The features within this collection
  */
 /**
