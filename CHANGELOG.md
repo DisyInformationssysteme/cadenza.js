@@ -8,6 +8,9 @@ This project uses a version scheme based on the Cadenza main version in the form
 ### Changed
 - Improved the docs regarding the description of the `setCustomValidity` method.
 
+### Changed
+- Improved the docs regarding the description of the `setCustomValidity` method.
+
 ## 10.3.10 - 2025-11-05
 ### Added
 - The description of the `additionalLayers` property and the code example have now been expanded to include notes on the correct configuration of Cadenza.
