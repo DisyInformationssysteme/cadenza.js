@@ -980,7 +980,7 @@ export class CadenzaClient {
   }
 
   /**
-   * Set the custom validation status of the geometry editor dialog ( {@link createGeometry}, {@link editGeometry} )
+   * Set the custom validation status of the geometry editor dialog ( {@link createGeometry}, {@link editGeometry}, {@link batchCreateGeometry}, {@link batchEditGeometry} )
    * or the {@link selectObjects} dialog in addition to the default validation status (including errors and warnings).
    *
    * Behavior:
