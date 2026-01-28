@@ -5,9 +5,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project uses a version scheme based on the Cadenza main version in the format x.x.y, where x.x is the Cadenza main version and y a functional change or bugfix.
 
 ## Unreleased
-### Added
-- The description of the `additionalLayers` property and the code example have now been expanded to include notes on the correct configuration of Cadenza.
-
 ### Changed
 - Improved the docs regarding the description of the `setCustomValidity` method.
 
