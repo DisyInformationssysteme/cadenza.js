@@ -711,10 +711,17 @@ export class CadenzaClient {
   /**
    * Set the custom validation status of the geometry editor dialog ( {@link createGeometry}, {@link editGeometry} )
    * or the {@link selectObjects} dialog in addition to the default validation status (including errors and warnings).
-   * When set to 'error', the dialog submission is blocked.
-   * If a custom status is already set, it will be overwritten.
-   * Passing '' resets the custom status to undefined, which means no custom status is displayed.
+   *
+   * Behavior in the geometry editor dialog:
+   * - When set to 'error', the dialog submission is blocked.
+   * - If a custom validation status is already set, it will be overwritten.
+   * - Passing '' resets the custom validation status, which means no custom validation status is displayed.
+   *
+   * Behavior in the {@link selectObjects} dialog:
+   * - The custom validation status is shown as a toast message which the user can dismiss.
+   *
    * If neither the geometry editor nor {@link selectObjects} is started, the method call has no effect.
+   *
    * @param {string} message The message to show in the dialog
    * @param {CustomValidityType} [type] The type of message (defaults to 'error')
    */
