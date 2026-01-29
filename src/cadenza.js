@@ -989,9 +989,9 @@ export class CadenzaClient {
    * or the {@link selectObjects} dialog in addition to the default validation status (including errors and warnings).
    *
    * Behavior:
-   * - When set to 'error', the dialog submission is blocked.
+   * - When the custom validation status is of type 'error', the dialog submission is blocked.
    * - If a custom validation status is already set, it will be overwritten.
-   * - Passing '' resets the custom validation status, which means no custom validation status is displayed.
+   * - Passing '' (an empty string) resets the custom validation status, which means no custom validation status is displayed.
    *
    * If neither the geometry editor nor {@link selectObjects} is started, the method call has no effect.
    *
