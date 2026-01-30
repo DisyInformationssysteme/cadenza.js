@@ -243,6 +243,7 @@
       minScale,
       parts,
       requestAsPdf,
+      showLegend,
       simplifiedOperationMode,
       snappingLayer,
       useAutoCorrection,
@@ -272,6 +273,7 @@
         layers: layers ? JSON.parse(layers) : undefined,
         minScale: minScale && Number(minScale),
         operationMode: (simplifiedOperationMode === 'on' ? 'simplified' : 'normal' ),
+        hideLegend: showLegend !== 'on',
         parts: parts && parts.split(','),
         snapping: snappingLayer ? {
           layer: JSON.parse(snappingLayer),
@@ -576,14 +578,14 @@
 
 <template data-action="setFilter" data-common="filter"></template>
 
-<template data-action="createGeometry" data-common="geometryType,simplifiedOperationMode,minimumScale,additionalLayers,extentStrategy,map,snapping,disabledUiFeatures,filter">
+<template data-action="createGeometry" data-common="geometryType,simplifiedOperationMode,showLegend,minimumScale,additionalLayers,extentStrategy,map,snapping,disabledUiFeatures,filter">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
   </div>
 </template>
 
-<template data-action="editGeometry" data-common="simplifiedOperationMode,minimumScale,additionalLayers,extentStrategy,map,snapping,disabledUiFeatures,filter">
+<template data-action="editGeometry" data-common="simplifiedOperationMode,showLegend,minimumScale,additionalLayers,extentStrategy,map,snapping,disabledUiFeatures,filter">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
@@ -610,14 +612,14 @@
   </div>
 </template>
 
-<template data-action="batchCreateGeometry" data-common="geometryType,simplifiedOperationMode,minimumScale,additionalLayers,extentStrategy,map,snapping,disabledUiFeatures,filter">
+<template data-action="batchCreateGeometry" data-common="geometryType,simplifiedOperationMode,showLegend,minimumScale,additionalLayers,extentStrategy,map,snapping,disabledUiFeatures,filter">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
   </div>
 </template>
 
-<template data-action="batchEditGeometry" data-common="simplifiedOperationMode,minimumScale,additionalLayers,extentStrategy,map,snapping,disabledUiFeatures,filter">
+<template data-action="batchEditGeometry" data-common="simplifiedOperationMode,showLegend,minimumScale,additionalLayers,extentStrategy,map,snapping,disabledUiFeatures,filter">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
@@ -747,6 +749,15 @@
     <label>
       <input type="checkbox" name="simplifiedOperationMode">
       Simplified operation mode
+    </label>
+  </div>
+</template>
+
+<template id="common-showLegend">
+  <div>
+    <label>
+      <input type="checkbox" name="showLegend">
+      Show Legend
     </label>
   </div>
 </template>
