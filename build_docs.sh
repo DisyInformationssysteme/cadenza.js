@@ -10,9 +10,6 @@ TYPEDOC_CONFIG=`mktemp -p .`.cjs
 # Create the output directory if it doesn't exist.
 mkdir -p "$OUTPUT_DIR"
 
-# Save the original branch name.
-ORIGINAL_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-
 # Get all remote branches that match the pattern v(\d+\.){2}x (e.g., v10.4.x, v11.1.x, etc.).
 BRANCHES=$(git branch -r --sort=v:refname | grep -P '^  origin/v(\d+\.){2}x$' | sed 's/origin\///' | sed 's/^[[:space:]]*//g')
 
@@ -61,4 +58,4 @@ done
 echo "All branches processed."
 
 # Switch back to the original branch.
-git switch $ORIGINAL_BRANCH
+git switch main
