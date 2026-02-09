@@ -985,11 +985,16 @@ export class CadenzaClient {
   }
 
   /**
-   * Set custom validity state of the geometry editor in addition to the default validation state (including errors and
-   * warnings). When set to error the dialog submission is blocked.
-   * If there already is a custom state set it will override it.
-   * Passing '' will reset the custom state to undefined, meaning no custom state is displayed.
-   * If no geometry editing is started, the method call has no effect.
+   * Set the custom validation status of the geometry editor dialog ( {@link createGeometry}, {@link editGeometry}, {@link batchCreateGeometry}, {@link batchEditGeometry} )
+   * or the {@link selectObjects} dialog in addition to the default validation status (including errors and warnings).
+   *
+   * Behavior:
+   * - When the custom validation status is of type 'error', the dialog submission is blocked.
+   * - If a custom validation status is already set, it will be overwritten.
+   * - Passing '' (an empty string) as the message parameter resets the custom validation status, which means no custom validation status is displayed.
+   *
+   * If neither the geometry editor nor {@link selectObjects} is started, the method call has no effect.
+   *
    * @param {string} message The message to show in the dialog
    * @param {CustomValidityType} [type] The type of message (defaults to 'error')
    */
