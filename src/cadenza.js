@@ -725,6 +725,7 @@ export class CadenzaClient {
       disabledUiFeatures,
       filter,
       geometryType,
+      hideLegend,
       minScale,
       operationMode,
       snapping,
@@ -735,7 +736,6 @@ export class CadenzaClient {
     await this.#setupEditorViaPostRequests({
       additionalLayers,
       validExtentStrategy,
-      hideLegend,
     });
     await this.#setEditorStateToReady();
   }
@@ -784,6 +784,7 @@ export class CadenzaClient {
       disabledUiFeatures,
       filter,
       geometryType,
+      hideLegend,
       minScale,
       operationMode,
       snapping,
@@ -795,7 +796,6 @@ export class CadenzaClient {
       additionalLayers,
       validExtentStrategy,
       geometry,
-      hideLegend,
     });
     await this.#setEditorStateToReady();
   }
@@ -846,6 +846,7 @@ export class CadenzaClient {
       disabledUiFeatures,
       filter,
       geometryType,
+      hideLegend,
       minScale,
       operationMode,
       snapping,
@@ -856,7 +857,6 @@ export class CadenzaClient {
     await this.#setupEditorViaPostRequests({
       additionalLayers,
       validExtentStrategy,
-      hideLegend,
     });
     await this.#setEditorStateToReady();
   }
@@ -908,6 +908,7 @@ export class CadenzaClient {
       disabledUiFeatures,
       filter,
       geometryType,
+      hideLegend,
       minScale,
       operationMode,
       snapping,
@@ -918,7 +919,6 @@ export class CadenzaClient {
     await this.#setupEditorViaPostRequests({
       additionalLayers,
       validExtentStrategy,
-      hideLegend,
     });
     await this.#createFeaturesAndEditLastCreatedFeature(features);
     await this.#setEditorStateToReady();
@@ -929,18 +929,15 @@ export class CadenzaClient {
    * @param [__namedParameters.geometry] {Geometry} - The geometry to edit
    * @param [__namedParameters.additionalLayers] {LayerDefinition[]} - Layer definitions to be imported and shown in the background, as a basis for the drawing. IMPORTANT: The Cadenza referenced with `cadenzaClient` must be configured to support the import of GeoJSON, and the (system) privileges of the corresponding user must also be set in such a way that the import of GeoJSON is possible.
    * @param [__namedParameters.validExtentStrategy] {ExtentStrategy} - Defines the initial map extent; If not given, Cadenza's default logic is used.
-   * @param [__namedParameters.hideLegend] {boolean} - Whether the legend should be hidden initially. Default is true.
    * @returns {Promise<Awaited<unknown>[]>}
    */
   #setupEditorViaPostRequests({
     geometry,
     additionalLayers,
     validExtentStrategy,
-    hideLegend,
   }) {
     const postRequests = [];
     postRequests.push(this.#setExtentStrategy(validExtentStrategy));
-    postRequests.push(this.#setLegendVisibility(!hideLegend));
     if (geometry) {
       postRequests.push(
         this.#postRequest('setGeometry', {
@@ -997,15 +994,6 @@ export class CadenzaClient {
    */
   #setEditorStateToReady() {
     return this.#postRequest('setEditorState', 'READY');
-  }
-
-  /**
-   * Toggles the visibility of the map legend.
-   *
-   * @param {boolean} value true to show the legend, false to hide it.
-   */
-  #setLegendVisibility(value) {
-    return this.#postRequest('setLegendVisibility', value);
   }
 
   /**
@@ -1521,6 +1509,7 @@ export class CadenzaClient {
    * @param {string} [params.fileName]
    * @param {FilterVariables} [params.filter]
    * @param {GeometryType} [params.geometryType]
+   * @param {boolean} [params.hideLegend]
    * @param {boolean} [params.hideMainHeaderAndFooter]
    * @param {boolean} [params.hideWorkbookToolBar]
    * @param {GlobalId} [params.highlightGlobalId]
@@ -1546,6 +1535,7 @@ export class CadenzaClient {
     fileName,
     filter,
     geometryType,
+    hideLegend,
     hideMainHeaderAndFooter,
     hideWorkbookToolBar,
     highlightGlobalId,
@@ -1624,6 +1614,7 @@ export class CadenzaClient {
           ),
         )),
       ...(geometryType && { geometryType }),
+      ...(hideLegend && { hideLegend: 'true' }),
       ...(hideMainHeaderAndFooter && { hideMainHeaderAndFooter: 'true' }),
       ...(hideWorkbookToolBar && { hideWorkbookToolBar: 'true' }),
       ...(highlightGlobalId && { highlightGlobalId }),
