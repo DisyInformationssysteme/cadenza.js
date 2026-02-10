@@ -19,7 +19,7 @@ npm install @disy/cadenza.js@~10.2.0 # For latest version for Cadenza 10.2
 The Cadenza main version is reflected in the corresponding major and minor version of Cadenza JS (e.g. 10.2.0 for Cadenza 10.2), while the last version segment is increased for both, bugfixes and functional changes.
 
 ### Cadenza 10.1 and earlier
-For Cadenza 10.1 and earlier versions Cadenza JS used did use genuine semantic versioning. Please consult the Cadenza Documentation for the corresponding major and minor version of cadenza.js.
+For Cadenza 10.1 and earlier versions Cadenza JS did use genuine semantic versioning. Please consult the Cadenza Documentation for the corresponding major and minor version of cadenza.js.
 
 ## Usage Examples
 
@@ -141,7 +141,7 @@ _Tip:_ You can use the same `AbortController` to abort multiple requests, e.g. w
 <!--
 ### Set Filters in the Currently Shown Embedding Target
 
-<small>API: [CadenzaClient#setFilter](./classes/CadenzaClient.html#setFilter)</small>
+<small>API: [CadenzaClient#setFilter](./classes/CadenzaClient.html#setfilter)</small>
 
 Set filter variables using a mapping of variable names to values.
 
@@ -152,7 +152,7 @@ cadenzaClient.setFilter({ '<variableName>': 'value' });
 
 ### Show a Workbook Map View
 
-<small>API: [CadenzaClient#showMap](./classes/CadenzaClient.html#showMap)</small>
+<small>API: [CadenzaClient#showMap](./classes/CadenzaClient.html#showmap)</small>
 
 Show the embedding target of a workbook map view in an iframe and ...
 
@@ -185,7 +185,7 @@ cadenzaClient.showMap('<embeddingTargetId>', {
 <!--
 ### Set the Visibility of a Layer in the Currently Shown Workbook Map View
 
-<small>API: [CadenzaClient#setLayerVisibility](./classes/CadenzaClient.html#setLayerVisibility)</small>
+<small>API: [CadenzaClient#setLayerVisibility](./classes/CadenzaClient.html#setlayervisibility)</small>
 
 To set the visibility of a layer in the currently shown map, pass the layer path or print name and the desired visibility.
 
@@ -197,7 +197,7 @@ cadenzaClient.setLayerVisibility('<layerPrintName>', false);
 <!--
 ### Get the Image of the Currently Shown Workbook Map View
 
-<small>API: [CadenzaClient#getData](./classes/CadenzaClient.html#getData)</small>
+<small>API: [CadenzaClient#getData](./classes/CadenzaClient.html#getdata)</small>
 
 The method may support multiple data types in the future. Currently, only `"png"` is supported to get the image of a workbook map view.
 
@@ -210,7 +210,7 @@ canvas.drawImage(await createImageBitmap(data), 0, 0);
 
 ### Edit an Existing Geometry
 
-<small>API: [CadenzaClient#editGeometry](./classes/CadenzaClient.html#editGeometry), [CadenzaClient#on](./classes/CadenzaClient.html#on)</small>
+<small>API: [CadenzaClient#editGeometry](./classes/CadenzaClient.html#editgeometry), [CadenzaClient#on](./classes/CadenzaClient.html#on)</small>
 
 Edit a GeoJSON geometry with a workbook map view in the background. The geometry coordinates are in the map's SRS (`useMapSrs: true`).
 
@@ -246,7 +246,7 @@ unsubscribe();
 
 ### Create a New Geometry
 
-<small>API: [CadenzaClient#createGeometry](./classes/CadenzaClient.html#createGeometry)</small>
+<small>API: [CadenzaClient#createGeometry](./classes/CadenzaClient.html#creategeometry)</small>
 
 Create a GeoJSON point geometry with a workbook map view in the background. The geometry coordinates are in the map's SRS (`useMapSrs: true`).
 
@@ -280,7 +280,7 @@ cadenzaClient.createGeometry('<embeddingTargetId>', 'Polygon', {
 
 ### Select Objects in a Workbook Map View
 
-<small>API: [CadenzaClient#selectObjects](./classes/CadenzaClient.html#selectObjects)</small>
+<small>API: [CadenzaClient#selectObjects](./classes/CadenzaClient.html#selectobjects)</small>
 
 Ask the user to select objects in a workbook map view. In the example the selection is restricted to specific layers. For layers in groups, pass the layer path.
 
@@ -300,7 +300,7 @@ cadenzaClient.on('selectObjects:ok', (event) => {
 <!--
 #### _Programmatically_ Set the Selection in the Currently Shown Workbook Map View
 
-<small>API: [CadenzaClient#setSelection](./classes/CadenzaClient.html#setSelection)</small>
+<small>API: [CadenzaClient#setSelection](./classes/CadenzaClient.html#setselection)</small>
 
 Set the selection in the currently shown workbook map view using a list of object IDs to select. An empty list clears the selection.
 
@@ -312,9 +312,8 @@ cadenzaClient.setSelection(
 ```
 
 You can also add to or remove from the current selection:
-* <small>API: [CadenzaClient#addSelection](./classes/CadenzaClient.html#addSelection)</small>
-* <small>API: [CadenzaClient#removeSelection](./classes/CadenzaClient.html#removeSelection)</small>
--->
+* <small>API: [CadenzaClient#addSelection](./classes/CadenzaClient.html#addselection)</small>
+* <small>API: [CadenzaClient#removeSelection](./classes/CadenzaClient.html#removeselection)</small>
 
 ### Highlight an Item in the Navigator
 
@@ -338,7 +337,7 @@ cadenzaClient.show({page: 'welcome'}, {highlightGlobalId: 'ROOT.MyFolder'});
 
 #### Expand the Navigator
 
-<small>API: [CadenzaClient#expandNavigator](./classes/CadenzaClient.html#expandNavigator)</small>
+<small>API: [CadenzaClient#expandNavigator](./classes/CadenzaClient.html#expandnavigator)</small>
 
 Expand the navigator.
 
@@ -348,7 +347,7 @@ cadenzaClient.expandNavigator();
 
 ### Fetch Data From a Workbook View
 
-<small>API: [CadenzaClient#fetchData](./classes/CadenzaClient.html#fetchData)</small>
+<small>API: [CadenzaClient#fetchData](./classes/CadenzaClient.html#fetchdata)</small>
 
 Fetch data from a workbook view in CSV format.
 
@@ -374,7 +373,7 @@ const tableData = await response.json();
 
 ### Fetch the Object Info from a Workbook Map View
 
-<small>API: [CadenzaClient#fetchObjectInfo(./classes/CadenzaClient.html#fetchObjectInfo)</small>
+<small>API: [CadenzaClient#fetchObjectInfo(./classes/CadenzaClient.html#fetchobjectinfo)</small>
 
 Fetch the object info from a workbook map view in JSON format. The result contains all information, that is shown in the object info within cadenza.
 
@@ -387,7 +386,7 @@ const objectInfo = await cadenzaClient.fetchObjectInfo('embeddingTargetId', 'lay
 
 ### Fetch the area intersection from a Workbook Map View Layer
 
-<small>API: [CadenzaClient#fetchObjectInfo(./classes/CadenzaClient.html#fetchAreaIntersections)</small>
+<small>API: [CadenzaClient#fetchObjectInfo(./classes/CadenzaClient.html#fetchareaintersections)</small>
 
 Fetch the intersection area from a workbook map view layer in JSON format for a given area. The result contains all intersecting objects of the layer, their object ID, if defined the object name and a geometry representing the intersection area, with area size and area perimeter.
 
@@ -409,7 +408,7 @@ const featureCollection = await cadenzaClient.fetchAreaIntersections('embeddingT
 
 ### Download Data From a Workbook View
 
-<small>API: [CadenzaClient#downloadData](./classes/CadenzaClient.html#downloadData)</small>
+<small>API: [CadenzaClient#downloadData](./classes/CadenzaClient.html#downloaddata)</small>
 
 Download data from a workbook view in Excel format. This triggers the browser's download dialog.
 
@@ -435,7 +434,7 @@ cadenzaClient.reload({ invalidateCaches: true });
 
 ### Close the Cadenza Dialog or Window That Embeds the Custom Application
 
-<small>API: [CadenzaClient#closeMe](./classes/CadenzaClient.html#closeMe)</small>
+<small>API: [CadenzaClient#closeMe](./classes/CadenzaClient.html#closeme)</small>
 
 Sends a message to parent Cadenza window to close the window containing this application.
 ```javascript
