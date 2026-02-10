@@ -194,6 +194,7 @@ globalThis.cadenza = Object.assign(
  * @property {OperationMode} [operationMode] - The mode in which a workbook should be operated
  * @property {AbortSignal} [signal] - A signal to abort the iframe loading
  * @property {SnappingOptions} [snapping] - Passing these options enables snapping
+ * @property {boolean} [hideLegend] - Whether the legend should be hidden initially. Default is true.
  * @property {boolean} [useMapSrs] - Whether the coordinates specified in other parameters are specified in the map's SRS and the created geometry should use the map's SRS (otherwise EPSG:4326 is assumed)
  */
 
@@ -712,6 +713,7 @@ export class CadenzaClient {
       operationMode,
       signal,
       snapping,
+      hideLegend,
     } = {},
   ) {
     this.#log('CadenzaClient#createGeometry', ...arguments);
@@ -723,6 +725,7 @@ export class CadenzaClient {
       disabledUiFeatures,
       filter,
       geometryType,
+      hideLegend,
       minScale,
       operationMode,
       snapping,
@@ -766,6 +769,7 @@ export class CadenzaClient {
       signal,
       snapping,
       useMapSrs,
+      hideLegend,
     } = {},
   ) {
     this.#log('CadenzaClient#editGeometry', ...arguments);
@@ -780,6 +784,7 @@ export class CadenzaClient {
       disabledUiFeatures,
       filter,
       geometryType,
+      hideLegend,
       minScale,
       operationMode,
       snapping,
@@ -827,6 +832,7 @@ export class CadenzaClient {
       signal,
       snapping,
       useMapSrs,
+      hideLegend,
     } = {},
   ) {
     this.#log('CadenzaClient#editGeometry', ...arguments);
@@ -840,6 +846,7 @@ export class CadenzaClient {
       disabledUiFeatures,
       filter,
       geometryType,
+      hideLegend,
       minScale,
       operationMode,
       snapping,
@@ -886,6 +893,7 @@ export class CadenzaClient {
       signal,
       snapping,
       useMapSrs,
+      hideLegend,
     } = {},
   ) {
     this.#log('CadenzaClient#editGeometry', ...arguments);
@@ -900,6 +908,7 @@ export class CadenzaClient {
       disabledUiFeatures,
       filter,
       geometryType,
+      hideLegend,
       minScale,
       operationMode,
       snapping,
@@ -980,6 +989,9 @@ export class CadenzaClient {
     return this.#postRequest('requestEditFeature', objectId);
   }
 
+  /**
+   * Sets editor state to ready.
+   */
   #setEditorStateToReady() {
     return this.#postRequest('setEditorState', 'READY');
   }
@@ -1497,6 +1509,7 @@ export class CadenzaClient {
    * @param {string} [params.fileName]
    * @param {FilterVariables} [params.filter]
    * @param {GeometryType} [params.geometryType]
+   * @param {boolean} [params.hideLegend]
    * @param {boolean} [params.hideMainHeaderAndFooter]
    * @param {boolean} [params.hideWorkbookToolBar]
    * @param {GlobalId} [params.highlightGlobalId]
@@ -1522,6 +1535,7 @@ export class CadenzaClient {
     fileName,
     filter,
     geometryType,
+    hideLegend,
     hideMainHeaderAndFooter,
     hideWorkbookToolBar,
     highlightGlobalId,
@@ -1600,6 +1614,7 @@ export class CadenzaClient {
           ),
         )),
       ...(geometryType && { geometryType }),
+      ...(hideLegend && { hideLegend: 'true' }),
       ...(hideMainHeaderAndFooter && { hideMainHeaderAndFooter: 'true' }),
       ...(hideWorkbookToolBar && { hideWorkbookToolBar: 'true' }),
       ...(highlightGlobalId && { highlightGlobalId }),
