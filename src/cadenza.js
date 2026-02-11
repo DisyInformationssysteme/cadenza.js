@@ -713,7 +713,7 @@ export class CadenzaClient {
       operationMode,
       signal,
       snapping,
-      hideLegend,
+      hideLegend = true,
     } = {},
   ) {
     this.#log('CadenzaClient#createGeometry', ...arguments);
@@ -769,7 +769,7 @@ export class CadenzaClient {
       signal,
       snapping,
       useMapSrs,
-      hideLegend,
+      hideLegend = true,
     } = {},
   ) {
     this.#log('CadenzaClient#editGeometry', ...arguments);
@@ -832,7 +832,7 @@ export class CadenzaClient {
       signal,
       snapping,
       useMapSrs,
-      hideLegend,
+      hideLegend = true,
     } = {},
   ) {
     this.#log('CadenzaClient#editGeometry', ...arguments);
@@ -893,7 +893,7 @@ export class CadenzaClient {
       signal,
       snapping,
       useMapSrs,
-      hideLegend,
+      hideLegend = true,
     } = {},
   ) {
     this.#log('CadenzaClient#editGeometry', ...arguments);
