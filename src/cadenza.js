@@ -1614,7 +1614,7 @@ export class CadenzaClient {
           ),
         )),
       ...(geometryType && { geometryType }),
-      ...(hideLegend && { hideLegend: 'true' }),
+      ...(hideLegend !== false ? { hideLegend: 'true' } : {}), // defaults to true
       ...(hideMainHeaderAndFooter && { hideMainHeaderAndFooter: 'true' }),
       ...(hideWorkbookToolBar && { hideWorkbookToolBar: 'true' }),
       ...(highlightGlobalId && { highlightGlobalId }),
