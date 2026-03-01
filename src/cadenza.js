@@ -145,6 +145,7 @@ globalThis.cadenza = Object.assign(
 /**
  * @typedef Geometry - A [GeoJSON](https://geojson.org/) geometry object
  * @property {GeometryType} type - The type of the geometry
+ * @property {string} [srs] - The authority of the used spatial reference system
  * @property {Coordinate | Coordinate[] | Coordinate[][] | Coordinate[][][]} coordinates - The coordinates of the geometry
  */
 /**
@@ -236,6 +237,7 @@ globalThis.cadenza = Object.assign(
 /**
  * @typedef FeatureCollection - A adapted [GeoJSON](https://geojson.org/) feature collection object
  * @property {'FeatureCollection'} type - The object's type
+ * @property {string} [srs] - The authority of the used spatial reference system
  * @property {Feature[]} features - The features within this collection
  */
 /**
@@ -1406,8 +1408,8 @@ export class CadenzaClient {
         geometry,
         useAutoCorrection,
         useMapSrs,
-        isForwardProblemDetailsEnabled: true,
       }),
+      true,
     ).then((response) => response.json());
   }
 
@@ -1415,7 +1417,7 @@ export class CadenzaClient {
     /** @type string */ path,
     /** @type URLSearchParams */ params,
     /** @type AbortSignal | undefined */ signal,
-    /** @type String | undefined If body is set, the fetch will be a post.*/ body,
+    /** @type String | undefined If body is set, the fetch will be a post.*/ body = undefined,
     /** @type boolean */ isForwardProblemDetailsEnabled = false,
   ) {
     const url = this.#createUrl(path, params);
