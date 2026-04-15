@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project uses a version scheme based on the Cadenza main version in the format x.x.y, where x.x is the Cadenza main version and y a functional change or bugfix.
 
 ## Unreleased
+
+## 10.6.1 - 2026-04-15
 ### Added
 - Support for `dataType=ods` in `CadenzaClient#downloadData` and `CadenzaClient#fetchData`
 
