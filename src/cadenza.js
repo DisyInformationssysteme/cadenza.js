@@ -199,7 +199,7 @@ globalThis.cadenza = Object.assign(
  */
 
 /**
- * @typedef {'csv' | 'excel' | 'json' | 'pdf' | 'png'} DataType - A data type
+ * @typedef {'csv' | 'excel' | 'ods' | 'json' | 'pdf' | 'png'} DataType - A data type
  *
  * See [JSON Representation of Cadenza Object Data](../index.html#md:json-representation-of-cadenza-object-data) for JSON data.
  */
@@ -1309,7 +1309,7 @@ export class CadenzaClient {
    *
    * @param {EmbeddingTargetId} source - The workbook view to fetch data from.
    * @param {DataType} dataType - The data type you want to get back from the server.
-   *  Currently, `"csv"`, `"excel"` and `"json"` are supported for embedding targets of type view with a view type of
+   *  Currently, `"csv"`, `"excel"`, `"ods"`, and `"json"` are supported for embedding targets of type view with a view type of
    *   table and indicator. `"pdf"` is supported for embedding targets of type report and of type view with a view type
    *   of "JasperReports report".
    * @param {object} [__namedParameters] - Options
@@ -1322,7 +1322,7 @@ export class CadenzaClient {
    */
   fetchData(source, dataType, { filter, parts, signal } = {}) {
     this.#log('CadenzaClient#fetchData', ...arguments);
-    assertSupportedDataType(dataType, ['csv', 'excel', 'json', 'pdf']);
+    assertSupportedDataType(dataType, ['csv', 'excel', 'ods', 'json', 'pdf']);
     const params = this.#createParams({ dataType, filter, parts });
     return this.#fetch(resolvePath(source), params, signal);
   }
@@ -1459,7 +1459,7 @@ export class CadenzaClient {
    *
    * @param {EmbeddingTargetId} source - The workbook view to fetch data from.
    * @param {DataType} dataType - The data type you want to get back from the server.
-   *  Currently, `"csv"`, `"excel"` and `"json"` are supported for embedding targets of type view with a view type of
+   *  Currently, `"csv"`, `"excel"`, `"ods"`, and `"json"` are supported for embedding targets of type view with a view type of
    *   table and indicator. `"pdf"` is supported for embedding targets of type report and of type view with a view type
    *   of "JasperReports report".
    * @param {object} [__namedParameters] - Options
@@ -1471,7 +1471,7 @@ export class CadenzaClient {
    */
   downloadData(source, dataType, { fileName, filter, parts } = {}) {
     this.#log('CadenzaClient#downloadData', ...arguments);
-    assertSupportedDataType(dataType, ['csv', 'excel', 'json', 'pdf']);
+    assertSupportedDataType(dataType, ['csv', 'excel', 'ods', 'json', 'pdf']);
     const params = this.#createParams({ dataType, fileName, filter, parts });
     this.#download(resolvePath(source), params);
   }
