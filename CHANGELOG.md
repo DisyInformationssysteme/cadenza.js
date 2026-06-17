@@ -6,6 +6,8 @@ This project uses a version scheme based on the Cadenza main version in the form
 
 ## Unreleased
 
+## 11.0.0 - 2026-06-17
+
 ## 10.6.1 - 2026-04-15
 ### Added
 - Support for `dataType=ods` in `CadenzaClient#downloadData` and `CadenzaClient#fetchData`
