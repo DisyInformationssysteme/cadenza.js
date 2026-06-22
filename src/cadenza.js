@@ -1414,8 +1414,8 @@ export class CadenzaClient {
   async #fetch(
     /** @type string */ path,
     /** @type URLSearchParams */ params,
-    /** @type AbortSignal | undefined */ signal,
-    /** @type String | undefined If body is set, the fetch will be a post.*/ body,
+    /** @type {AbortSignal | undefined}  */ signal,
+    /** @type {String | undefined} If body is set, the fetch will be a post.*/ body = undefined,
     /** @type boolean */ isForwardProblemDetailsEnabled = false,
   ) {
     const url = this.#createUrl(path, params);
@@ -1996,5 +1996,8 @@ export class CadenzaError extends Error {
 }
 
 function isTest() {
-  return location.href === 'test';
+  return (
+    /** @ts-ignore */
+    globalThis.CADENZA_TEST
+  );
 }
