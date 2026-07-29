@@ -205,13 +205,26 @@ globalThis.cadenza = Object.assign(
  */
 /** @typedef {'columns' | 'values' | 'totals'} TablePart - A part of a table to export */
 /**
- * @typedef {Record<string, string | string[] | number | Date | SpatialFilterValue | null>} FilterVariables - Filter variable names and values
+ * @typedef {string | number} AttributeValue - The value of a Cadenza attribute
  *
- * Variables of type String, Integer, Long, Double and Date can be set.
- * A property named "$spatial" reflects a Spatial filter value and must adhere to type {@link SpatialFilterValue}.
+ * The exact representation is described in [JSON Representation of Cadenza Object Data](../index.html#json-representation-of-cadenza-object-data).
+ */
+/**
+ * @typedef {AttributeValue | bigint | Date} LenientAttributeValue - A lenient variant of {@link AttributeValue} that - for convenience - allows more values.
  *
- * _Note:_ Since numbers in JavaScript are Double values ([more info on MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number#number_encoding)),
- * for Long variables, the API is currently limited to the Double value range.
+ * Here's how the values are converted to proper attribute values:
+ *
+ * | `LenientAttributeValue` | Conversion to `AttributeType` |
+ * |-------------------------|-------------------------------|
+ * | `bigint`                | `value.toString()`            |
+ * | `Date`                  | `value.toISOString()`         |
+ */
+/**
+ * @typedef {Record<string, LenientAttributeValue | string[] | SpatialFilterValue | null>} FilterVariables - Filter variable names and values
+ *
+ * - Use `null` to unset a filter variable.
+ * - Use a `string` array to pass multiple values for a variable that is used in an `IN` expression.
+ * - The name "$spatial" reflects a Spatial filter value and must adhere to type {@link SpatialFilterValue}.
  */
 /**
  * @typedef SpatialFilterValue - Defines a spatial filter variable value.
@@ -226,7 +239,7 @@ globalThis.cadenza = Object.assign(
 /**
  * @typedef Feature - A adapted [GeoJSON](https://geojson.org/) feature object.
  * @property {'Feature'} type - The object's type
- * @property {any[]} objectId - The id of the feature
+ * @property {AttributeValue[]} objectId - The id of the feature
  * @property {Geometry} geometry - The geometry
  * @property {Record<string, string>} properties - The formated properties
  * @property {number} [area] - The area of a `Polygon` feature
@@ -598,8 +611,9 @@ export class CadenzaClient {
    */
   setFilter(filter) {
     this.#log('CadenzaClient#setFilter', ...arguments);
-    assertValidFilterVariables(filter);
-    return this.#postRequest('setFilter', { filter });
+    return this.#postRequest('setFilter', {
+      filter: sanitizeAndValidateFilterVariables(filter),
+    });
   }
 
   /**
@@ -626,7 +640,7 @@ export class CadenzaClient {
    * Set the selection in the currently shown workbook map view.
    *
    * @param {WorkbookLayerPath | string} layer - The data view layer to set the selection in
-   * @param {unknown[][]} values - The IDs of the objects to select
+   * @param {LenientAttributeValue[][]} values - The IDs of the objects to select
    * @param {object} [__namedParameters]
    * @param {GeometryExtentStrategy} [__namedParameters.extentStrategy] - Strategy to define the new map extent
    * @return {Promise<void>} A `Promise` for when the selection was set.
@@ -636,7 +650,7 @@ export class CadenzaClient {
     this.#log('CadenzaClient#setSelection', ...arguments);
     const selectionResult = this.#postRequest('setSelection', {
       layer: array(layer),
-      values,
+      values: values.map(sanitizeAndValidateAttributeValues),
     });
     this.#setExtentStrategy(extentStrategy);
     return selectionResult;
@@ -646,7 +660,7 @@ export class CadenzaClient {
    * Add to the selection in the currently shown workbook map view.
    *
    * @param {WorkbookLayerPath | string} layer - The data view layer to change the selection in
-   * @param {unknown[][]} values - The IDs of the objects to select
+   * @param {LenientAttributeValue[][]} values - The IDs of the objects to select
    * @param {object} [__namedParameters]
    * @param {GeometryExtentStrategy} [__namedParameters.extentStrategy] - Strategy to define the new map extent
    * @return {Promise<void>} A `Promise` for when the selection was changed.
@@ -656,7 +670,7 @@ export class CadenzaClient {
     this.#log('CadenzaClient#addSelection', ...arguments);
     const selectionResult = this.#postRequest('addSelection', {
       layer: array(layer),
-      values,
+      values: values.map(sanitizeAndValidateAttributeValues),
     });
     this.#setExtentStrategy(extentStrategy);
     return selectionResult;
@@ -666,7 +680,7 @@ export class CadenzaClient {
    * Remove from the selection in the currently shown workbook map view.
    *
    * @param {WorkbookLayerPath | string} layer - The data view layer to change the selection in
-   * @param {unknown[][]} values - The IDs of the objects to unselect
+   * @param {LenientAttributeValue[][]} values - The IDs of the objects to unselect
    * @param {object} [__namedParameters]
    * @param {GeometryExtentStrategy} [__namedParameters.extentStrategy] - Strategy to define the new map extent
    * @return {Promise<void>} A `Promise` for when the selection was changed.
@@ -676,7 +690,7 @@ export class CadenzaClient {
     this.#log('CadenzaClient#removeSelection', ...arguments);
     const selectionResult = this.#postRequest('removeSelection', {
       layer: array(layer),
-      values,
+      values: values.map(sanitizeAndValidateAttributeValues),
     });
     this.#setExtentStrategy(extentStrategy);
     return selectionResult;
@@ -1333,7 +1347,7 @@ export class CadenzaClient {
    * @param {EmbeddingTargetId} source - The workbook view to fetch object info from.
    * @param {(WorkbookLayerPath | string)[]} layerPath - Layer path to identify the layer
    *  (identified using layer paths or print names)
-   * @param {unknown[][]} objectIds - The IDs of the objects to select
+   * @param {LenientAttributeValue[][]} objectIds - The IDs of the objects to select
    * @param {object} [__namedParameters] - Options
    * @param {FilterVariables} [__namedParameters.filter] - Filter variables
    * @param {Boolean} [__namedParameters.fullGeometries] - Return non-simplified geometries
@@ -1358,7 +1372,7 @@ export class CadenzaClient {
       signal,
       JSON.stringify({
         fullGeometries,
-        objectIds,
+        objectIds: objectIds.map(sanitizeAndValidateAttributeValues),
         layerPath: array(layerPath),
         useMapSrs,
       }),
@@ -1557,7 +1571,7 @@ export class CadenzaClient {
       );
     }
     if (filter) {
-      assertValidFilterVariables(filter);
+      filter = sanitizeAndValidateFilterVariables(filter);
     }
     if (geometryType) {
       assertValidGeometryType(geometryType);
@@ -1601,7 +1615,7 @@ export class CadenzaClient {
         Object.fromEntries(
           Object.entries(filter).map(([variable, value]) => [
             `filter.${variable}`,
-            JSON.stringify(value instanceof Date ? value.toISOString() : value),
+            value,
           ]),
         )),
       ...(worksheetPlaceholders &&
@@ -1769,11 +1783,7 @@ function assertSupportedDataType(
 }
 
 function validSpatialFilterValue(/** @type SpatialFilterValue */ $spatial) {
-  if ($spatial === null) {
-    return true;
-  }
-
-  if (typeof $spatial === 'object') {
+  if (typeof $spatial === 'object' && $spatial != null) {
     return (
       validSpatialRelation($spatial.spatialRelation) &&
       validSpatialFilterGeometry($spatial.geometry)
@@ -1791,18 +1801,62 @@ function validSpatialFilterGeometry(/** @type Polygon */ geometry) {
   return typeof geometry === 'object' && geometry.type === 'Polygon';
 }
 
-function assertValidFilterVariables(/** @type {FilterVariables} */ filter) {
-  const { $spatial, ...otherFilter } = filter;
-  assert(
-    $spatial === undefined ||
-      validSpatialFilterValue(/** @type {SpatialFilterValue} */ ($spatial)),
-    'Invalid value for spatial filter value under $spatial property',
-  );
-  Object.keys(otherFilter).forEach((varName) =>
-    assert(
-      validKebabCaseString(varName),
-      `Invalid filter variable name: ${varName}`,
-    ),
+/** @return {AttributeValue} */
+function sanitizeAttributeValue(/** @type {LenientAttributeValue} */ value) {
+  if (typeof value === 'bigint') {
+    value = value.toString();
+  }
+  if (value instanceof Date) {
+    value = value.toISOString();
+  }
+  return value;
+}
+
+function validAttributeValue(/** @type unknown */ value) {
+  return typeof value === 'string' || typeof value === 'number';
+}
+
+function sanitizeAndValidateAttributeValues(
+  /** @type {LenientAttributeValue[]} */ values,
+) {
+  return values.map((value) => {
+    value = sanitizeAttributeValue(value);
+    assert(validAttributeValue(value), `Invalid attribute value`);
+    return value;
+  });
+}
+
+function sanitizeAndValidateFilterVariables(
+  /** @type {FilterVariables} */ filter,
+) {
+  return Object.fromEntries(
+    Object.entries(filter).map(([varName, value = null]) => {
+      if (varName === '$spatial') {
+        assert(
+          value == null ||
+            validSpatialFilterValue(/** @type {SpatialFilterValue} */ (value)),
+          'Invalid value for spatial filter ($spatial)',
+        );
+      } else {
+        assert(
+          validKebabCaseString(varName),
+          `Invalid filter variable name: ${varName}`,
+        );
+        if (
+          value != null &&
+          !(Array.isArray(value) && value.every((v) => typeof v === 'string'))
+        ) {
+          value = sanitizeAttributeValue(
+            /** @type {LenientAttributeValue} */ (value),
+          );
+          assert(
+            validAttributeValue(value),
+            `Invalid value for filter variable "${varName}"`,
+          );
+        }
+      }
+      return [varName, value];
+    }),
   );
 }
 
@@ -1933,12 +1987,12 @@ function getGeometryTypeFromFeatureCollection(featureCollection) {
  *   The extent is transformed according to the `useMapSrs` option.
  */
 /**
- * @typedef {CadenzaEvent<'change:selection', undefined | {layer: WorkbookLayerPath, values: unknown[][]}>} CadenzaChangeSelectionEvent - When the user changed the selection. `undefined` if no objects were selected.
+ * @typedef {CadenzaEvent<'change:selection', undefined | {layer: WorkbookLayerPath, values: AttributeValue[][]}>} CadenzaChangeSelectionEvent - When the user changed the selection. `undefined` if no objects were selected.
  *
  * For a selection in a workbook map view with activated feature info, the values also include the simplified geometries of the selected objects.
  */
 /**
- * @typedef {CadenzaEvent<'drillThrough', {context?: string, values: unknown[][]}>} CadenzaDrillThroughEvent - When the user executed a POST message drill-through.
+ * @typedef {CadenzaEvent<'drillThrough', {context?: string, values: AttributeValue[][]}>} CadenzaDrillThroughEvent - When the user executed a POST message drill-through.
  * <p>
  * The event includes a data row for every item in the workbook selection, each row consisting of the values of
  * the attributes that were selected for the POST message content. If the drill-through was executed from a map
@@ -1954,7 +2008,7 @@ function getGeometryTypeFromFeatureCollection(featureCollection) {
 /** @typedef {CadenzaEvent<'editGeometry:cancel'>} CadenzaEditGeometryCancelEvent - When the user cancelled the geometry editing. */
 /** @typedef {CadenzaEvent<'error', {type: string, message?: string}>} CadenzaErrorEvent - An error event that is mapped to a {@link CadenzaError} */
 /**
- * @typedef {CadenzaEvent<'selectObjects:ok', undefined | {layer: WorkbookLayerPath, values: unknown[][]}>} CadenzaSelectObjectsOkEvent - When the user submitted the selection. `undefined` if no objects were selected.
+ * @typedef {CadenzaEvent<'selectObjects:ok', undefined | {layer: WorkbookLayerPath, values: AttributeValue[][]}>} CadenzaSelectObjectsOkEvent - When the user submitted the selection. `undefined` if no objects were selected.
  *
  * For a selection in a workbook map view with activated feature info, the values also include the simplified geometries of the selected objects.
  */
