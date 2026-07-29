@@ -688,20 +688,21 @@ By default, the sandbox expects Cadenza to run on http://localhost:8080/cadenza.
 
 ## JSON Representation of Cadenza Object Data
 
-[JSON](https://www.json.org/) is a simple data-interchange format, which is also used in the Embedding API. It does not support all the attribute types of Cadenza objects, that's why there are some rules for representing Cadenza object data in JSON.
+[JSON](https://www.json.org/) is a simple data-interchange format, which is also used in the Cadenza API. It does not support all the attribute types of Cadenza objects, that's why there are some rules for representing Cadenza object data in JSON.
 
-| Cadenza Attribute Type              | JSON Type | JSON Example Value       | Notes                                                                                                                                                                                                                                 |
-|-------------------------------------|-----------|--------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Text (String)                       | string    | `"Text"`                 |                                                                                                                                                                                                                                       |
-| Number (Integer)                    | number    | `1`                      |                                                                                                                                                                                                                                       |
-| Number (Long)                       | string    | `"1"`                    | The long value range exceeds the range of the JSON number type ([more info on MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number#number_encoding)). So it's represented as a string.        |
+
+| Cadenza Attribute Type              | JSON Type | JSON Example Value       | Notes |
+|-------------------------------------|-----------|--------------------------|-------|
+| Text (String)                       | string    | `"Text"`                 | |
+| Number (Integer)                    | number    | `1`                      | |
+| Number (Long)                       | string    | `"1"`                    | The long value range exceeds the range of the JSON number type. So it's represented as a string. |
 | Floating point number (Double)      | number    | `1.23`                   |
-| Floating point number (Big decimal) | string    | `"1.23"`                 | The big decimal value range exceeds the range of the JSON number type ([more info on MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number#number_encoding)). So it's represented as a string. |
-| Date                                | string    | `"1999-12-31T23:00:00Z"` | A date is represented as an [ISO date time string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#date_time_string_format).                                                                                                    |
-| Duration                            | number    | `1`                      | A duration is represented by its numeric value.                                                                                                                                                                                       |
-| Geometry                            | object    | <pre lang="json">{<br>  "type": "Point"<br>  "coordinates": [125.6, 10.1]<br>}</pre> | A geometry is represented as a [GeoJSON](https://geojson.org/) object.<br>_Note:_ By default, coordinates in GeoJSON use the WGS84 projection.                                                                                        |
-| IP address                          | string    | `"127.0.0.1"`            |                                                                                                                                                                                                                                       |
-| URL                                 | string    | `"http://example.com"`   |                                                                                                                                                                                                                                       |
-| LOB                                 | string    |                          |                                                                                                                                                                                                                                       |
+| Floating point number (Big decimal) | string    | `"1.23"`                 | The big decimal value range exceeds the range of the JSON number type. So it's represented as a string. |
+| Date                                | string    | `"1999-12-31T23:00:00Z"` | A date is represented as an [ISO string in universal time](https://en.wikipedia.org/wiki/ISO_8601#Coordinated_Universal_Time_(UTC)) (UTC). |
+| Duration                            | number    | `1`                      | A duration is represented by its numeric value. |
+| Geometry                            | object    | <pre lang="json">{<br>  "type": "Point"<br>  "coordinates": [125.6, 10.1]<br>}</pre> | A geometry is represented as a [GeoJSON](https://geojson.org/) object.<br>_Note:_ By default, coordinates in GeoJSON use the WGS84 projection. |
+| IP address                          | string    | `"127.0.0.1"`            | |
+| URL                                 | string    | `"http://example.com"`   | |
+| LOB                                 | string    |                          | |
 
 <!-- prettier-ignore-end -->

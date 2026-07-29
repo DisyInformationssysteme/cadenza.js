@@ -304,7 +304,7 @@ describe('Given a Cadenza JS client instance', () => {
       expect(postMessage).toHaveBeenCalledTimes(1);
       const [event] = postMessage.mock.lastCall;
       expect(event.type).toBe('setFilter');
-      expect(event.detail.filter).toEqual(FILTER);
+      expect(event.detail.filter).toBe(FILTER);
       expect(getPort()).toBeDefined();
       expect(getResponse()).toBeInstanceOf(Promise);
     });
