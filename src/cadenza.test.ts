@@ -300,11 +300,27 @@ describe('Given a Cadenza JS client instance', () => {
       cad.setFilter(FILTER);
     });
 
+    it.each([
+      [null, null],
+      ['value', 'value'],
+      [
+        ['a', 'b'],
+        ['a', 'b'],
+      ],
+      [1.23, 1.23],
+      [1234567890n, '1234567890'],
+      [new Date('2023-11-17T17:12:06.175Z'), '2023-11-17T17:12:06.175Z'],
+    ])('Sanitizes filter value %p to %p', (filter, sanitizedFilter) => {
+      cad.setFilter({ filter });
+      const [event] = postMessage.mock.lastCall;
+      expect(event.detail.filter).toEqual({ filter: sanitizedFilter });
+    });
+
     it('Posts an event with a response port and returns a response Promise', () => {
       expect(postMessage).toHaveBeenCalledTimes(1);
       const [event] = postMessage.mock.lastCall;
       expect(event.type).toBe('setFilter');
-      expect(event.detail.filter).toBe(FILTER);
+      expect(event.detail.filter).toEqual(FILTER);
       expect(getPort()).toBeDefined();
       expect(getResponse()).toBeInstanceOf(Promise);
     });
