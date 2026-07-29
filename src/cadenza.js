@@ -1987,12 +1987,12 @@ function getGeometryTypeFromFeatureCollection(featureCollection) {
  *   The extent is transformed according to the `useMapSrs` option.
  */
 /**
- * @typedef {CadenzaEvent<'change:selection', undefined | {layer: WorkbookLayerPath, values: AttributeValue[][]}>} CadenzaChangeSelectionEvent - When the user changed the selection. `undefined` if no objects were selected.
+ * @typedef {CadenzaEvent<'change:selection', undefined | {layer: WorkbookLayerPath, values: unknown[][]}>} CadenzaChangeSelectionEvent - When the user changed the selection. `undefined` if no objects were selected.
  *
  * For a selection in a workbook map view with activated feature info, the values also include the simplified geometries of the selected objects.
  */
 /**
- * @typedef {CadenzaEvent<'drillThrough', {context?: string, values: AttributeValue[][]}>} CadenzaDrillThroughEvent - When the user executed a POST message drill-through.
+ * @typedef {CadenzaEvent<'drillThrough', {context?: string, values: unknown[][]}>} CadenzaDrillThroughEvent - When the user executed a POST message drill-through.
  * <p>
  * The event includes a data row for every item in the workbook selection, each row consisting of the values of
  * the attributes that were selected for the POST message content. If the drill-through was executed from a map
@@ -2008,7 +2008,7 @@ function getGeometryTypeFromFeatureCollection(featureCollection) {
 /** @typedef {CadenzaEvent<'editGeometry:cancel'>} CadenzaEditGeometryCancelEvent - When the user cancelled the geometry editing. */
 /** @typedef {CadenzaEvent<'error', {type: string, message?: string}>} CadenzaErrorEvent - An error event that is mapped to a {@link CadenzaError} */
 /**
- * @typedef {CadenzaEvent<'selectObjects:ok', undefined | {layer: WorkbookLayerPath, values: AttributeValue[][]}>} CadenzaSelectObjectsOkEvent - When the user submitted the selection. `undefined` if no objects were selected.
+ * @typedef {CadenzaEvent<'selectObjects:ok', undefined | {layer: WorkbookLayerPath, values: unknown[][]}>} CadenzaSelectObjectsOkEvent - When the user submitted the selection. `undefined` if no objects were selected.
  *
  * For a selection in a workbook map view with activated feature info, the values also include the simplified geometries of the selected objects.
  */
