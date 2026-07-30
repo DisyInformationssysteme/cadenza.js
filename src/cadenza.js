@@ -1933,7 +1933,7 @@ function getGeometryTypeFromFeatureCollection(featureCollection) {
  *   The extent is transformed according to the `useMapSrs` option.
  */
 /**
- * @typedef {CadenzaEvent<'change:selection', undefined | {viewName: string, attribute: string, layer?: WorkbookLayerPath, values: unknown[][]}>} CadenzaChangeSelectionEvent - When the user changed the selection. `undefined` if no objects were selected.
+ * @typedef {CadenzaEvent<'change:selection', undefined | {viewName: string, attributeName: string, layer?: WorkbookLayerPath, values: unknown[][]}>} CadenzaChangeSelectionEvent - When the user changed the selection. `undefined` if no objects were selected.
  *
  * For a selection in a workbook map view with activated feature info, the values also include the simplified geometries of the selected objects.
  */
