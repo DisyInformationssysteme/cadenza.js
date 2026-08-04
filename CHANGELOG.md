@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project uses a version scheme based on the Cadenza main version in the format x.x.y, where x.x is the Cadenza main version and y a functional change or bugfix.
 
 ## Unreleased
+- Extended the CadenzaChangeSelectionEvent with viewName and selection attribute 
 
 ## 11.1.2 - 2026-07-29
 ### Fixed

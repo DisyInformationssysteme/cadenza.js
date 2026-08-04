@@ -385,7 +385,7 @@ export class CadenzaClient {
     const targetWindow = this.#iframe
       ? this.iframe?.contentWindow
       : // If a window does not have a parent, its parent property is a reference to itself.
-        (window.opener ?? (window.parent !== window ? window.parent : null));
+        window.opener ?? (window.parent !== window ? window.parent : null);
     return /** @type {WindowProxy | null} */ targetWindow;
   }
 
@@ -1987,7 +1987,7 @@ function getGeometryTypeFromFeatureCollection(featureCollection) {
  *   The extent is transformed according to the `useMapSrs` option.
  */
 /**
- * @typedef {CadenzaEvent<'change:selection', undefined | {layer: WorkbookLayerPath, values: unknown[][]}>} CadenzaChangeSelectionEvent - When the user changed the selection. `undefined` if no objects were selected.
+ * @typedef {CadenzaEvent<'change:selection', undefined | {viewName: string, attributeName: string, layer?: WorkbookLayerPath, values: unknown[][]}>} CadenzaChangeSelectionEvent - When the user changed the selection. `undefined` if no objects were selected.
  *
  * For a selection in a workbook map view with activated feature info, the values also include the simplified geometries of the selected objects.
  */
