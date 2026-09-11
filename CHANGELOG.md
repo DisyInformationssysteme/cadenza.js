@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project uses a version scheme based on the Cadenza main version in the format x.x.y, where x.x is the Cadenza main version and y a functional change or bugfix.
 
 ## Unreleased
+### Added
+- `UserState` support in `CadenzaClient#showMap`, `CadenzaClient#createGeometry`, `CadenzaClient#editGeometry`, `CadenzaClient#batchCreateGeometry` and `CadenzaClient#batchEditGeometry`.
+- `CadenzaClient#setUserState` and `CadenzaClient#getUserState`
 
 ## 11.2.0 - 2026-09-23
 

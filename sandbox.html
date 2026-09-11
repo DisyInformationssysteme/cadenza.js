@@ -144,10 +144,11 @@
       iframe: parentMode ? undefined : 'iframe',
       debug: true
     });
+    window.cadenzaClient = cadenzaClient;
     const actionHandlers = {
       show: data => cadenzaClient.show(data.embeddingTargetId, getOptions(data)),
       showPage: data => cadenzaClient.show({ page: data.page }, getOptions(data)),
-      showMap: data => cadenzaClient.showMap(data.embeddingTargetId, getOptions(data)),
+      showMap: data => cadenzaClient.showMap(data.embeddingTargetId, getOptions(data), parseUserState(data.userState)),
       expandNavigator: data => cadenzaClient.expandNavigator(data.expandNavigator === 'on'),
       reload: data => cadenzaClient.reload({ invalidateCaches: data.invalidateCaches === 'on'}),
       closeMe: () => cadenzaClient.closeMe(),
@@ -166,11 +167,11 @@
       setSelection: data => cadenzaClient.setSelection(JSON.parse(data.layer), JSON.parse(data.objectIds), data.extentStrategy ? {extentStrategy: JSON.parse(data.extentStrategy) } : {}),
       addSelection: data => cadenzaClient.addSelection(JSON.parse(data.layer), JSON.parse(data.objectIds), data.extentStrategy ? {extentStrategy: JSON.parse(data.extentStrategy) } : {}),
       removeSelection: data => cadenzaClient.removeSelection(JSON.parse(data.layer), JSON.parse(data.objectIds), data.extentStrategy ? {extentStrategy: JSON.parse(data.extentStrategy) } : {}),
-      createGeometry: (data, formData) => cadenzaClient.createGeometry(data.embeddingTargetId, data.geometryType, getOptions(data, formData)),
-      editGeometry: (data, formData) => cadenzaClient.editGeometry(data.embeddingTargetId, JSON.parse(data.geometry), getOptions(data, formData)),
-      batchCreateGeometry: (data , formData) => cadenzaClient.batchCreateGeometry(data.embeddingTargetId, data.geometryType, getOptions(data, formData)),
-      batchEditGeometry: (data, formData) => cadenzaClient.batchEditGeometry(data.embeddingTargetId, JSON.parse(data.features), getOptions(data, formData)),
-      selectObjects: data => cadenzaClient.selectObjects(data.embeddingTargetId, getOptions(data)),
+      createGeometry: (data, formData) => cadenzaClient.createGeometry(data.embeddingTargetId, data.geometryType, getOptions(data, formData), parseUserState(data.userState)),
+      editGeometry: (data, formData) => cadenzaClient.editGeometry(data.embeddingTargetId, JSON.parse(data.geometry), getOptions(data, formData), parseUserState(data.userState)),
+      batchCreateGeometry: (data , formData) => cadenzaClient.batchCreateGeometry(data.embeddingTargetId, data.geometryType, getOptions(data, formData), parseUserState(data.userState)),
+      batchEditGeometry: (data, formData) => cadenzaClient.batchEditGeometry(data.embeddingTargetId, JSON.parse(data.features), getOptions(data, formData), parseUserState(data.userState)),
+      selectObjects: data => cadenzaClient.selectObjects(data.embeddingTargetId, getOptions(data), parseUserState(data.userState)),
       fetchData: data => {
         console.log('Inspect the fetchData() request in the devtools.');
         cadenzaClient.fetchData(data.embeddingTargetId, data.dataType, getOptions(data));
@@ -298,6 +299,10 @@
         }
         return value;
       });
+    }
+
+    function parseUserState (userState) {
+      return userState?.trim() ? JSON.parse(userState) : {};
     }
   </script>
 </head>
@@ -557,7 +562,7 @@
   </div>
 </template>
 
-<template data-action="showMap" data-common="geometry,additionalLayers,extentStrategy,map,showWorkbook,disabledUiFeatures,filter,show">
+<template data-action="showMap" data-common="userState,geometry,additionalLayers,extentStrategy,map,showWorkbook,disabledUiFeatures,filter,show">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
@@ -580,14 +585,14 @@
 
 <template data-action="setFilter" data-common="filter"></template>
 
-<template data-action="createGeometry" data-common="geometryType,simplifiedOperationMode,showLegend,minimumScale,additionalLayers,extentStrategy,map,snapping,disabledUiFeatures,filter">
+<template data-action="createGeometry" data-common="userState,geometryType,simplifiedOperationMode,showLegend,minimumScale,additionalLayers,extentStrategy,map,snapping,disabledUiFeatures,filter">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
   </div>
 </template>
 
-<template data-action="editGeometry" data-common="simplifiedOperationMode,showLegend,minimumScale,additionalLayers,extentStrategy,map,snapping,disabledUiFeatures,filter">
+<template data-action="editGeometry" data-common="userState,simplifiedOperationMode,showLegend,minimumScale,additionalLayers,extentStrategy,map,snapping,disabledUiFeatures,filter">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
@@ -614,14 +619,14 @@
   </div>
 </template>
 
-<template data-action="batchCreateGeometry" data-common="geometryType,simplifiedOperationMode,showLegend,minimumScale,additionalLayers,extentStrategy,map,snapping,disabledUiFeatures,filter">
+<template data-action="batchCreateGeometry" data-common="userState,geometryType,simplifiedOperationMode,showLegend,minimumScale,additionalLayers,extentStrategy,map,snapping,disabledUiFeatures,filter">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
   </div>
 </template>
 
-<template data-action="batchEditGeometry" data-common="simplifiedOperationMode,showLegend,minimumScale,additionalLayers,extentStrategy,map,snapping,disabledUiFeatures,filter">
+<template data-action="batchEditGeometry" data-common="userState,simplifiedOperationMode,showLegend,minimumScale,additionalLayers,extentStrategy,map,snapping,disabledUiFeatures,filter">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
@@ -692,7 +697,7 @@
   </div>
 </template>
 
-<template data-action="selectObjects" data-common="extentStrategy,map,disabledUiFeatures,filter">
+<template data-action="selectObjects" data-common="userState,extentStrategy,map,disabledUiFeatures,filter">
   <div>
     <label for="embeddingTargetId">Embedding target ID of the map view *</label>
     <input name="embeddingTargetId" id="embeddingTargetId" required>
@@ -705,6 +710,27 @@
         A JSON value like <code>["&lt;layerPrintName&gt;",...]</code> or
         <code>[["&lt;layerGroupPrintName&gt;","&lt;layerPrintName&gt;"],...]</code>
       </p>
+    </small>
+  </div>
+</template>
+
+<template id="common-userState">
+  <div>
+    <label for="userState">User state</label>
+    <textarea name="userState" id="userState" rows="8"></textarea>
+    <small>
+      <p>Optional JSON object containing the user state to apply.</p>
+      <strong>Example:</strong>
+      <pre>
+{
+  "map.layers": [
+    {
+      "layer": "Waterways",
+      "visible": false
+    }
+  ]
+}
+      </pre>
     </small>
   </div>
 </template>
