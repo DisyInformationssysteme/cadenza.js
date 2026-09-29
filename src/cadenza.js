@@ -283,14 +283,14 @@ globalThis.cadenza = Object.assign(
 
 /**
  * @typedef UserStateLayerDefinition
- * @property {WorkbookLayerPath | string} layer - The layer's identifier name
+ * @property {WorkbookLayerPath | string} layer - The layer's name of layer path
  * @property {boolean} visible - Whether the layer is visible
  */
 
 /**
  * @typedef {{
  *   'map.layers'?: UserStateLayerDefinition[],
- * }} UserState - The current application state of the user
+ * }} UserState - The current application state; Can be set programmatically (see {@link #setUserState}) and updated via user interactions.
  */
 
 let hasCadenzaSession = false;
@@ -640,10 +640,10 @@ export class CadenzaClient {
    * @param {WorkbookLayerPath | string} layer - The layer to show or hide
    *   (identified using a layer path or a print name)
    * @param {boolean} visible - The visibility state of the layer
-   * @return {Promise<UserState>} The actual user state after applying the visibility change, including changes to ancestors and toggle siblings.
+   * @return {Promise<void>} A `Promise` for when the layer visibility was set.
    * @postMessage
    *
-   * @deprecated Use `setUserState` instead
+   * @deprecated Use {@link #setUserState} instead
    */
   setLayerVisibility(layer, visible) {
     this.#log(
@@ -1054,6 +1054,7 @@ export class CadenzaClient {
    *
    * @param {UserState} userState UserState
    * @return {Promise<UserState>} the updated user state
+   * @postMessage
    */
   async setUserState(userState) {
     this.#log('CadenzaClient#setUserState', userState);
@@ -1062,6 +1063,7 @@ export class CadenzaClient {
 
   /**
    * Returns the current user state.
+   * @postMessage
    */
   async getUserState() {
     return this.#postRequest('getUserState');
@@ -1080,6 +1082,7 @@ export class CadenzaClient {
    *
    * @param {string} message The message to show in the dialog
    * @param {CustomValidityType} [type] The type of message (defaults to 'error')
+   * @postMessage
    */
   setCustomValidity(message, type = 'error') {
     assert(
