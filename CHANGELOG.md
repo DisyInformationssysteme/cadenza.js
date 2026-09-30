@@ -8,6 +8,10 @@ This project uses a version scheme based on the Cadenza main version in the form
 ### Added
 - `UserState` support in `CadenzaClient#showMap`, `CadenzaClient#createGeometry`, `CadenzaClient#editGeometry`, `CadenzaClient#batchCreateGeometry` and `CadenzaClient#batchEditGeometry`.
 - `CadenzaClient#setUserState` and `CadenzaClient#getUserState`
+- `CadenzaUserStateChangeEvent`
+
+### Deprecated
+- `setLayerVisibility`
 
 ## 11.2.0 - 2026-09-23
 

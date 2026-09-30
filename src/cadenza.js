@@ -283,7 +283,7 @@ globalThis.cadenza = Object.assign(
 
 /**
  * @typedef UserStateLayerDefinition
- * @property {WorkbookLayerPath | string} layer - The layer's name of layer path
+ * @property {WorkbookLayerPath | string} layer - The layer's name or layer path
  * @property {boolean} visible - Whether the layer is visible
  */
 
@@ -549,7 +549,7 @@ export class CadenzaClient {
       useMapSrs,
       signal,
     } = {},
-    userState = {},
+    userState,
   ) {
     this.#log('CadenzaClient#showMap', ...arguments);
     if (geometry) {
@@ -583,7 +583,7 @@ export class CadenzaClient {
       }
     }
     await this.#setExtentStrategy(validExtentStrategy);
-    await this.setUserState(userState);
+    await this.#setUserState(userState);
   }
 
   /**
@@ -647,7 +647,7 @@ export class CadenzaClient {
    */
   setLayerVisibility(layer, visible) {
     this.#log(
-      'CadenzaClient#setLayerVisibility is deprecated. Use setUserState instead',
+      'CadenzaClient#setLayerVisibility is deprecated. Use `setUserState` instead',
     );
     this.#log('CadenzaClient#setLayerVisibility', ...arguments);
     return this.#postRequest('setLayerVisibility', {
@@ -751,7 +751,7 @@ export class CadenzaClient {
       snapping,
       hideLegend = true,
     } = {},
-    userState = {},
+    userState,
   ) {
     this.#log('CadenzaClient#createGeometry', ...arguments);
     const validExtentStrategy = sanitizeExtentStrategy({
@@ -774,7 +774,7 @@ export class CadenzaClient {
       additionalLayers,
       validExtentStrategy,
     });
-    await this.setUserState(userState);
+    await this.#setUserState(userState);
     await this.#setEditorStateToReady();
   }
 
@@ -811,7 +811,7 @@ export class CadenzaClient {
       useMapSrs,
       hideLegend = true,
     } = {},
-    userState = {},
+    userState,
   ) {
     this.#log('CadenzaClient#editGeometry', ...arguments);
     const geometryType = geometry.type;
@@ -838,7 +838,7 @@ export class CadenzaClient {
       validExtentStrategy,
       geometry,
     });
-    await this.setUserState(userState);
+    await this.#setUserState(userState);
     await this.#setEditorStateToReady();
   }
 
@@ -878,7 +878,7 @@ export class CadenzaClient {
       useMapSrs,
       hideLegend = true,
     } = {},
-    userState = {},
+    userState,
   ) {
     this.#log('CadenzaClient#editGeometry', ...arguments);
     assertValidGeometryType(geometryType);
@@ -903,7 +903,7 @@ export class CadenzaClient {
       additionalLayers,
       validExtentStrategy,
     });
-    await this.setUserState(userState);
+    await this.#setUserState(userState);
     await this.#setEditorStateToReady();
   }
 
@@ -943,7 +943,7 @@ export class CadenzaClient {
       useMapSrs,
       hideLegend = true,
     } = {},
-    userState = {},
+    userState,
   ) {
     this.#log('CadenzaClient#editGeometry', ...arguments);
     const geometryType = getGeometryTypeFromFeatureCollection(features);
@@ -970,7 +970,7 @@ export class CadenzaClient {
       validExtentStrategy,
     });
     await this.#createFeaturesAndEditLastCreatedFeature(features);
-    await this.setUserState(userState);
+    await this.#setUserState(userState);
     await this.#setEditorStateToReady();
   }
 
@@ -1057,6 +1057,11 @@ export class CadenzaClient {
    * @postMessage
    */
   async setUserState(userState) {
+    return this.#setUserState(userState);
+  }
+
+  /** @return {Promise<UserState>} */
+  async #setUserState(userState = {}) {
     this.#log('CadenzaClient#setUserState', userState);
     return this.#postRequest('setUserState', userState);
   }
