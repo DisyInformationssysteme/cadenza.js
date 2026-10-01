@@ -11,7 +11,7 @@ This project uses a version scheme based on the Cadenza main version in the form
 - `CadenzaUserStateChangeEvent`
 
 ### Deprecated
-- `setLayerVisibility`
+- `CadenzaClient#setLayerVisibility`
 
 ## 11.2.0 - 2026-09-23
 
