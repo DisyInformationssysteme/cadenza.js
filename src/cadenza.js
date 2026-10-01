@@ -281,6 +281,18 @@ globalThis.cadenza = Object.assign(
  * - `linear`: Views are shown linearly, one after another in one column.
  */
 
+/**
+ * @typedef UserStateLayerDefinition
+ * @property {WorkbookLayerPath | string} layer - The layer's name or layer path
+ * @property {boolean} visible - Whether the layer is visible
+ */
+
+/**
+ * @typedef {{
+ *   'map.layers'?: UserStateLayerDefinition[],
+ * }} UserState - The current application state; Can be set programmatically (see {@link #setUserState}) and updated via user interactions.
+ */
+
 let hasCadenzaSession = false;
 
 /** @type {Promise<void> | undefined} */
@@ -511,6 +523,7 @@ export class CadenzaClient {
    * @param {OperationMode} [__namedParameters.operationMode] - The mode in which a workbook should be operated
    * @param {AbortSignal} [__namedParameters.signal] - A signal to abort the iframe loading
    * @param {boolean} [__namedParameters.useMapSrs] - Whether the coordinates specified in other parameters are specified in the map's SRS (otherwise EPSG:4326 is assumed)
+   * @param {UserState} [userState] - The user state to apply
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires
@@ -536,6 +549,7 @@ export class CadenzaClient {
       useMapSrs,
       signal,
     } = {},
+    userState,
   ) {
     this.#log('CadenzaClient#showMap', ...arguments);
     if (geometry) {
@@ -568,7 +582,8 @@ export class CadenzaClient {
         await this.#postRequest('importLayer', layer);
       }
     }
-    this.#setExtentStrategy(validExtentStrategy);
+    await this.#setExtentStrategy(validExtentStrategy);
+    await this.#setUserState(userState);
   }
 
   /**
@@ -627,8 +642,13 @@ export class CadenzaClient {
    * @param {boolean} visible - The visibility state of the layer
    * @return {Promise<void>} A `Promise` for when the layer visibility was set.
    * @postMessage
+   *
+   * @deprecated Use {@link #setUserState} instead
    */
   setLayerVisibility(layer, visible) {
+    this.#log(
+      'CadenzaClient#setLayerVisibility is deprecated. Use `setUserState` instead',
+    );
     this.#log('CadenzaClient#setLayerVisibility', ...arguments);
     return this.#postRequest('setLayerVisibility', {
       layer: array(layer),
@@ -705,6 +725,7 @@ export class CadenzaClient {
    * @param {EmbeddingTargetId} backgroundMapView - The workbook map view in the background
    * @param {GeometryType} geometryType - The geometry type
    * @param {CommonEditGeometryOptions} [editGeometryOptions] - Options for the initialization of the geometry editor.
+   * @param {UserState} [userState] - The user state to apply
    * @throws For invalid arguments
    * @fires
    * - {@link CadenzaChangeExtentEvent}
@@ -712,6 +733,7 @@ export class CadenzaClient {
    * - {@link CadenzaEditGeometryUpdateEvent}
    * - {@link CadenzaEditGeometryOkEvent}
    * - {@link CadenzaEditGeometryCancelEvent}
+   * - {@link CadenzaUserStateChangeEvent}
    * @embed
    */
   async createGeometry(
@@ -729,6 +751,7 @@ export class CadenzaClient {
       snapping,
       hideLegend = true,
     } = {},
+    userState,
   ) {
     this.#log('CadenzaClient#createGeometry', ...arguments);
     const validExtentStrategy = sanitizeExtentStrategy({
@@ -751,6 +774,7 @@ export class CadenzaClient {
       additionalLayers,
       validExtentStrategy,
     });
+    await this.#setUserState(userState);
     await this.#setEditorStateToReady();
   }
 
@@ -760,6 +784,7 @@ export class CadenzaClient {
    * @param {EmbeddingTargetId} backgroundMapView - The workbook map view in the background
    * @param {Geometry} geometry - The geometry to edit
    * @param {CommonEditGeometryOptions} [editGeometryOptions] - Options for the initialization of the geometry editor.
+   * @param {UserState} [userState] - The user state to apply
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires
@@ -768,6 +793,7 @@ export class CadenzaClient {
    * - {@link CadenzaEditGeometryUpdateEvent}
    * - {@link CadenzaEditGeometryOkEvent}
    * - {@link CadenzaEditGeometryCancelEvent}
+   * - {@link CadenzaUserStateChangeEvent}
    * @embed
    */
   async editGeometry(
@@ -785,6 +811,7 @@ export class CadenzaClient {
       useMapSrs,
       hideLegend = true,
     } = {},
+    userState,
   ) {
     this.#log('CadenzaClient#editGeometry', ...arguments);
     const geometryType = geometry.type;
@@ -811,6 +838,7 @@ export class CadenzaClient {
       validExtentStrategy,
       geometry,
     });
+    await this.#setUserState(userState);
     await this.#setEditorStateToReady();
   }
 
@@ -820,6 +848,7 @@ export class CadenzaClient {
    * @param {EmbeddingTargetId} backgroundMapView - The workbook map view in the background
    * @param {GeometryType} geometryType - The type of geometries to create
    * @param {CommonEditGeometryOptions} [editGeometryOptions] - Options for the initialization of the geometry editor.
+   * @param {UserState} [userState] - The user state to apply
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires
@@ -831,6 +860,7 @@ export class CadenzaClient {
    * - {@link CadenzaEditGeometryEditEvent}
    * - {@link CadenzaEditGeometryDeleteEvent}
    * - {@link CadenzaEditGeometryCancelEvent}
+   * - {@link CadenzaUserStateChangeEvent}
    * @embed
    */
   async batchCreateGeometry(
@@ -848,6 +878,7 @@ export class CadenzaClient {
       useMapSrs,
       hideLegend = true,
     } = {},
+    userState,
   ) {
     this.#log('CadenzaClient#editGeometry', ...arguments);
     assertValidGeometryType(geometryType);
@@ -872,6 +903,7 @@ export class CadenzaClient {
       additionalLayers,
       validExtentStrategy,
     });
+    await this.#setUserState(userState);
     await this.#setEditorStateToReady();
   }
 
@@ -881,6 +913,7 @@ export class CadenzaClient {
    * @param {EmbeddingTargetId} backgroundMapView - The workbook map view in the background
    * @param {FeatureCollection} features - The features to edit. The last feature in this collection is directly set up for editing.
    * @param {CommonEditGeometryOptions} [editGeometryOptions] - Options for the initialization of the geometry editor.
+   * @param {UserState} [userState] - The user state to apply
    * @return {Promise<void>} A `Promise` for when the iframe is loaded
    * @throws For invalid arguments
    * @fires
@@ -892,6 +925,7 @@ export class CadenzaClient {
    * - {@link CadenzaEditGeometryEditEvent}
    * - {@link CadenzaEditGeometryDeleteEvent}
    * - {@link CadenzaEditGeometryCancelEvent}
+   * - {@link CadenzaUserStateChangeEvent}
    * @embed
    */
   async batchEditGeometry(
@@ -909,6 +943,7 @@ export class CadenzaClient {
       useMapSrs,
       hideLegend = true,
     } = {},
+    userState,
   ) {
     this.#log('CadenzaClient#editGeometry', ...arguments);
     const geometryType = getGeometryTypeFromFeatureCollection(features);
@@ -935,6 +970,7 @@ export class CadenzaClient {
       validExtentStrategy,
     });
     await this.#createFeaturesAndEditLastCreatedFeature(features);
+    await this.#setUserState(userState);
     await this.#setEditorStateToReady();
   }
 
@@ -1011,6 +1047,34 @@ export class CadenzaClient {
   }
 
   /**
+   * Applies the given user state.
+   *
+   * Returns the actual state after the request completes. Changes made while an
+   * API mutation is pending do not generate `userState:change` events.
+   *
+   * @param {UserState} userState UserState
+   * @return {Promise<UserState>} the updated user state
+   * @postMessage
+   */
+  async setUserState(userState) {
+    return this.#setUserState(userState);
+  }
+
+  /** @return {Promise<UserState>} */
+  async #setUserState(userState = {}) {
+    this.#log('CadenzaClient#setUserState', userState);
+    return this.#postRequest('setUserState', userState);
+  }
+
+  /**
+   * Returns the current user state.
+   * @postMessage
+   */
+  async getUserState() {
+    return this.#postRequest('getUserState');
+  }
+
+  /**
    * Set the custom validation status of the geometry editor dialog ( {@link createGeometry}, {@link editGeometry}, {@link batchCreateGeometry}, {@link batchEditGeometry} )
    * or the {@link selectObjects} dialog in addition to the default validation status (including errors and warnings).
    *
@@ -1023,6 +1087,7 @@ export class CadenzaClient {
    *
    * @param {string} message The message to show in the dialog
    * @param {CustomValidityType} [type] The type of message (defaults to 'error')
+   * @postMessage
    */
   setCustomValidity(message, type = 'error') {
     assert(
@@ -1950,6 +2015,7 @@ function getGeometryTypeFromFeatureCollection(featureCollection) {
  * | 'reload'
  * | 'selectObjects:ok'
  * | 'selectObjects:cancel'
+ * | 'userState:change'
  * } CadenzaEventType - An event type to subscribe to using {@link CadenzaClient#on}
  */
 
@@ -1968,6 +2034,7 @@ function getGeometryTypeFromFeatureCollection(featureCollection) {
  *  : T extends 'reload' ? CadenzaReloadEvent
  *  : T extends 'selectObjects:ok' ? CadenzaSelectObjectsOkEvent
  *  : T extends 'selectObjects:cancel' ? CadenzaSelectObjectsCancelEvent
+ *  : T extends 'userState:change' ? CadenzaUserStateChangeEvent
  *  : never
  * } CadenzaEventByType
  */
@@ -2013,6 +2080,18 @@ function getGeometryTypeFromFeatureCollection(featureCollection) {
  * For a selection in a workbook map view with activated feature info, the values also include the simplified geometries of the selected objects.
  */
 /** @typedef {CadenzaEvent<'selectObjects:cancel'>} CadenzaSelectObjectsCancelEvent - When the user cancelled the selection. */
+/**
+ * @typedef {CadenzaEvent<'userState:change', {userState: UserState, change: Array<keyof UserState>}>} CadenzaUserStateChangeEvent - When the user changes the user state in Cadenza.
+ *
+ * This event is not dispatched for changes made programmatically, for example, with
+ * `setUserState` or `setLayerVisibility`. Use the state returned by those methods
+ * to get the updated user state instead.
+ *
+ * The event detail contains:
+ *
+ * - `userState`: The complete current user state.
+ * - `change`: The keys of the user state that changed.
+ */
 /**
  * @typedef {CadenzaEvent<'reload'>} CadenzaReloadEvent - When the user clicked on the 'reload' button in the embedding standby page
  *

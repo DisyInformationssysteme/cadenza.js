@@ -260,6 +260,28 @@ To set the visibility of a layer in the currently shown map, pass the layer path
 cadenzaClient.setLayerVisibility('<layerPrintName>', false);
 ```
 
+_Note:_ `setLayerVisibility` is deprecated. Use [`CadenzaClient#setUserState`](./classes/CadenzaClient.html#setuserstate) instead.
+
+### Set and Get the User State
+
+<small>API: [CadenzaClient#setUserState](./classes/CadenzaClient.html#setuserstate), [CadenzaClient#getUserState](./classes/CadenzaClient.html#getuserstate)</small>
+
+Set and get the current state of the user.
+
+```javascript
+const userState = {
+  'map.layers': [
+    { layer: 'Waterways', visible: false },
+  ],
+};
+
+const updatedUserState = await cadenzaClient.setUserState(userState);
+console.log(updatedUserState);
+
+const currentUserState = await cadenzaClient.getUserState();
+console.log(currentUserState);
+```
+
 ### Get the Image of the Currently Shown Workbook Map View
 
 <small>API: [CadenzaClient#getData](./classes/CadenzaClient.html#getdata)</small>
