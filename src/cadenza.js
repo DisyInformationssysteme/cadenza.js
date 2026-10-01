@@ -1680,7 +1680,7 @@ export class CadenzaClient {
         Object.fromEntries(
           Object.entries(filter).map(([variable, value]) => [
             `filter.${variable}`,
-            value,
+            JSON.stringify(value),
           ]),
         )),
       ...(worksheetPlaceholders &&
