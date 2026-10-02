@@ -6,6 +6,7 @@ This project uses a version scheme based on the Cadenza main version in the form
 
 ## Unreleased
 
+## 11.0.3 - 2026-10-02
 ### Fixed
 - Restore JSON serialization of filter variables in embedding URLs.
 
