@@ -6,6 +6,9 @@ This project uses a version scheme based on the Cadenza main version in the form
 
 ## Unreleased
 
+### Fixed
+- Restore JSON serialization of filter variables in embedding URLs.
+
 ## 11.1.4 - 2026-10-01
 ### Added
 - `UserState` support in `CadenzaClient#showMap`, `CadenzaClient#createGeometry`, `CadenzaClient#editGeometry`, `CadenzaClient#batchCreateGeometry` and `CadenzaClient#batchEditGeometry`.
