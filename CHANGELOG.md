@@ -6,6 +6,9 @@ This project uses a version scheme based on the Cadenza main version in the form
 
 ## Unreleased
 
+### Fixed
+- Restore JSON serialization of filter variables in embedding URLs.
+
 ## 11.0.2 - 2026-07-29
 ### Fixed
 - `CadenzaChangeSelectionEvent`, `CadenzaSelectObjectsOkEvent` and `CadenzaDrillThroughEvent` types
