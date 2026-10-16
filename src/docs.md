@@ -486,7 +486,7 @@ cadenzaClient.on('selectObjects:ok', (event) => {
 Set the selection in the currently shown workbook map view using a list of object IDs to select. An empty list clears the selection.
 
 ```javascript
-cadenzaClient.setSelection('<layerPrintName>', [ 'objectId', ... ]);
+await cadenzaClient.setSelection('<layerPrintName>', [ 'objectId', ... ]);
 ```
 
 You can also add to or remove from the current selection:
