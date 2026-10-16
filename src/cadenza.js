@@ -666,14 +666,13 @@ export class CadenzaClient {
    * @return {Promise<void>} A `Promise` for when the selection was set.
    * @postMessage
    */
-  setSelection(layer, values, { extentStrategy } = {}) {
+  async setSelection(layer, values, { extentStrategy } = {}) {
     this.#log('CadenzaClient#setSelection', ...arguments);
-    const selectionResult = this.#postRequest('setSelection', {
+    await this.#setExtentStrategy(extentStrategy);
+    return this.#postRequest('setSelection', {
       layer: array(layer),
       values: values.map(sanitizeAndValidateAttributeValues),
     });
-    this.#setExtentStrategy(extentStrategy);
-    return selectionResult;
   }
 
   /**
@@ -686,14 +685,13 @@ export class CadenzaClient {
    * @return {Promise<void>} A `Promise` for when the selection was changed.
    * @postMessage
    */
-  addSelection(layer, values, { extentStrategy } = {}) {
+  async addSelection(layer, values, { extentStrategy } = {}) {
     this.#log('CadenzaClient#addSelection', ...arguments);
-    const selectionResult = this.#postRequest('addSelection', {
+    await this.#setExtentStrategy(extentStrategy);
+    return this.#postRequest('addSelection', {
       layer: array(layer),
       values: values.map(sanitizeAndValidateAttributeValues),
     });
-    this.#setExtentStrategy(extentStrategy);
-    return selectionResult;
   }
 
   /**
@@ -706,14 +704,13 @@ export class CadenzaClient {
    * @return {Promise<void>} A `Promise` for when the selection was changed.
    * @postMessage
    */
-  removeSelection(layer, values, { extentStrategy } = {}) {
+  async removeSelection(layer, values, { extentStrategy } = {}) {
     this.#log('CadenzaClient#removeSelection', ...arguments);
-    const selectionResult = this.#postRequest('removeSelection', {
+    await this.#setExtentStrategy(extentStrategy);
+    return this.#postRequest('removeSelection', {
       layer: array(layer),
       values: values.map(sanitizeAndValidateAttributeValues),
     });
-    this.#setExtentStrategy(extentStrategy);
-    return selectionResult;
   }
 
   /**
@@ -1144,7 +1141,7 @@ export class CadenzaClient {
       validExtentStrategy,
     });
     await this.#show(resolvePath(backgroundMapView), params, signal);
-    this.#setExtentStrategy(validExtentStrategy);
+    await this.#setExtentStrategy(validExtentStrategy);
   }
 
   #setExtentStrategy(/** @type {ExtentStrategy | undefined} */ extentStrategy) {
