@@ -6,6 +6,9 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write # <-- Required for npm Trusted Publishing (OIDC)
 
     steps:
     - uses: actions/create-github-app-token@v1
@@ -47,13 +50,9 @@ jobs:
     - name: Replace {{version}} placeholder with release version
       run: sed -i "s/{{version}}/${RELEASE_VERSION}/" ./cadenza.js
 
-    # Try to publish the package before doing any other persistent changes.
+      # Try to publish the package before doing any other persistent changes.
     - name: Publish npm package
-      run: |
-        npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
-        npm publish --verbose --access=public --tag=${{ env.RELEASE_TAG }}
-      env:
-        NPM_TOKEN: ${{ secrets.NPMJS_ACCESS_TOKEN }}
+      run: npm publish --verbose --access=public --tag=${{ env.RELEASE_TAG }}
 
     # Update changelog unreleased section with new version
     - name: Update changelog
